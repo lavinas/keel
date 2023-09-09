@@ -1,13 +1,12 @@
-package usercase
+package usecase
 
 import (
 	"github.com/lavinas/keel/internal/entity"
 )
 
 type CreateProductInputDto struct {
-	ID    string
-	Name  string
-	Price float64
+	Name  string  `json:"name"`
+	Price float64 `json:"price"`
 }
 
 type CreateProductOutputDto struct {
@@ -20,7 +19,7 @@ type CreateProductUseCase struct {
 	ProductRepository entity.ProductRepository
 }
 
-func NewCreateProductUseCase(productRepository entity.ProductRepository) *CreateProductUseCase{
+func NewCreateProductUseCase(productRepository entity.ProductRepository) *CreateProductUseCase {
 	return &CreateProductUseCase{
 		ProductRepository: productRepository,
 	}

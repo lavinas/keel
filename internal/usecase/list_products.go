@@ -1,10 +1,10 @@
-package usercase
+package usecase
 
 import "github.com/lavinas/keel/internal/entity"
 
 type ListProductsOutputDto struct {
-	ID string
-	Name string
+	ID    string
+	Name  string
 	Price float64
 }
 
@@ -26,8 +26,8 @@ func (u *ListProductUseCase) Execute() ([]*ListProductsOutputDto, error) {
 	var productsOutput []*ListProductsOutputDto
 	for _, product := range products {
 		productsOutput = append(productsOutput, &ListProductsOutputDto{
-			ID: product.ID,
-			Name: product.Name,
+			ID:    product.ID,
+			Name:  product.Name,
 			Price: product.Price,
 		})
 	}
