@@ -4,29 +4,29 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/lavinas/keel/internal/example/usecase"
+	"github.com/lavinas/keel/internal/example/service"
 )
 
 type ProductHandler struct {
-	CreateProductUseCase *usecase.CreateProductUseCase
-	ListProductUseCase   *usecase.ListProductUseCase
+	CreateProductService *service.CreateProductService
+	ListProductService   *service.ListProductService
 }
 
-func NewProductUseCase(createProductUseCase *usecase.CreateProductUseCase, listProductUseCase *usecase.ListProductUseCase) *ProductHandler {
+func NewProductService(createProductService *service.CreateProductService, listProductService *service.ListProductService) *ProductHandler {
 	return &ProductHandler{
-		CreateProductUseCase: createProductUseCase,
-		ListProductUseCase:   listProductUseCase,
+		CreateProductService: createProductService,
+		ListProductService:   listProductService,
 	}
 }
 
 func (h *ProductHandler) CreateProductHandler(w http.ResponseWriter, r *http.Request) {
-	var input usecase.CreateProductInputDto
+	var input service.CreateProductInputDto
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	output, err := h.CreateProductUseCase.Execute(input)
+	output, err := h.CreateProductService.Execute(input)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -36,7 +36,7 @@ func (h *ProductHandler) CreateProductHandler(w http.ResponseWriter, r *http.Req
 }
 
 func (h *ProductHandler) ListProductHandler(w http.ResponseWriter, r *http.Request) {
-	output, err := h.ListProductUseCase.Execute()
+	output, err := h.ListProductService.Execute()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return

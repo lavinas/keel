@@ -1,6 +1,6 @@
-package usecase
+package service
 
-import "github.com/lavinas/keel/internal/example/entity"
+import "github.com/lavinas/keel/internal/example/domain"
 
 type ListProductsOutputDto struct {
 	ID    string
@@ -8,17 +8,17 @@ type ListProductsOutputDto struct {
 	Price float64
 }
 
-type ListProductUseCase struct {
-	ProductRepository entity.ProductRepository
+type ListProductService struct {
+	ProductRepository domain.ProductRepository
 }
 
-func NewListProductUseCase(productRepository entity.ProductRepository) *ListProductUseCase {
-	return &ListProductUseCase{
+func NewListProductService(productRepository domain.ProductRepository) *ListProductService {
+	return &ListProductService{
 		ProductRepository: productRepository,
 	}
 }
 
-func (u *ListProductUseCase) Execute() ([]*ListProductsOutputDto, error) {
+func (u *ListProductService) Execute() ([]*ListProductsOutputDto, error) {
 	products, err := u.ProductRepository.FindAll()
 	if err != nil {
 		return nil, err

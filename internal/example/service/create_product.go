@@ -1,7 +1,7 @@
-package usecase
+package service
 
 import (
-	"github.com/lavinas/keel/internal/example/entity"
+	"github.com/lavinas/keel/internal/example/domain"
 )
 
 type CreateProductInputDto struct {
@@ -15,18 +15,18 @@ type CreateProductOutputDto struct {
 	Price float64
 }
 
-type CreateProductUseCase struct {
-	ProductRepository entity.ProductRepository
+type CreateProductService struct {
+	ProductRepository domain.ProductRepository
 }
 
-func NewCreateProductUseCase(productRepository entity.ProductRepository) *CreateProductUseCase {
-	return &CreateProductUseCase{
+func NewCreateProductService(productRepository domain.ProductRepository) *CreateProductService {
+	return &CreateProductService{
 		ProductRepository: productRepository,
 	}
 }
 
-func (u *CreateProductUseCase) Execute(input CreateProductInputDto) (*CreateProductOutputDto, error) {
-	product := entity.NewProduct(input.Name, input.Price)
+func (u *CreateProductService) Execute(input CreateProductInputDto) (*CreateProductOutputDto, error) {
+	product := domain.NewProduct(input.Name, input.Price)
 	if err := u.ProductRepository.Create(product); err != nil {
 		return nil, err
 	}
