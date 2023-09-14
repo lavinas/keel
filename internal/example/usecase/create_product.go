@@ -1,7 +1,7 @@
 package usecase
 
 import (
-	"github.com/lavinas/keel/internal/entity"
+	"github.com/lavinas/keel/internal/example/entity"
 )
 
 type CreateProductInputDto struct {

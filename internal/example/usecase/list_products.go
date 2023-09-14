@@ -1,6 +1,6 @@
 package usecase
 
-import "github.com/lavinas/keel/internal/entity"
+import "github.com/lavinas/keel/internal/example/entity"
 
 type ListProductsOutputDto struct {
 	ID    string

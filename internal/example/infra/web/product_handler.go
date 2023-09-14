@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/lavinas/keel/internal/usecase"
+	"github.com/lavinas/keel/internal/example/usecase"
 )
 
 type ProductHandler struct {

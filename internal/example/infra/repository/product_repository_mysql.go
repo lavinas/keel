@@ -3,7 +3,7 @@ package repository
 import (
 	"database/sql"
 
-	"github.com/lavinas/keel/internal/entity"
+	"github.com/lavinas/keel/internal/example/entity"
 )
 
 type ProductRepositoryMysql struct {

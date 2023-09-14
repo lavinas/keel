@@ -9,10 +9,10 @@ import (
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/go-chi/chi/v5"
 
-	"github.com/lavinas/keel/internal/infra/akafka"
-	"github.com/lavinas/keel/internal/infra/repository"
-	"github.com/lavinas/keel/internal/infra/web"
-	"github.com/lavinas/keel/internal/usecase"
+	"github.com/lavinas/keel/internal/example/infra/akafka"
+	"github.com/lavinas/keel/internal/example/infra/repository"
+	"github.com/lavinas/keel/internal/example/infra/web"
+	"github.com/lavinas/keel/internal/example/usecase"
 )
 
 func main() {
@@ -28,7 +28,7 @@ func main() {
 
 	productHandler := web.NewProductUseCase(createProductUseCase, listProductUseCase)
 	r := chi.NewRouter()
-	r.Post("products", productHandler.CreateProductHandler)
+	r.Post("/products", productHandler.CreateProductHandler)
 	r.Get("/products", productHandler.ListProductHandler)
 
 	go http.ListenAndServe(":8000", r)
