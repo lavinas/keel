@@ -17,7 +17,6 @@ func main() {
 	}
 	defer db.Close()
 	repo := repo.NewRepoMysql(db)
-	create := service.NewCreate(repo)
-	list := service.NewList(repo)
-	hdlr.NewHandlerChi(create, list)
+	service := service.NewService(repo)
+	hdlr.NewHandlerChi(service)
 }

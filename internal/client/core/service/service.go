@@ -5,20 +5,20 @@ import (
 	"github.com/lavinas/keel/internal/client/core/port"
 )
 
-// Create is the service to create a client
-type Create struct {
+// ClientService are services to orchestrate client domain
+type ClientService struct {
 	Repo port.Repo
 }
 
 //NewCreate creates a new Create service
-func NewCreate(repo port.Repo) *Create {
-	return &Create{
+func NewService(repo port.Repo) *ClientService {
+	return &ClientService{
 		Repo: repo,
 	}
 }
 
-// Execute creates a new client
-func (u *Create) Execute(input domain.CreateInputDto) (*domain.CreateOutputDto, error) {
+// Create creates a new client
+func (u *ClientService) Create(input domain.CreateInputDto) (*domain.CreateOutputDto, error) {
 	d := clearNumber(input.Document)
 	p := clearNumber(input.Phone)
 
@@ -34,6 +34,22 @@ func (u *Create) Execute(input domain.CreateInputDto) (*domain.CreateOutputDto, 
 		Email:    client.Email,
 	}, nil
 }
+
+// ListAll list all clients
+func (l *ClientService) ListAll() (*domain.ListAllOutputDto, error) {
+	c := domain.CreateOutputDto{
+		Name:     "Test",
+		Nickname: "Test",
+		Document: 12321232222,
+		Phone:    11999999999,
+		Email:    "test@test.com.br",		
+	}
+	r := domain.ListAllOutputDto {
+		Clients: []domain.CreateOutputDto{c},
+	}
+	return &r, nil
+}
+
 
 //clearNumber removes all non-numeric characters from a string
 func clearNumber(number string) uint64 {
