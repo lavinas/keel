@@ -4,6 +4,7 @@ import (
 	"github.com/lavinas/keel/internal/client/core/service"
 	"github.com/lavinas/keel/internal/client/hdlr"
 	"github.com/lavinas/keel/internal/client/repo"
+	"github.com/lavinas/keel/internal/client/util"
 	"github.com/lavinas/keel/pkg/config"
 	"github.com/lavinas/keel/pkg/log"
 )
@@ -13,7 +14,8 @@ func main() {
 	c := config.NewConfig()
 	l := log.NewlogFile(".", "client", true)
 	r := repo.NewRepoMysql(c)
-	s := service.NewService(r)
+	u := util.NewUtil()
+	s := service.NewService(l, r, u)
 	h := hdlr.NewHandlerGin(l, s)
 	h.Run()
 }

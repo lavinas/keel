@@ -1,31 +1,45 @@
 package service
 
 import (
+	"encoding/json"
+	"errors"
+	"strconv"
+
 	"github.com/lavinas/keel/internal/client/core/domain"
 	"github.com/lavinas/keel/internal/client/core/port"
 )
 
 // Service are services to orchestrate client domain
 type Service struct {
-	Repo port.Repo
+	log port.Log
+	repo port.Repo
+	util port.Util
 }
 
 // NewCreate creates a new Create service
-func NewService(repo port.Repo) *Service {
+func NewService(log port.Log, repo port.Repo, util port.Util) *Service {
 	return &Service{
-		Repo: repo,
+		log: log,
+		repo: repo,
+		util: util,
 	}
 }
 
 // Create creates a new client
-func (u *Service) Create(input domain.CreateInputDto) (*domain.CreateOutputDto, error) {
-	d := clearNumber(input.Document)
-	p := clearNumber(input.Phone)
-
-	client := domain.NewClient(input.Name, input.Nickname, p, d, input.Email)
-	if err := u.Repo.Create(client); err != nil {
-		return nil, err
+func (s *Service) Create(input domain.CreateInputDto) (*domain.CreateOutputDto, error) {
+	if !s.util.ValidateDocument(input.Document) {
+		logInfo(s.log, input, "bad request: invalid document")		
+		return nil, errors.New("bad request: invalid document")
 	}
+	d, _ := strconv.ParseUint(s.util.ClearNumber(input.Document), 10, 64)
+	p, _ := strconv.ParseUint(s.util.ClearNumber(input.Phone), 10, 64)
+	
+	client := domain.NewClient(input.Name, input.Nickname, p, d, input.Email)
+	if err := s.repo.Create(client); err != nil {
+		logError(s.log, input, err)
+		return nil, errors.New("internal server error: ")
+	}
+	logInfo(s.log, input, "created")
 	return &domain.CreateOutputDto{
 		Id:       client.ID,
 		Name:     client.Name,
@@ -51,13 +65,12 @@ func (l *Service) ListAll() (*domain.ListAllOutputDto, error) {
 	return &r, nil
 }
 
-// clearNumber removes all non-numeric characters from a string
-func clearNumber(number string) uint64 {
-	var result uint64
-	for _, n := range number {
-		if n >= '0' && n <= '9' {
-			result = result*10 + uint64(n-'0')
-		}
-	}
-	return result
+func logError(log port.Log, input any, err error) {
+	b, _ := json.Marshal(input)
+	log.Error (err.Error() + " | " + string(b))
+}
+
+func logInfo(log port.Log, input any, message string) {
+	b, _ := json.Marshal(input)
+	log.Info (message + " | " + string(b))
 }

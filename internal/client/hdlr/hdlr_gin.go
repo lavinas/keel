@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lavinas/keel/internal/client/core/domain"
@@ -49,7 +50,7 @@ func (h *HandlerGin) Create(c *gin.Context) {
 	}
 	output, err := h.service.Create(input)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(mapError(err.Error()), gin.H{"error": err.Error()})
 		return
 	}
 	c.JSON(http.StatusCreated, output)
@@ -102,3 +103,11 @@ func ginShutDown(l port.Log, srv *http.Server) {
 	<-ctx.Done()
 	l.Info("closed gin service at 127.0.0.1:8081")
 }
+
+func mapError(message string) int {
+	if strings.Contains(message, "bad request") {
+		return http.StatusBadRequest
+	}
+	return http.StatusInternalServerError
+}
+
