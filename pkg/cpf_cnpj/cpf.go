@@ -1,6 +1,5 @@
 package cpf_cnpj
 
-
 import (
 	"fmt"
 	"regexp"

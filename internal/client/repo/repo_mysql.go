@@ -14,7 +14,7 @@ const (
 )
 
 // Repo is a service to interact with the database
-type RepoMysql struct{
+type RepoMysql struct {
 	db *sql.DB
 }
 
@@ -48,7 +48,7 @@ func (r *RepoMysql) Close() {
 }
 
 // getField gets a field from a group in config file
-func getField(c port.Config, field string) (string) {
+func getField(c port.Config, field string) string {
 	r, err := c.GetField(groupMysql, field)
 	if err != nil {
 		panic(err)

@@ -8,4 +8,3 @@ import (
 type Repo interface {
 	Create(client *domain.Client) error
 }
-

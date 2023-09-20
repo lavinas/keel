@@ -8,7 +8,7 @@ import (
 	"github.com/lavinas/keel/pkg/log"
 )
 
-// main is the entrypoint of the application 
+// main is the entrypoint of the application
 func main() {
 	c := config.NewConfig()
 	l := log.NewlogFile(".", "client", true)
