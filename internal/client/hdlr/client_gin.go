@@ -28,6 +28,7 @@ func NewHandlerGin(log port.Log, service port.ClientService) *HandlerGin {
 		gin: r,
 	}
 	r.POST("/create", h.Create)
+	r.GET("/list", h.ListAll)
 	return &h
 }
 
@@ -49,6 +50,11 @@ func (h *HandlerGin) Create(c *gin.Context) {
 	}
 	c.JSON(http.StatusCreated, output)
 }
+
+func (h *HandlerGin) ListAll(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"message": "pong"})
+}
+
 
 func ginConf(l port.Log) *gin.Engine {
 	gin.SetMode(gin.ReleaseMode)
