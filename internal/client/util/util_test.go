@@ -40,7 +40,7 @@ func TestValidateWithInvalidCPF(t *testing.T) {
 	}
 }
 
-func TestValidateWithValidCNPJ(t *testing.T){
+func TestValidateWithValidCNPJ(t *testing.T) {
 	d := Util{}
 	r := d.ValidateDocument("53.931.154/0001-63")
 
@@ -49,7 +49,7 @@ func TestValidateWithValidCNPJ(t *testing.T){
 	}
 }
 
-func TestValidateWithInvalidCNPJ(t *testing.T){
+func TestValidateWithInvalidCNPJ(t *testing.T) {
 	d := Util{}
 	r := d.ValidateDocument("53.931.154/0001-62")
 

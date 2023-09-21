@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lavinas/keel/internal/client/core/domain"
@@ -110,4 +110,3 @@ func mapError(message string) int {
 	}
 	return http.StatusInternalServerError
 }
-
