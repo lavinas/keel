@@ -26,7 +26,8 @@ func NewService(log port.Log, repo port.Repo, util port.Util) *Service {
 // Create creates a new client
 func (s *Service) Create(input domain.CreateInputDto) (*domain.CreateOutputDto, error) {
 	if _, m := s.util.ValidateAll(input.Name, input.Nickname, input.Document, input.Phone, input.Email); m != "" {
-		return nil, errors.New("invalid input: " + m)
+		s.log.Infof(input, "bad request: " + m)
+		return nil, errors.New("bad request: " + m)
 	}
 	name, nick, doc, phone, email, _ := s.util.ClearAll(input.Name, input.Nickname, input.Document, input.Phone, input.Email)
 	client := domain.NewClient(name, nick, doc, phone, email)

@@ -43,8 +43,10 @@ func (l *LogMock) Close() {
 
 // Repo Mock
 type RepoMock struct {
+	client *domain.Client
 }
 
 func (r *RepoMock) Create(client *domain.Client) error {
+	r.client = client
 	return nil
 }
