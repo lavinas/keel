@@ -5,7 +5,7 @@ import (
 )
 
 func TestValidCPFWithValidNumber1(t *testing.T) {
-	r := ValidateCPF("64844696793")
+	r := ValidateCPF("09238981400")
 
 	if !r {
 		t.Errorf("Invalid result: %v", r)

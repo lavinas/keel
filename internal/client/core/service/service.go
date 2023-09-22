@@ -1,7 +1,6 @@
 package service
 
 import (
-	"encoding/json"
 	"errors"
 
 	"github.com/lavinas/keel/internal/client/core/domain"
@@ -32,10 +31,10 @@ func (s *Service) Create(input domain.CreateInputDto) (*domain.CreateOutputDto, 
 	name, nick, doc, phone, email, _ := s.util.ClearAll(input.Name, input.Nickname, input.Document, input.Phone, input.Email)
 	client := domain.NewClient(name, nick, doc, phone, email)
 	if err := s.repo.Create(client); err != nil {
-		logError(s.log, input, err)
+		s.log.Errorf(input, err)
 		return nil, errors.New("internal server error: ")
 	}
-	logInfo(s.log, input, "created")
+	s.log.Infof(input, "created")
 	return &domain.CreateOutputDto{
 		Id:       client.ID,
 		Name:     client.Name,
@@ -59,16 +58,4 @@ func (l *Service) ListAll() (*domain.ListAllOutputDto, error) {
 		Clients: []domain.CreateOutputDto{c},
 	}
 	return &r, nil
-}
-
-// logError format a error for logging
-func logError(log port.Log, input any, err error) {
-	b, _ := json.Marshal(input)
-	log.Error(err.Error() + " | " + string(b))
-}
-
-// logError format a error for logging
-func logInfo(log port.Log, input any, message string) {
-	b, _ := json.Marshal(input)
-	log.Info(message + " | " + string(b))
 }

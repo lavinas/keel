@@ -1,11 +1,12 @@
 package util
 
 import (
+	"errors"
+	"fmt"
 	"net/mail"
 	"regexp"
 	"strconv"
 	"strings"
-	"errors"
 
 	"github.com/lavinas/keel/pkg/cpf_cnpj"
 	"github.com/lavinas/keel/pkg/phone"
@@ -134,11 +135,10 @@ func (d *Util) ClearDocument(document string) (uint64, error) {
 		return 0, errors.New("invalid document")
 	}
 	idoc, _ := strconv.ParseUint(doc, 10, 64)
-	doc = strconv.FormatUint(idoc, 10)
-	if cpf_cnpj.ValidateCPF(doc) {
+	if cpf_cnpj.ValidateCPF(fmt.Sprintf("%11d", idoc)) {
 		return idoc, nil
 	}
-	if cpf_cnpj.ValidateCNPJ(doc) {
+	if cpf_cnpj.ValidateCNPJ(fmt.Sprintf("%14d", idoc)) {
 		return idoc, nil
 	}
 	return 0, errors.New("invalid document")

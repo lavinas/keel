@@ -3,6 +3,7 @@ package log
 import (
 	"os"
 	"time"
+	"encoding/json"
 )
 
 type logFile struct {
@@ -28,8 +29,18 @@ func (l *logFile) Info(message string) {
 	}
 }
 
+func (l *logFile) Infof(input any, message string) {
+	b, _ := json.Marshal(input)
+	l.Info(message + " | " + string(b))
+}
+
 func (l *logFile) Error(message string) {
 	write(l, message)
+}
+
+func (l *logFile) Errorf (input any, err error) {
+	b, _ := json.Marshal(input)
+	l.Error(err.Error() + " | " + string(b))
 }
 
 func (l *logFile) Close() {

@@ -101,6 +101,14 @@ func TestValidateDocumentWithValidCPF(t *testing.T) {
 	if m != "" {
 		t.Errorf("Invalid result: %v", m)
 	}
+	b, m = d.ValidateDocument("092.389.814-00")
+	if !b {	
+		t.Errorf("Invalid result: %v", b)
+	}
+	if m != "" {
+		t.Errorf("Invalid result: %v", m)
+	}
+
 }
 
 func TestValidateDocumentWithValidCPF2(t *testing.T) {
@@ -127,13 +135,21 @@ func TestValidateWithInvalidCPF(t *testing.T) {
 
 func TestValidateWithValidCNPJ(t *testing.T) {
 	d := Util{}
-	b, m := d.ValidateDocument("53.931.154/0001-63")
+	b, m := d.ValidateDocument("53.931.154  0001-63")
 	if !b {	
 		t.Errorf("Invalid result: %v", b)
 	}
 	if m != "" {
 		t.Errorf("Invalid result: %v", m)
 	}
+	b, m = d.ValidateDocument("04.346.251/0001-83")
+	if !b {	
+		t.Errorf("Invalid result: %v", b)
+	}
+	if m != "" {
+		t.Errorf("Invalid result: %v", m)
+	}
+
 }
 
 func TestValidateWithInvalidCNPJ(t *testing.T) {

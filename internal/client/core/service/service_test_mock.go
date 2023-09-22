@@ -2,6 +2,7 @@ package service
 
 import (
 	"os"
+	"encoding/json"
 
 	"github.com/lavinas/keel/internal/client/core/domain"
 )
@@ -21,9 +22,20 @@ func (l *LogMock) Info(msg string) {
 	l.msg = msg
 }
 
+func (l *LogMock) Infof(input any, message string) {
+	l.mtype = "Info"
+	b, _ := json.Marshal(input)
+	l.Info(message + " | " + string(b))
+}
+
 func (l *LogMock) Error(msg string) {
 	l.mtype = "Error"
 	l.msg = msg
+}
+
+func (l *LogMock) Errorf (input any, err error) {
+	b, _ := json.Marshal(input)
+	l.Error(err.Error() + " | " + string(b))
 }
 
 func (l *LogMock) Close() {

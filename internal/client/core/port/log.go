@@ -8,6 +8,8 @@ import (
 type Log interface {
 	GetFile() *os.File
 	Info(message string)
+	Infof(input any, message string)
 	Error(message string)
+	Errorf (input any, err error)
 	Close()
 }

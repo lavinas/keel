@@ -2,6 +2,7 @@ package service
 
 import (
 	"testing"
+	"strings"
 
 	"github.com/lavinas/keel/internal/client/core/domain"
 	"github.com/lavinas/keel/internal/client/util"
@@ -27,7 +28,8 @@ func TestCreate(t *testing.T) {
 	if log.mtype != "Info" {
 		t.Errorf("Expected Info, got %s", log.mtype)
 	}
-	if log.msg != "" {
+
+	if !strings.Contains(log.msg, "created") {
 		t.Errorf("Expected created, got %s", log.msg)
 	}
 
