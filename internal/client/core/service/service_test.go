@@ -6,6 +6,7 @@ import (
 	"reflect"
 
 	"github.com/lavinas/keel/internal/client/core/domain"
+	"github.com/lavinas/keel/internal/client/core/dto"
 	"github.com/lavinas/keel/internal/client/util"
 )
 
@@ -15,7 +16,7 @@ func TestCreateOk(t *testing.T) {
 	repo := RepoMock{}
 	util := util.NewUtil()
 	s := NewService(&log, &repo, util)
-	input := domain.CreateInputDto{
+	input := dto.CreateInputDto{
 		Name:     "Test XXXX",
 		Nickname: "Test",
 		Document: "947.869.840-00",
@@ -30,7 +31,7 @@ func TestCreateOk(t *testing.T) {
 		Phone:    5511999999999,
 		Email: "teste@teste.com",
 	}
-	output := domain.CreateOutputDto{
+	output := dto.CreateOutputDto{
 		Id: cli.ID,
 		Name:     cli.Name,
 		Nickname: cli.Nickname,
@@ -70,7 +71,7 @@ func TestCreate(t *testing.T) {
 	repo := RepoMock{}
 	util := util.NewUtil()
 	s := NewService(&log, &repo, util)
-	input := domain.CreateInputDto{
+	input := dto.CreateInputDto{
 		Name:     "Test",
 		Nickname: "Test",
 		Document: "947.869.840-01",

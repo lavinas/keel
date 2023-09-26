@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/lavinas/keel/internal/client/core/domain"
+	"github.com/lavinas/keel/internal/client/core/dto"
 	"github.com/lavinas/keel/internal/client/core/port"
 )
 
@@ -43,7 +43,7 @@ func (h *HandlerGin) Run() {
 
 // Create responds for call of creates a new client
 func (h *HandlerGin) Create(c *gin.Context) {
-	var input domain.CreateInputDto
+	var input dto.CreateInputDto
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

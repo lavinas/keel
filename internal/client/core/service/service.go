@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/lavinas/keel/internal/client/core/domain"
+	"github.com/lavinas/keel/internal/client/core/dto"
 	"github.com/lavinas/keel/internal/client/core/port"
 )
 
@@ -24,7 +25,7 @@ func NewService(log port.Log, repo port.Repo, util port.Util) *Service {
 }
 
 // Create creates a new client
-func (s *Service) Create(input domain.CreateInputDto) (*domain.CreateOutputDto, error) {
+func (s *Service) Create(input dto.CreateInputDto) (*dto.CreateOutputDto, error) {
 	if _, m := s.util.ValidateAll(input.Name, input.Nickname, input.Document, input.Phone, input.Email); m != "" {
 		s.log.Infof(input, "bad request: " + m)
 		return nil, errors.New("bad request: " + m)
@@ -36,7 +37,7 @@ func (s *Service) Create(input domain.CreateInputDto) (*domain.CreateOutputDto, 
 		return nil, errors.New("internal server error: ")
 	}
 	s.log.Infof(input, "created")
-	return &domain.CreateOutputDto{
+	return &dto.CreateOutputDto{
 		Id:       client.ID,
 		Name:     client.Name,
 		Nickname: client.Nickname,
@@ -47,16 +48,16 @@ func (s *Service) Create(input domain.CreateInputDto) (*domain.CreateOutputDto, 
 }
 
 // ListAll list all clients
-func (l *Service) ListAll() (*domain.ListAllOutputDto, error) {
-	c := domain.CreateOutputDto{
+func (l *Service) ListAll() (*dto.ListAllOutputDto, error) {
+	c := dto.CreateOutputDto{
 		Name:     "Test",
 		Nickname: "Test",
 		Document: 12321232222,
 		Phone:    11999999999,
 		Email:    "test@test.com.br",
 	}
-	r := domain.ListAllOutputDto{
-		Clients: []domain.CreateOutputDto{c},
+	r := dto.ListAllOutputDto{
+		Clients: []dto.CreateOutputDto{c},
 	}
 	return &r, nil
 }
