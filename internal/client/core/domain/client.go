@@ -1,6 +1,8 @@
 package domain
 
 import (
+	"strconv"
+	"errors"
 	"github.com/google/uuid"
 )
 
@@ -15,13 +17,21 @@ type Client struct {
 }
 
 // NewClient creates a new client
-func NewClient(name, nickName string, document, phone uint64, email string) *Client {
+func NewClient(name, nickName, document, phone, email string) (*Client, error) {
+	doc, err := strconv.ParseUint(document, 10, 64)
+	if err != nil {
+		return nil, errors.New("invalid document")
+	}
+	ph, err := strconv.ParseUint(phone, 10, 64)
+	if err != nil {
+		return nil, errors.New("invalid cell phone")
+	}
 	return &Client{
 		ID:       uuid.New().String(),
 		Name:     name,
 		Nickname: nickName,
-		Document: document,
-		Phone:    phone,
+		Document: doc,
+		Phone:    ph,
 		Email:    email,
-	}
+	}, nil
 }

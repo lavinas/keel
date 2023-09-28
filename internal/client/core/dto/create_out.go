@@ -5,7 +5,18 @@ type CreateOutputDto struct {
 	Id       string `json:"id" binding:"required"`
 	Name     string `json:"name" binding:"required"`
 	Nickname string `json:"nickname" binding:"required"`
-	Document uint64 `json:"document" binding:"required"`
-	Phone    uint64 `json:"phone" binding:"required"`
+	Document string `json:"document" binding:"required"`
+	Phone    string `json:"phone" binding:"required"`
 	Email    string `json:"email" binding:"required"`
+}
+
+func  NewCreateOutputDto(id, name, nickname, document, phone, email string) CreateOutputDto {
+	return CreateOutputDto{
+		Id:       id,
+		Name:     name,
+		Nickname: nickname,
+		Document: document,
+		Phone:    phone,
+		Email:    email,
+	}
 }

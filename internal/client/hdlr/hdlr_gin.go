@@ -31,7 +31,6 @@ func NewHandlerGin(log port.Log, service port.Service) *HandlerGin {
 		gin:     r,
 	}
 	r.POST("/client/create", h.Create)
-	r.GET("/client/list", h.ListAll)
 	return &h
 }
 
@@ -54,16 +53,6 @@ func (h *HandlerGin) Create(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusCreated, output)
-}
-
-// ListAll responds for call of list all clients
-func (h *HandlerGin) ListAll(c *gin.Context) {
-	output, err := h.service.ListAll()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, output)
 }
 
 // Gin assistant functions
