@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/lavinas/keel/internal/client/core/domain"
-	"github.com/lavinas/keel/internal/client/core/dto"
+	"github.com/lavinas/keel/internal/client/dto"
 )
 
 func TestCreateOk(t *testing.T) {

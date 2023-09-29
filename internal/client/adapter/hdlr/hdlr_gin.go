@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/lavinas/keel/internal/client/core/dto"
+	"github.com/lavinas/keel/internal/client/adapter/dto"
 	"github.com/lavinas/keel/internal/client/core/port"
 )
 
