@@ -69,7 +69,7 @@ func (c *CreateInputDto) Format() error {
 	var err error
 	var name, nick, doc, phone, email string
 	if name, err = formatName(c.Name); err != nil {
-		 return err
+		return err
 	}
 	if nick, err = formatNickname(c.Nickname); err != nil {
 		return err
@@ -116,8 +116,7 @@ func (c *CreateInputDto) GetEmail() string {
 	return c.Email
 }
 
-
-//clearName clears a name
+// clearName clears a name
 func formatName(name string) (string, error) {
 	n := strings.Trim(name, " ")
 	if n == "" {
@@ -133,7 +132,7 @@ func formatName(name string) (string, error) {
 	return n, nil
 }
 
-//clearNickname clears a nickname
+// clearNickname clears a nickname
 func formatNickname(nickname string) (string, error) {
 	nick := strings.Trim(nickname, " ")
 	if nick == "" {
@@ -183,7 +182,7 @@ func formatEmail(email string) (string, error) {
 	return e.Address, nil
 }
 
-//clearPhone clears a phone number
+// clearPhone clears a phone number
 func formatPhone(number string) (string, error) {
 	if strings.Trim(number, "") == "" {
 		return "", errors.New("phone is blank")
@@ -201,4 +200,3 @@ func formatPhone(number string) (string, error) {
 	}
 	return p, nil
 }
-

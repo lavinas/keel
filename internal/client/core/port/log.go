@@ -10,6 +10,6 @@ type Log interface {
 	Info(message string)
 	Infof(input any, message string)
 	Error(message string)
-	Errorf (input any, err error)
+	Errorf(input any, err error)
 	Close()
 }

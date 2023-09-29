@@ -99,4 +99,3 @@ func TestValidate(t *testing.T) {
 		t.Errorf("Invalid result: %v", err)
 	}
 }
-

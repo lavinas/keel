@@ -25,7 +25,7 @@ type HandlerGin struct {
 // NewHandlerGin creates a new HandlerGin
 func NewHandlerGin(log port.Log, service port.Service) *HandlerGin {
 	r := ginConf(log)
-	h := HandlerGin{
+	h := HandlerGin {
 		log:     log,
 		service: service,
 		gin:     r,
@@ -43,11 +43,12 @@ func (h *HandlerGin) Run() {
 // Create responds for call of creates a new client
 func (h *HandlerGin) Create(c *gin.Context) {
 	var input dto.CreateInputDto
+	var output dto.CreateOutputDto
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	output, err := h.service.Create(input)
+	err := h.service.Create(&input, &output)
 	if err != nil {
 		c.JSON(mapError(err.Error()), gin.H{"error": err.Error()})
 		return

@@ -1,8 +1,8 @@
 package service
 
 import (
-	"os"
 	"encoding/json"
+	"os"
 
 	"github.com/lavinas/keel/internal/client/core/domain"
 )
@@ -10,7 +10,7 @@ import (
 // Log Mock
 type LogMock struct {
 	mtype string
-	msg string
+	msg   string
 }
 
 func (l *LogMock) GetFile() *os.File {
@@ -33,7 +33,7 @@ func (l *LogMock) Error(msg string) {
 	l.msg = msg
 }
 
-func (l *LogMock) Errorf (input any, err error) {
+func (l *LogMock) Errorf(input any, err error) {
 	b, _ := json.Marshal(input)
 	l.Error(err.Error() + " | " + string(b))
 }

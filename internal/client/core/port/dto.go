@@ -11,5 +11,5 @@ type CreateInputDto interface {
 }
 
 type CreateOutputDto interface {
-	Fill(id string, name string, nickname string, document string, phone string, email string) error
+	Fill(id, name, nick, doc, phone, email string)
 }

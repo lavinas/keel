@@ -29,7 +29,7 @@ var mobFormatTests = []struct {
 }
 
 func TestBrasilPhoneNumbers(t *testing.T) {
-	s := "(11)988888888"	
+	s := "(11)988888888"
 	n := ParseWithLandLine(s, "BR")
 	if n == "" {
 		t.Errorf("country %s", n)

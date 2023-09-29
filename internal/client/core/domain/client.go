@@ -1,9 +1,9 @@
 package domain
 
 import (
-	"strconv"
 	"errors"
 	"github.com/google/uuid"
+	"strconv"
 )
 
 // Client is the domain model for a client

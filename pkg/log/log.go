@@ -1,9 +1,9 @@
 package log
 
 import (
+	"encoding/json"
 	"os"
 	"time"
-	"encoding/json"
 )
 
 type logFile struct {
@@ -38,7 +38,7 @@ func (l *logFile) Error(message string) {
 	write(l, message)
 }
 
-func (l *logFile) Errorf (input any, err error) {
+func (l *logFile) Errorf(input any, err error) {
 	b, _ := json.Marshal(input)
 	l.Error(err.Error() + " | " + string(b))
 }

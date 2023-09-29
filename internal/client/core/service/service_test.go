@@ -1,14 +1,13 @@
 package service
 
 import (
-	"testing"
-	"strings"
 	"reflect"
+	"strings"
+	"testing"
 
 	"github.com/lavinas/keel/internal/client/core/domain"
 	"github.com/lavinas/keel/internal/client/core/dto"
 )
-
 
 func TestCreateOk(t *testing.T) {
 	log := LogMock{}
@@ -22,23 +21,24 @@ func TestCreateOk(t *testing.T) {
 		Email:    "teste@teste.com",
 	}
 	cli := domain.Client{
-		ID: "",
+		ID:       "",
 		Name:     "Test Xxxx",
 		Nickname: "test",
 		Document: 94786984000,
 		Phone:    5511999999999,
-		Email: "teste@teste.com",
+		Email:    "teste@teste.com",
 	}
 	output := dto.CreateOutputDto{
-		Id: cli.ID,
+		Id:       cli.ID,
 		Name:     cli.Name,
 		Nickname: cli.Nickname,
 		Document: "94786984000",
 		Phone:    "5511999999999",
 		Email:    cli.Email,
 	}
-		
-	res, err := s.Create(input)
+
+	var res dto.CreateOutputDto
+	err := s.Create(&input, &res)
 	if err != nil {
 		t.Errorf("Error: %s", err)
 	}
@@ -59,7 +59,7 @@ func TestCreateOk(t *testing.T) {
 		t.Errorf("Expected '36', got '%d'", len(output.Id))
 	}
 	output.Id = repo.client.ID
-	if !reflect.DeepEqual(output, *res) {
+	if !reflect.DeepEqual(output, res) {
 		t.Errorf("Expected '%v', got '%v'", output, res)
 	}
 }
@@ -75,7 +75,9 @@ func TestCreateError(t *testing.T) {
 		Phone:    "11299999999",
 		Email:    "teste",
 	}
-	_, err := s.Create(input)
+
+	var res dto.CreateOutputDto
+	err := s.Create(&input, &res)
 	if err == nil {
 		t.Errorf("Error: %s", err)
 	}
@@ -87,6 +89,3 @@ func TestCreateError(t *testing.T) {
 		t.Errorf("Expected '%s', Got '%s'", msg, err.Error())
 	}
 }
-
-
-
