@@ -2,6 +2,8 @@ package repo
 
 import (
 	"database/sql"
+	"fmt"
+
 	_ "github.com/go-sql-driver/mysql"
 
 	"github.com/lavinas/keel/internal/client/core/domain"
@@ -20,6 +22,7 @@ type RepoMysql struct {
 
 // NewRepo creates a new Repo service
 func NewRepoMysql(c port.Config) *RepoMysql {
+	fmt.Println("NewRepoMysql")
 	user := getField(c, "user")
 	pass := getField(c, "pass")
 	host := getField(c, "host")
@@ -34,11 +37,17 @@ func NewRepoMysql(c port.Config) *RepoMysql {
 
 // Create creates a new client
 func (r *RepoMysql) Create(client *domain.Client) error {
-	_, err := r.db.Exec("insert into client (id, name, nickname, document, phone, email) values (?, ?, ?, ?, ?, ?)",
+	tx, err := r.db.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+	_, err = tx.Exec("insert into client (id, name, nickname, document, phone, email) values (?, ?, ?, ?, ?, ?)",
 		client.ID, client.Name, client.Nickname, client.Document, client.Phone, client.Email)
 	if err != nil {
 		return err
 	}
+	tx.Commit()
 	return nil
 }
 

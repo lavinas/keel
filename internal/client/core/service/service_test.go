@@ -6,7 +6,8 @@ import (
 	"testing"
 
 	"github.com/lavinas/keel/internal/client/core/domain"
-	"github.com/lavinas/keel/internal/client/dto"
+	"github.com/lavinas/keel/internal/client/adapter/dto"
+	"github.com/lavinas/keel/internal/client/adapter/repo"
 )
 
 func TestCreateOk(t *testing.T) {
@@ -88,4 +89,35 @@ func TestCreateError(t *testing.T) {
 	if err.Error() != msg {
 		t.Errorf("Expected '%s', Got '%s'", msg, err.Error())
 	}
+}
+
+func TestWithDB(t *testing.T) {
+	c := ConfigMock{}
+	l := LogMock{}
+	r := repo.NewRepoMysql(&c)
+	defer r.Close()
+
+	s := NewService(&l, r)
+	
+	input := dto.CreateInputDto{
+		Name:     "Test XXXX",
+		Nickname: "Test",
+		Document: "947.869.840-00",
+		Phone:    "11999999999",
+		Email:    "teste@teste.com",
+	}
+
+	var res dto.CreateOutputDto
+	err := s.Create(&input, &res)
+
+	if err != nil {
+		t.Errorf("Error: %s", err)
+	}
+	if l.mtype != "Info" {
+		t.Errorf("Expected Info, got %s", l.mtype)
+	}
+	if !strings.Contains(l.msg, "created") {
+		t.Errorf("Expected 'created', got '%s'", l.msg)
+	}
+
 }
