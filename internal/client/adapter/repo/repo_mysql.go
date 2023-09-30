@@ -2,8 +2,6 @@ package repo
 
 import (
 	"database/sql"
-	"fmt"
-
 	_ "github.com/go-sql-driver/mysql"
 
 	"github.com/lavinas/keel/internal/client/core/domain"
@@ -22,7 +20,6 @@ type RepoMysql struct {
 
 // NewRepo creates a new Repo service
 func NewRepoMysql(c port.Config) *RepoMysql {
-	fmt.Println("NewRepoMysql")
 	user := getField(c, "user")
 	pass := getField(c, "pass")
 	host := getField(c, "host")

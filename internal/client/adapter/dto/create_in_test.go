@@ -53,6 +53,16 @@ func TestClearDocument(t *testing.T) {
 	if r != "20665660049" {
 		t.Errorf("Invalid result: %v", r)
 	}
+
+	r, err = formatDocument("044. 179328-24")
+	if err != nil {
+		t.Errorf("Invalid result: %v", err)
+	}
+	if r != "04417932824" {
+		t.Errorf("Invalid result: %v", r)
+	}
+
+
 	if r, err := formatDocument(""); err.Error() != "document is blank" {
 		t.Errorf("Invalid result: %v", r)
 	}

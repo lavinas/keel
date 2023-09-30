@@ -23,18 +23,28 @@ func NewService(log port.Log, repo port.Repo) *Service {
 
 // Orquestration of Creating a new client
 func (s *Service) Create(input port.CreateInputDto, output port.CreateOutputDto) error {
+	// Validate input
 	if err := input.Validate(); err != nil {
 		s.log.Infof(input, "bad request: "+err.Error())
 		return errors.New("bad request: " + err.Error())
 	}
+	// Format input
 	input.Format()
+	// Create domain client
 	name, nick, doc, phone, email := input.GetName(), input.GetNickname(), input.GetDocument(), input.GetPhone(), input.GetEmail()
-	client, _ := domain.NewClient(name, nick, doc, phone, email)
+	s.log.Info("ver: " + doc)
+	client, err := domain.NewClient(name, nick, doc, phone, email)
+	if err != nil {
+		s.log.Errorf(input, err)
+		return errors.New("internal server error")
+	}
+	// Store client
 	if err := s.repo.Create(client); err != nil {
 		s.log.Errorf(input, err)
 		return errors.New("internal server error")
 	}
-	s.log.Infof(input, "created")
+	// Fill output
 	output.Fill(client.ID, name, nick, doc, phone, email)
+	s.log.Infof(input, "created")
 	return nil
 }

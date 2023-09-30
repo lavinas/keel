@@ -159,11 +159,12 @@ func formatDocument(document string) (string, error) {
 		return "", errors.New("invalid document")
 	}
 	idoc, _ := strconv.ParseUint(doc, 10, 64)
-	doc = fmt.Sprintf("%11d", idoc)
+	
+	doc = fmt.Sprintf("%011d", idoc)
 	if cpf_cnpj.ValidateCPF(doc) {
 		return doc, nil
 	}
-	doc = fmt.Sprintf("%14d", idoc)
+	doc = fmt.Sprintf("%014d", idoc)
 	if cpf_cnpj.ValidateCNPJ(doc) {
 		return doc, nil
 	}
