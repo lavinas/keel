@@ -43,6 +43,40 @@ func MockJsonPost(c *gin.Context, content interface{}) {
 	c.Request.Body = io.NopCloser(bytes.NewBuffer(jsonbytes))
 }
 
+// mock GET request 
+func MockJsonGet(c *gin.Context) {
+	c.Request.Method = "GET"
+	c.Request.Header.Set("Content-Type", "application/json")
+	c.Set("user_id", 1)
+
+	// set query params
+	u := url.Values{}
+	u.Add("skip", "5")
+	u.Add("limit", "10")
+	c.Request.URL.RawQuery = u.Encode()
+}
+
+// mock PUT request
+func MockJsonPut(c *gin.Context, content interface{}, params gin.Params) {
+	c.Request.Method = "PUT"
+	c.Request.Header.Set("Content-Type", "application/json")
+	c.Set("user_id", 1)
+	c.Params = params
+
+	jsonbytes, err := json.Marshal(content)
+	if err != nil {
+		panic(err)
+	}
+	c.Request.Body = io.NopCloser(bytes.NewBuffer(jsonbytes))
+}
+
+// mock DELETE request
+func MockJsonDelete(c *gin.Context, params gin.Params) {
+	c.Request.Method = "DELETE"
+	c.Request.Header.Set("Content-Type", "application/json")
+	c.Set("user_id", 1)
+	c.Params = params
+}
 
 // Log Mock
 type LogMock struct {
