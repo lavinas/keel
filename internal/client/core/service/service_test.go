@@ -23,7 +23,7 @@ func TestCreateOk(t *testing.T) {
 		Email:    "teste@teste.com",
 	}
 	var res dto.CreateOutputDto
-	err := s.Create(&input, &res)
+	err := s.ClientCreate(&input, &res)
 	if err != nil {
 		t.Errorf("Error: %s", err)
 	}
@@ -49,7 +49,7 @@ func TestCreateError(t *testing.T) {
 	}
 
 	var res dto.CreateOutputDto
-	err := s.Create(&input, &res)
+	err := s.ClientCreate(&input, &res)
 	if err == nil {
 		t.Errorf("Error: %s", err)
 	}
@@ -67,6 +67,7 @@ func TestWithDB(t *testing.T) {
 	l := LogMock{}
 	r := repo.NewRepoMysql(&c)
 	defer r.Close()
+	r.ClientTruncate()
 	d := domain.NewDomain(r)
 
 	s := NewService(d, &l, r)
@@ -80,7 +81,7 @@ func TestWithDB(t *testing.T) {
 	}
 
 	var res dto.CreateOutputDto
-	err := s.Create(&input, &res)
+	err := s.ClientCreate(&input, &res)
 
 	if err != nil {
 		t.Errorf("Error: %s", err)
@@ -91,5 +92,6 @@ func TestWithDB(t *testing.T) {
 	if !strings.Contains(l.msg, "created") {
 		t.Errorf("Expected 'created', got '%s'", l.msg)
 	}
+	r.ClientTruncate()
 
 }

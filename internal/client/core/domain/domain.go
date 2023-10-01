@@ -31,14 +31,14 @@ func NewDomain(repo port.Repo) *Domain {
 }
 
 // Create fills the client with the given data
-func (c *Domain) ClientInit(name, nickName, document, phone, email string) (string, error) {
+func (c *Domain) ClientInit(name, nick, document, phone, email string) (string, error) {
 	id, err := uuid.NewRandom()
 	if err != nil {
 		return "", err
 	}
 	c.client.ID = id.String()
 	c.client.Name = name
-	c.client.Nickname = nickName
+	c.client.Nickname = nick
 	doc, err := strconv.ParseUint(document, 10, 64)
 	if err != nil {
 		return "", err
@@ -53,6 +53,16 @@ func (c *Domain) ClientInit(name, nickName, document, phone, email string) (stri
 	return c.client.ID, nil
 }
 
+// ClientDocumentDuplicity checks if a document is already registered
+func (c *Domain)  ClientDocumentDuplicity() (bool, error) {
+	return c.repo.ClientDocumentDuplicity(c.client.Document)
+}
+
+// ClientEmailDuplicity checks if an email is already registered
+func (c *Domain) ClientEmailDuplicity() (bool, error) {
+	return c.repo.ClientEmailDuplicity(c.client.Email)
+}
+
 // SaveClient stores the client data
 func (c *Domain) ClientSave() error {
 	return c.repo.ClientSave(c)
@@ -61,4 +71,10 @@ func (c *Domain) ClientSave() error {
 // GetClient returns the client data
 func (c *Domain) ClientGet() (string, string, string, uint64, uint64, string) {
 	return c.client.ID, c.client.Name, c.client.Nickname, c.client.Document, c.client.Phone, c.client.Email
+}
+
+// GetClientFormatted returns the client data formatted
+func (c *Domain) ClientGetFormatted() (string, string, string, string, string, string) {
+	return c.client.ID, c.client.Name, c.client.Nickname, strconv.FormatUint(c.client.Document, 10), 
+			strconv.FormatUint(c.client.Phone, 10), c.client.Email
 }

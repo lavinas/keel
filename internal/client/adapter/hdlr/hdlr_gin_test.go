@@ -21,7 +21,7 @@ func TestCreate(t *testing.T) {
 	s := ServiceMock{}
 
 	h := NewHandlerGin(&l, &s)
-	h.Create(ctx)
+	h.ClientCreate(ctx)
 
 	if w.Code != http.StatusCreated {
 		t.Errorf("Invalid result: %v", w.Code)

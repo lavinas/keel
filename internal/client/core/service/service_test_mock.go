@@ -80,3 +80,11 @@ func (r *RepoMock) ClientSave(domain port.Domain) error {
 	r.domain = domain
 	return nil
 }
+
+func (r *RepoMock) ClientDocumentDuplicity(document uint64) (bool, error) {
+	return false, nil
+}
+
+func (r *RepoMock) ClientEmailDuplicity(email string) (bool, error) {
+	return false, nil
+}

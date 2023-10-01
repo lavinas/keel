@@ -30,7 +30,7 @@ func NewHandlerGin(log port.Log, service port.Service) *HandlerGin {
 		service: service,
 		gin:     r,
 	}
-	r.POST("/client/create", h.Create)
+	r.POST("/client/create", h.ClientCreate)
 	return &h
 }
 
@@ -41,14 +41,14 @@ func (h *HandlerGin) Run() {
 }
 
 // Create responds for call of creates a new client
-func (h *HandlerGin) Create(c *gin.Context) {
+func (h *HandlerGin) ClientCreate(c *gin.Context) {
 	var input dto.CreateInputDto
 	var output dto.CreateOutputDto
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	err := h.service.Create(&input, &output)
+	err := h.service.ClientCreate(&input, &output)
 	if err != nil {
 		c.JSON(mapError(err.Error()), gin.H{"error": err.Error()})
 		return

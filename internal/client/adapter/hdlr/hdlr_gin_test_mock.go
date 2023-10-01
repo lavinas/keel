@@ -111,7 +111,7 @@ func (l *LogMock) Close() {
 type ServiceMock struct {
 }
 
-func (s *ServiceMock) Create(input port.CreateInputDto, output port.CreateOutputDto) error {
+func (s *ServiceMock) ClientCreate(input port.CreateInputDto, output port.CreateOutputDto) error {
 	output.Fill("1", "name", "nickname", "document", "phone", "email")
 	return nil
 }
