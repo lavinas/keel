@@ -22,7 +22,6 @@ func GetTestGinContext(w *httptest.ResponseRecorder) *gin.Context {
 		Header: make(http.Header),
 		URL:    &url.URL{},
 	}
-
 	return ctx
 }
 

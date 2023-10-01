@@ -54,7 +54,7 @@ func (c *Domain) ClientInit(name, nick, document, phone, email string) (string, 
 }
 
 // ClientDocumentDuplicity checks if a document is already registered
-func (c *Domain)  ClientDocumentDuplicity() (bool, error) {
+func (c *Domain) ClientDocumentDuplicity() (bool, error) {
 	return c.repo.ClientDocumentDuplicity(c.client.Document)
 }
 
@@ -75,6 +75,6 @@ func (c *Domain) ClientGet() (string, string, string, uint64, uint64, string) {
 
 // GetClientFormatted returns the client data formatted
 func (c *Domain) ClientGetFormatted() (string, string, string, string, string, string) {
-	return c.client.ID, c.client.Name, c.client.Nickname, strconv.FormatUint(c.client.Document, 10), 
-			strconv.FormatUint(c.client.Phone, 10), c.client.Email
+	return c.client.ID, c.client.Name, c.client.Nickname, strconv.FormatUint(c.client.Document, 10),
+		strconv.FormatUint(c.client.Phone, 10), c.client.Email
 }

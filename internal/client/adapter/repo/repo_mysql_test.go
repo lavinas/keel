@@ -53,7 +53,7 @@ func TestClientDocumentDuplicity(t *testing.T) {
 	if !b {
 		t.Errorf("Error: Document should be duplicated")
 	}
-	repo.ClientTruncate()			
+	repo.ClientTruncate()
 }
 
 func TestClientEmailDuplicityQuery(t *testing.T) {
