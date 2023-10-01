@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/lavinas/keel/internal/client/core/domain"
+	"github.com/lavinas/keel/internal/client/core/port"
 )
 
 // Log Mock
@@ -46,12 +46,12 @@ func (l *LogMock) Close() {
 type ConfigMock struct {
 }
 
-var ConfigFields = map[string]string {
-	"host": "127.0.0.1",
-	"port": "3306",
-	"user": "root",
-	"pass": "pwd22Adm",
-	"dbname": "cbs_client",
+var ConfigFields = map[string]string{
+	"host":      "127.0.0.1",
+	"port":      "3306",
+	"user":      "root",
+	"pass":      "pwd22Adm",
+	"dbname":    "cbs_client",
 	"pool_size": "3",
 }
 
@@ -73,10 +73,10 @@ func (c *ConfigMock) GetGroup(group string) (map[string]interface{}, error) {
 
 // Repo Mock
 type RepoMock struct {
-	client *domain.Client
+	domain port.Domain
 }
 
-func (r *RepoMock) Create(client *domain.Client) error {
-	r.client = client
+func (r *RepoMock) CreateClient(domain port.Domain) error {
+	r.domain = domain
 	return nil
 }

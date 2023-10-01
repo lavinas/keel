@@ -8,12 +8,12 @@ import (
 type ConfigMock struct {
 }
 
-var ConfigFields = map[string]string {
-	"host": "127.0.0.1",
-	"port": "3306",
-	"user": "root",
-	"pass": "pwd22Adm",
-	"dbname": "cbs_client",
+var ConfigFields = map[string]string{
+	"host":      "127.0.0.1",
+	"port":      "3306",
+	"user":      "root",
+	"pass":      "pwd22Adm",
+	"dbname":    "cbs_client",
 	"pool_size": "3",
 }
 

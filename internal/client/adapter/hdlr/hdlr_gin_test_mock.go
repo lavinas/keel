@@ -1,32 +1,32 @@
 package hdlr
 
 import (
-	"os"
-	"io"
 	"bytes"
-	"net/http"
-	"net/url"
-	"net/http/httptest"
 	"encoding/json"
+	"io"
+	"net/http"
+	"net/http/httptest"
+	"net/url"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lavinas/keel/internal/client/core/port"
 )
 
-//mock gin context
+// mock gin context
 func GetTestGinContext(w *httptest.ResponseRecorder) *gin.Context {
 	gin.SetMode(gin.TestMode)
 
 	ctx, _ := gin.CreateTestContext(w)
 	ctx.Request = &http.Request{
-	Header: make(http.Header),
-	URL:    &url.URL{},
+		Header: make(http.Header),
+		URL:    &url.URL{},
 	}
 
 	return ctx
 }
 
-//mock postrequest
+// mock postrequest
 func MockJsonPost(c *gin.Context, content interface{}) {
 	c.Request.Method = "POST"
 	c.Request.Header.Set("Content-Type", "application/json")
@@ -43,7 +43,7 @@ func MockJsonPost(c *gin.Context, content interface{}) {
 	c.Request.Body = io.NopCloser(bytes.NewBuffer(jsonbytes))
 }
 
-// mock GET request 
+// mock GET request
 func MockJsonGet(c *gin.Context) {
 	c.Request.Method = "GET"
 	c.Request.Header.Set("Content-Type", "application/json")
@@ -83,6 +83,7 @@ type LogMock struct {
 	mtype string
 	msg   string
 }
+
 func (l *LogMock) GetFile() *os.File {
 	return nil
 }
@@ -105,7 +106,6 @@ func (l *LogMock) Errorf(input any, err error) {
 }
 func (l *LogMock) Close() {
 }
-
 
 // Service Mock
 type ServiceMock struct {

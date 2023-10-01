@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
 
-	"github.com/lavinas/keel/internal/client/core/domain"
 	"github.com/lavinas/keel/internal/client/core/port"
 )
 
@@ -33,14 +32,16 @@ func NewRepoMysql(c port.Config) *RepoMysql {
 }
 
 // Create creates a new client
-func (r *RepoMysql) Create(client *domain.Client) error {
+func (r *RepoMysql) CreateClient(domain port.Domain) error {
 	tx, err := r.db.Begin()
 	if err != nil {
 		return err
 	}
 	defer tx.Rollback()
+
+	id, name, nick, doc, phone, email := domain.GetClient()
 	_, err = tx.Exec("insert into client (id, name, nickname, document, phone, email) values (?, ?, ?, ?, ?, ?)",
-		client.ID, client.Name, client.Nickname, client.Document, client.Phone, client.Email)
+		id, name, nick, doc, phone, email)
 	if err != nil {
 		return err
 	}

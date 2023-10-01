@@ -62,7 +62,6 @@ func TestClearDocument(t *testing.T) {
 		t.Errorf("Invalid result: %v", r)
 	}
 
-
 	if r, err := formatDocument(""); err.Error() != "document is blank" {
 		t.Errorf("Invalid result: %v", r)
 	}

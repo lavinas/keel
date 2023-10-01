@@ -1,21 +1,20 @@
 package hdlr
 
 import (
+	"net/http"
 	"net/http/httptest"
 	"testing"
-	"net/http"
-
 )
 
 func TestCreate(t *testing.T) {
 	w := httptest.NewRecorder()
 	ctx := GetTestGinContext(w)
 	content := map[string]interface{}{
-		"name": "Jose da Silva",
+		"name":     "Jose da Silva",
 		"nickname": "jose_da_silva_222",
 		"document": "206.656.600-49",
-		"phone": "+55 (11) 99999-9999",
-		"email": "test@test.com.br",
+		"phone":    "+55 (11) 99999-9999",
+		"email":    "test@test.com.br",
 	}
 	MockJsonPost(ctx, content)
 	l := LogMock{}
@@ -26,7 +25,6 @@ func TestCreate(t *testing.T) {
 
 	if w.Code != http.StatusCreated {
 		t.Errorf("Invalid result: %v", w.Code)
-	}	
+	}
 
 }
-

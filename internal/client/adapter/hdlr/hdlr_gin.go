@@ -25,7 +25,7 @@ type HandlerGin struct {
 // NewHandlerGin creates a new HandlerGin
 func NewHandlerGin(log port.Log, service port.Service) *HandlerGin {
 	r := ginConf(log)
-	h := HandlerGin {
+	h := HandlerGin{
 		log:     log,
 		service: service,
 		gin:     r,

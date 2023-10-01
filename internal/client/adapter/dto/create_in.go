@@ -159,7 +159,7 @@ func formatDocument(document string) (string, error) {
 		return "", errors.New("invalid document")
 	}
 	idoc, _ := strconv.ParseUint(doc, 10, 64)
-	
+
 	doc = fmt.Sprintf("%011d", idoc)
 	if cpf_cnpj.ValidateCPF(doc) {
 		return doc, nil
