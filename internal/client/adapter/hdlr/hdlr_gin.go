@@ -9,7 +9,6 @@ import (
 	"github.com/lavinas/keel/pkg/gin_wrapper"
 )
 
-
 // HandlerGin is a handler for gin framework
 type HandlerGin struct {
 	log     port.Log

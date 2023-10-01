@@ -90,7 +90,6 @@ func TestCreateDuplicity(t *testing.T) {
 	}
 }
 
-
 func TestWithDB(t *testing.T) {
 	c := ConfigMock{}
 	l := LogMock{}

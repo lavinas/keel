@@ -1,8 +1,8 @@
 package gin_wrapper
 
 import (
-	"testing"
 	"net/http"
+	"testing"
 )
 
 func TestMapError(t *testing.T) {
