@@ -33,18 +33,17 @@ func (s *Service) Create(input port.CreateInputDto, output port.CreateOutputDto)
 	input.Format()
 	// Create domain client
 	name, nick, doc, phone, email := input.GetName(), input.GetNickname(), input.GetDocument(), input.GetPhone(), input.GetEmail()
-	err := s.domain.CreateClient(name, nick, doc, phone, email)
+	id, err := s.domain.ClientInit(name, nick, doc, phone, email)
 	if err != nil {
 		s.log.Errorf(input, err)
 		return errors.New("internal server error")
 	}
 	// Store client
-	if err := s.repo.CreateClient(s.domain); err != nil {
+	if err := s.domain.ClientSave(); err != nil {
 		s.log.Errorf(input, err)
 		return errors.New("internal server error")
 	}
 	// Fill output
-	id, _, _, _, _, _ := s.domain.GetClient()
 	output.Fill(id, name, nick, doc, phone, email)
 	s.log.Infof(input, "created")
 	return nil

@@ -31,29 +31,34 @@ func NewDomain(repo port.Repo) *Domain {
 }
 
 // Create fills the client with the given data
-func (c *Domain) CreateClient(name, nickName, document, phone, email string) error {
+func (c *Domain) ClientInit(name, nickName, document, phone, email string) (string, error) {
 	id, err := uuid.NewRandom()
 	if err != nil {
-		return err
+		return "", err
 	}
 	c.client.ID = id.String()
 	c.client.Name = name
 	c.client.Nickname = nickName
 	doc, err := strconv.ParseUint(document, 10, 64)
 	if err != nil {
-		return err
+		return "", err
 	}
 	c.client.Document = doc
 	ph, err := strconv.ParseUint(phone, 10, 64)
 	if err != nil {
-		return err
+		return "", err
 	}
 	c.client.Phone = ph
 	c.client.Email = email
-	return nil
+	return c.client.ID, nil
+}
+
+// SaveClient stores the client data
+func (c *Domain) ClientSave() error {
+	return c.repo.ClientSave(c)
 }
 
 // GetClient returns the client data
-func (c *Domain) GetClient() (string, string, string, uint64, uint64, string) {
+func (c *Domain) ClientGet() (string, string, string, uint64, uint64, string) {
 	return c.client.ID, c.client.Name, c.client.Nickname, c.client.Document, c.client.Phone, c.client.Email
 }

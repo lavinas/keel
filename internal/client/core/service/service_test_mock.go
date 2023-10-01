@@ -76,7 +76,7 @@ type RepoMock struct {
 	domain port.Domain
 }
 
-func (r *RepoMock) CreateClient(domain port.Domain) error {
+func (r *RepoMock) ClientSave(domain port.Domain) error {
 	r.domain = domain
 	return nil
 }
