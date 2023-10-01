@@ -74,6 +74,8 @@ func (c *ConfigMock) GetGroup(group string) (map[string]interface{}, error) {
 // Repo Mock
 type RepoMock struct {
 	domain port.Domain
+	ClientDocumentDuplicityReturn bool
+	ClientEmailDuplicityReturn bool
 }
 
 func (r *RepoMock) ClientSave(domain port.Domain) error {
@@ -82,9 +84,15 @@ func (r *RepoMock) ClientSave(domain port.Domain) error {
 }
 
 func (r *RepoMock) ClientDocumentDuplicity(document uint64) (bool, error) {
+	if r.ClientDocumentDuplicityReturn {
+		return true, nil
+	}
 	return false, nil
 }
 
 func (r *RepoMock) ClientEmailDuplicity(email string) (bool, error) {
+	if r.ClientEmailDuplicityReturn {
+		return true, nil
+	}
 	return false, nil
 }

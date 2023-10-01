@@ -1,43 +1,42 @@
 package hdlr
 
 import (
-	"context"
-	"io"
 	"net/http"
-	"os"
-	"os/signal"
-	"strings"
-	"syscall"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lavinas/keel/internal/client/adapter/dto"
 	"github.com/lavinas/keel/internal/client/core/port"
+	"github.com/lavinas/keel/pkg/gin_wrapper"
 )
+
 
 // HandlerGin is a handler for gin framework
 type HandlerGin struct {
 	log     port.Log
 	service port.Service
-	gin     *gin.Engine
+	gin     *gin_wrapper.GinEngineWrapper
 }
 
 // NewHandlerGin creates a new HandlerGin
 func NewHandlerGin(log port.Log, service port.Service) *HandlerGin {
-	r := ginConf(log)
+	r := gin_wrapper.NewGinEngineWrapper(log)
 	h := HandlerGin{
 		log:     log,
 		service: service,
 		gin:     r,
 	}
-	r.POST("/client/create", h.ClientCreate)
 	return &h
+}
+
+// MapHandlers maps the handlers
+func (h *HandlerGin) MapHandlers() {
+	h.gin.POST("/client/create", h.ClientCreate)
 }
 
 // Run runs the gin service
 func (h *HandlerGin) Run() {
-	srv := ginRun(h.log, h.gin)
-	ginShutDown(h.log, srv)
+	h.gin.Run()
+	h.gin.ShutDown()
 }
 
 // Create responds for call of creates a new client
@@ -48,55 +47,9 @@ func (h *HandlerGin) ClientCreate(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	err := h.service.ClientCreate(&input, &output)
-	if err != nil {
-		c.JSON(mapError(err.Error()), gin.H{"error": err.Error()})
+	if err := h.service.ClientCreate(&input, &output); err != nil {
+		c.JSON(h.gin.MapError(err.Error()), gin_wrapper.H{"error": err.Error()})
 		return
 	}
 	c.JSON(http.StatusCreated, output)
-}
-
-// Gin assistant functions
-
-// ginConf configures gin framework
-func ginConf(l port.Log) *gin.Engine {
-	gin.SetMode(gin.ReleaseMode)
-	gin.DefaultWriter = io.MultiWriter(l.GetFile())
-	r := gin.Default()
-	r.SetTrustedProxies([]string{"127.0.0.1"})
-	return r
-}
-
-// ginRun runs gin service
-func ginRun(l port.Log, r http.Handler) *http.Server {
-	l.Info("starting gin service at 127.0.0.1:8081")
-	srv := &http.Server{Addr: ":8081", Handler: r}
-	quit := make(chan os.Signal, 1)
-	go func() {
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			l.Error("listenner error: " + err.Error())
-			quit <- syscall.SIGTERM
-		}
-	}()
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	<-quit
-	return srv
-}
-
-// ginShutDown shutdowns gin service
-func ginShutDown(l port.Log, srv *http.Server) {
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
-	defer cancel()
-	if err := srv.Shutdown(ctx); err != nil {
-		l.Error("server Shutdown Error: " + err.Error())
-	}
-	<-ctx.Done()
-	l.Info("closed gin service at 127.0.0.1:8081")
-}
-
-func mapError(message string) int {
-	if strings.Contains(message, "bad request") {
-		return http.StatusBadRequest
-	}
-	return http.StatusInternalServerError
 }

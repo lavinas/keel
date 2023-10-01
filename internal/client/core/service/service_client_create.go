@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/lavinas/keel/internal/client/core/port"
 )
@@ -48,23 +49,27 @@ func createDomain(log port.Log, domain port.Domain, input port.CreateInputDto) e
 
 // duplicity checks if a document or email is already registered
 func duplicity(log port.Log, domain port.Domain, input port.CreateInputDto) error {
+	message := ""
 	b, err := domain.ClientDocumentDuplicity()
 	if err != nil {
 		log.Errorf(input, err)
 		return errors.New("internal server error")
 	}
 	if b {
-		log.Infof(input, "document already registered")
-		return errors.New("document already registered")
+		message += "document already registered | "
 	}
 	e, err := domain.ClientEmailDuplicity()
 	if err != nil {
 		log.Errorf(input, err)
-		return errors.New("internal server error")
+		return errors.New("internal server error |")
 	}
 	if e {
-		log.Infof(input, "email already registered")
-		return errors.New("email already registered")
+		message += "email already registered"
+	}
+	if message != "" {
+		message = strings.Trim(message, " |")
+		log.Infof(input, "conflict: "+message)
+		return errors.New("conflict: " + message)
 	}
 	return nil
 }

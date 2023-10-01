@@ -62,6 +62,35 @@ func TestCreateError(t *testing.T) {
 	}
 }
 
+func TestCreateDuplicity(t *testing.T) {
+	log := LogMock{}
+	repo := RepoMock{}
+	repo.ClientDocumentDuplicityReturn = true
+	repo.ClientEmailDuplicityReturn = true
+	domain := domain.NewDomain(&repo)
+	s := NewService(domain, &log, &repo)
+	input := dto.CreateInputDto{
+		Name:     "Test XXXX",
+		Nickname: "Test",
+		Document: "947.869.840-00",
+		Phone:    "11999999999",
+		Email:    "test@test.com",
+	}
+	var res dto.CreateOutputDto
+	err := s.ClientCreate(&input, &res)
+	if err == nil {
+		t.Errorf("Error: %s", err)
+	}
+	if log.mtype != "Info" {
+		t.Errorf("Expected 'Info', got '%s'", log.mtype)
+	}
+	msg := "conflict: document already registered | email already registered"
+	if err.Error() != msg {
+		t.Errorf("Expected '%s', Got '%s'", msg, err.Error())
+	}
+}
+
+
 func TestWithDB(t *testing.T) {
 	c := ConfigMock{}
 	l := LogMock{}
