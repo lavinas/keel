@@ -73,13 +73,13 @@ func (c *ConfigMock) GetGroup(group string) (map[string]interface{}, error) {
 
 // Repo Mock
 type RepoMock struct {
-	domain                        port.Domain
+	client                        port.Client
 	ClientDocumentDuplicityReturn bool
 	ClientEmailDuplicityReturn    bool
 }
 
-func (r *RepoMock) ClientSave(domain port.Domain) error {
-	r.domain = domain
+func (r *RepoMock) ClientSave(client port.Client) error {
+	r.client = client
 	return nil
 }
 

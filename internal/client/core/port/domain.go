@@ -1,6 +1,7 @@
 package port
 
 type Domain interface {
+	GetClient(input CreateInputDto) (Client, error)
 }
 
 type Client interface {

@@ -20,27 +20,27 @@ type Client struct {
 }
 
 // NewClient creates a new client
-func NewClient(repo port.Repo, name, nick, document, phone, email string) (*Client, error) {
+func NewClient(repo port.Repo, input port.CreateInputDto) (*Client, error) {
 	id, err := uuid.NewRandom()
 	if err != nil {
 		return nil, err
 	}
-	doc, err := strconv.ParseUint(document, 10, 64)
+	doc, err := strconv.ParseUint(input.GetDocument(), 10, 64)
 	if err != nil {
 		return nil, err
 	}
-	ph, err := strconv.ParseUint(phone, 10, 64)
+	ph, err := strconv.ParseUint(input.GetPhone(), 10, 64)
 	if err != nil {
 		return nil, err
 	}
 	return &Client{
 		repo:    repo,
 		ID:       id.String(),
-		Name:     name,
-		Nickname: nick,
+		Name:     input.GetName(),
+		Nickname: input.GetNickname(),
 		Document: doc,
 		Phone:    ph,
-		Email:    email,
+		Email:    input.GetEmail(),
 	}, nil
 }
 
