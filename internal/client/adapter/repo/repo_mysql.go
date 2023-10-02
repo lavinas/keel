@@ -32,13 +32,13 @@ func NewRepoMysql(c port.Config) *RepoMysql {
 }
 
 // Create creates a new client
-func (r *RepoMysql) ClientSave(domain port.Domain) error {
+func (r *RepoMysql) ClientSave(client port.Client) error {
 	tx, err := r.db.Begin()
 	if err != nil {
 		return err
 	}
 	defer tx.Rollback()
-	id, name, nick, doc, phone, email := domain.ClientGet()
+	id, name, nick, doc, phone, email := client.Get()
 	_, err = tx.Exec(clientSaveQuery, id, name, nick, doc, phone, email)
 	if err != nil {
 		return err

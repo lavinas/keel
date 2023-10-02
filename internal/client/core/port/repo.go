@@ -4,5 +4,5 @@ package port
 type Repo interface {
 	ClientDocumentDuplicity(document uint64) (bool, error)
 	ClientEmailDuplicity(email string) (bool, error)
-	ClientSave(domain Domain) error
+	ClientSave(client Client) error
 }
