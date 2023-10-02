@@ -12,7 +12,7 @@ func ServiceClientCreate(log port.Log, domain port.Domain, input port.CreateInpu
 	if err := validateInput(log, input); err != nil {
 		return err
 	}
-	client, err :=  createDomain(log, domain, input)
+	client, err := createDomain(log, domain, input)
 	if err != nil {
 		return err
 	}

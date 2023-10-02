@@ -1,8 +1,8 @@
 package domain
 
 import (
-	"strconv"
 	"fmt"
+	"strconv"
 
 	"github.com/google/uuid"
 	"github.com/lavinas/keel/internal/client/core/port"
@@ -10,7 +10,7 @@ import (
 
 // Client is the domain model for a client
 type Client struct {
-	repo    port.Repo
+	repo     port.Repo
 	ID       string
 	Name     string
 	Nickname string
@@ -34,7 +34,7 @@ func NewClient(repo port.Repo, input port.CreateInputDto) (*Client, error) {
 		return nil, err
 	}
 	return &Client{
-		repo:    repo,
+		repo:     repo,
 		ID:       id.String(),
 		Name:     input.GetName(),
 		Nickname: input.GetNickname(),
@@ -72,4 +72,3 @@ func (c *Client) GetFormatted() (string, string, string, string, string, string)
 func (c *Client) Save() error {
 	return c.repo.ClientSave(c)
 }
-
