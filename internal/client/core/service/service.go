@@ -21,6 +21,7 @@ func NewService(domain port.Domain, log port.Log, repo port.Repo) *Service {
 }
 
 // Orquestration of Creating a new client
-func (s *Service) ClientCreate(input port.CreateInputDto, output port.CreateOutputDto) error {
-	return ServiceClientCreate(s.log, s.domain, input, output)
+func (s *Service) ClientCreate(input port.ClientCreateInputDto, output port.ClientCreateOutputDto) error {
+	service_client := NewClientCreate(s.log, s.domain.GetClient(input), input, output)
+	return service_client.Execute()
 }

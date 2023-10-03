@@ -16,10 +16,6 @@ func NewDomain(repo port.Repo) *Domain {
 	}
 }
 
-func (c *Domain) GetClient(input port.CreateInputDto) (port.Client, error) {
-	cli, err := NewClient(c.repo, input)
-	if err != nil {
-		return nil, err
-	}
-	return cli, nil
+func (c *Domain) GetClient(input port.ClientCreateInputDto) port.Client {
+	return NewClient(c.repo)
 }

@@ -1,10 +1,11 @@
 package port
 
 type Domain interface {
-	GetClient(input CreateInputDto) (Client, error)
+	GetClient(input ClientCreateInputDto) Client
 }
 
 type Client interface {
+	LoadInput(input ClientCreateInputDto) error
 	DocumentDuplicity() (bool, error)
 	EmailDuplicity() (bool, error)
 	Get() (string, string, string, uint64, uint64, string)

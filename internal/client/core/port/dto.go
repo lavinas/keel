@@ -1,6 +1,6 @@
 package port
 
-type CreateInputDto interface {
+type ClientCreateInputDto interface {
 	Validate() error
 	Format() error
 	GetName() string
@@ -10,6 +10,6 @@ type CreateInputDto interface {
 	GetEmail() string
 }
 
-type CreateOutputDto interface {
+type ClientCreateOutputDto interface {
 	Fill(id, name, nick, doc, phone, email string)
 }

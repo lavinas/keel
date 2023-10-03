@@ -40,8 +40,8 @@ func (h *HandlerGin) Run() {
 
 // Create responds for call of creates a new client
 func (h *HandlerGin) ClientCreate(c *gin.Context) {
-	var input dto.CreateInputDto
-	var output dto.CreateOutputDto
+	var input dto.ClientCreateInputDto
+	var output dto.ClientCreateOutputDto
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

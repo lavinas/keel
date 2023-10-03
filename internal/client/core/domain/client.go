@@ -20,28 +20,38 @@ type Client struct {
 }
 
 // NewClient creates a new client
-func NewClient(repo port.Repo, input port.CreateInputDto) (*Client, error) {
+func NewClient(repo port.Repo) *Client {
+	return &Client{
+		repo:     repo,
+		ID:       "",
+		Name:     "",
+		Nickname: "",
+		Document: 0,
+		Phone:    0,
+		Email:    "",
+	}
+}
+
+func (c *Client) LoadInput(input port.ClientCreateInputDto) error {
 	id, err := uuid.NewRandom()
 	if err != nil {
-		return nil, err
+		return err
 	}
 	doc, err := strconv.ParseUint(input.GetDocument(), 10, 64)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	ph, err := strconv.ParseUint(input.GetPhone(), 10, 64)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return &Client{
-		repo:     repo,
-		ID:       id.String(),
-		Name:     input.GetName(),
-		Nickname: input.GetNickname(),
-		Document: doc,
-		Phone:    ph,
-		Email:    input.GetEmail(),
-	}, nil
+	c.ID = id.String()
+	c.Name = input.GetName()
+	c.Nickname = input.GetNickname()
+	c.Document = doc
+	c.Phone = ph
+	c.Email = input.GetEmail()
+	return nil
 }
 
 // DocumentDuplicity checks if a document is already registered

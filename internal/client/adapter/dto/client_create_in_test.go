@@ -87,7 +87,7 @@ func TestClearPhone(t *testing.T) {
 }
 
 func TestValidate(t *testing.T) {
-	c := CreateInputDto{
+	c := ClientCreateInputDto{
 		Name:     "Jose da Silva",
 		Nickname: "jose_da_silva",
 		Document: "20665660049",
@@ -97,7 +97,7 @@ func TestValidate(t *testing.T) {
 	if err := c.Validate(); err != nil {
 		t.Errorf("Invalid result: %v", err)
 	}
-	c = CreateInputDto{
+	c = ClientCreateInputDto{
 		Name:     "Jose",
 		Nickname: "",
 		Document: "20665660050",

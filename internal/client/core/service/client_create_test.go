@@ -15,14 +15,14 @@ func TestCreateOk(t *testing.T) {
 	repo := RepoMock{}
 	domain := domain.NewDomain(&repo)
 	s := NewService(domain, &log, &repo)
-	input := dto.CreateInputDto{
+	input := dto.ClientCreateInputDto{
 		Name:     "Test XXXX",
 		Nickname: "Test",
 		Document: "947.869.840-00",
 		Phone:    "11999999999",
 		Email:    "teste@teste.com",
 	}
-	var res dto.CreateOutputDto
+	var res dto.ClientCreateOutputDto
 	err := s.ClientCreate(&input, &res)
 	if err != nil {
 		t.Errorf("Error: %s", err)
@@ -40,7 +40,7 @@ func TestCreateError(t *testing.T) {
 	repo := RepoMock{}
 	domain := domain.NewDomain(&repo)
 	s := NewService(domain, &log, &repo)
-	input := dto.CreateInputDto{
+	input := dto.ClientCreateInputDto{
 		Name:     "Test",
 		Nickname: "Test",
 		Document: "947.869.840-01",
@@ -48,7 +48,7 @@ func TestCreateError(t *testing.T) {
 		Email:    "teste",
 	}
 
-	var res dto.CreateOutputDto
+	var res dto.ClientCreateOutputDto
 	err := s.ClientCreate(&input, &res)
 	if err == nil {
 		t.Errorf("Error: %s", err)
@@ -69,14 +69,14 @@ func TestCreateDuplicity(t *testing.T) {
 	repo.ClientEmailDuplicityReturn = true
 	domain := domain.NewDomain(&repo)
 	s := NewService(domain, &log, &repo)
-	input := dto.CreateInputDto{
+	input := dto.ClientCreateInputDto{
 		Name:     "Test XXXX",
 		Nickname: "Test",
 		Document: "947.869.840-00",
 		Phone:    "11999999999",
 		Email:    "test@test.com",
 	}
-	var res dto.CreateOutputDto
+	var res dto.ClientCreateOutputDto
 	err := s.ClientCreate(&input, &res)
 	if err == nil {
 		t.Errorf("Error: %s", err)
@@ -100,7 +100,7 @@ func TestWithDB(t *testing.T) {
 
 	s := NewService(d, &l, r)
 
-	input := dto.CreateInputDto{
+	input := dto.ClientCreateInputDto{
 		Name:     "Test XXXX",
 		Nickname: "Test",
 		Document: "947.869.840-00",
@@ -108,7 +108,7 @@ func TestWithDB(t *testing.T) {
 		Email:    "teste@teste.com",
 	}
 
-	var res dto.CreateOutputDto
+	var res dto.ClientCreateOutputDto
 	err := s.ClientCreate(&input, &res)
 
 	if err != nil {

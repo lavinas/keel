@@ -7,28 +7,41 @@ import (
 	"github.com/lavinas/keel/internal/client/core/port"
 )
 
-// Orquestration of Creating a new client
-func ServiceClientCreate(log port.Log, domain port.Domain, input port.CreateInputDto, output port.CreateOutputDto) error {
-	if err := validateInput(log, input); err != nil {
+type ClientCreate struct {
+	log    port.Log
+	client port.Client
+	input  port.ClientCreateInputDto
+	output port.ClientCreateOutputDto
+}
+
+func NewClientCreate(log port.Log, client port.Client, input port.ClientCreateInputDto, output port.ClientCreateOutputDto) *ClientCreate {
+	return &ClientCreate{
+		log:    log,
+		client: client,
+		input:  input,
+		output: output,
+	}
+}
+
+func (s *ClientCreate) Execute() error {
+	if err := validateInput(s.log, s.input); err != nil {
 		return err
 	}
-	client, err := createDomain(log, domain, input)
-	if err != nil {
+	s.input.Format()
+
+	if err := duplicity(s.log, s.client, s.input); err != nil {
 		return err
 	}
-	if err := duplicity(log, client, input); err != nil {
+	if err := store(s.log, s.client, s.input); err != nil {
 		return err
 	}
-	if err := store(log, client, input); err != nil {
-		return err
-	}
-	prepareOutput(client, output)
-	log.Infof(input, "created")
+	prepareOutput(s.client, s.output)
+	s.log.Infof(s.input, "created")
 	return nil
 }
 
 // validateInput validates input data of Create service
-func validateInput(log port.Log, input port.CreateInputDto) error {
+func validateInput(log port.Log, input port.ClientCreateInputDto) error {
 	if err := input.Validate(); err != nil {
 		log.Infof(input, "bad request: "+err.Error())
 		return errors.New("bad request: " + err.Error())
@@ -36,14 +49,8 @@ func validateInput(log port.Log, input port.CreateInputDto) error {
 	return nil
 }
 
-// createDomain creates a new client domain
-func createDomain(log port.Log, domain port.Domain, input port.CreateInputDto) (port.Client, error) {
-	input.Format()
-	return domain.GetClient(input)
-}
-
 // duplicity checks if a document or email is already registered
-func duplicity(log port.Log, client port.Client, input port.CreateInputDto) error {
+func duplicity(log port.Log, client port.Client, input port.ClientCreateInputDto) error {
 	message := ""
 	b, err := client.DocumentDuplicity()
 	if err != nil {
@@ -70,7 +77,7 @@ func duplicity(log port.Log, client port.Client, input port.CreateInputDto) erro
 }
 
 // store stores a new client
-func store(log port.Log, client port.Client, input port.CreateInputDto) error {
+func store(log port.Log, client port.Client, input port.ClientCreateInputDto) error {
 	// Store client
 	if err := client.Save(); err != nil {
 		log.Errorf(input, err)
@@ -80,7 +87,7 @@ func store(log port.Log, client port.Client, input port.CreateInputDto) error {
 }
 
 // prepareOutput prepares output data of Create service
-func prepareOutput(client port.Client, output port.CreateOutputDto) {
+func prepareOutput(client port.Client, output port.ClientCreateOutputDto) {
 	id, name, nick, doc, phone, email := client.GetFormatted()
 	output.Fill(id, name, nick, doc, phone, email)
 }

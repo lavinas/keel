@@ -19,8 +19,8 @@ var (
 	countries = []string{"BR"}
 )
 
-// CreateInputDto is the input DTO used to create a client
-type CreateInputDto struct {
+// ClientCreateInputDto is the input DTO used to create a client
+type ClientCreateInputDto struct {
 	Name     string `json:"name" binding:"required"`
 	Nickname string `json:"nickname" binding:"required"`
 	Document string `json:"document" binding:"required"`
@@ -28,9 +28,9 @@ type CreateInputDto struct {
 	Email    string `json:"email" binding:"required"`
 }
 
-// NewCreateInputDto creates a new CreateInputDto
-func NewCreateInputDto(name, nickname, document, phone, email string) CreateInputDto {
-	return CreateInputDto{
+// NewClientCreateInputDto creates a new ClientCreateInputDto
+func NewClientCreateInputDto(name, nickname, document, phone, email string) ClientCreateInputDto {
+	return ClientCreateInputDto{
 		Name:     name,
 		Nickname: nickname,
 		Document: document,
@@ -40,7 +40,7 @@ func NewCreateInputDto(name, nickname, document, phone, email string) CreateInpu
 }
 
 // Validate validates the input DTO
-func (c *CreateInputDto) Validate() error {
+func (c *ClientCreateInputDto) Validate() error {
 	msg := ""
 	if _, err := formatName(c.Name); err != nil {
 		msg += err.Error() + " | "
@@ -65,7 +65,7 @@ func (c *CreateInputDto) Validate() error {
 }
 
 // ClearAll clears all fields (name, nickname, document, phone, email)
-func (c *CreateInputDto) Format() error {
+func (c *ClientCreateInputDto) Format() error {
 	var err error
 	var name, nick, doc, phone, email string
 	if name, err = formatName(c.Name); err != nil {
@@ -92,27 +92,27 @@ func (c *CreateInputDto) Format() error {
 }
 
 // GetName returns the name of the client
-func (c *CreateInputDto) GetName() string {
+func (c *ClientCreateInputDto) GetName() string {
 	return c.Name
 }
 
 // GetNickname returns the nickname of the client
-func (c *CreateInputDto) GetNickname() string {
+func (c *ClientCreateInputDto) GetNickname() string {
 	return c.Nickname
 }
 
 // GetDocument returns the document of the client
-func (c *CreateInputDto) GetDocument() string {
+func (c *ClientCreateInputDto) GetDocument() string {
 	return c.Document
 }
 
 // GetPhone returns the phone of the client
-func (c *CreateInputDto) GetPhone() string {
+func (c *ClientCreateInputDto) GetPhone() string {
 	return c.Phone
 }
 
 // GetEmail returns the email of the client
-func (c *CreateInputDto) GetEmail() string {
+func (c *ClientCreateInputDto) GetEmail() string {
 	return c.Email
 }
 

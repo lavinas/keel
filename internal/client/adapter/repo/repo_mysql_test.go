@@ -12,8 +12,10 @@ func TestClientSave(t *testing.T) {
 	repo := NewRepoMysql(&config)
 	defer repo.Close()
 	repo.ClientTruncate()
-	input := dto.NewCreateInputDto("Test Xxxx", "test", "94786984000", "5511999999999", "test@test.com")
-	client, err := domain.NewClient(repo, &input)
+	input := dto.NewClientCreateInputDto("Test Xxxx", "test", "94786984000", "5511999999999", "test@test.com")
+
+	client := domain.NewClient(repo)
+	err := client.LoadInput(&input)
 	if err != nil {
 		t.Errorf("Error: %s", err)
 	}
@@ -38,8 +40,9 @@ func TestClientDocumentDuplicity(t *testing.T) {
 		t.Errorf("Error: Document should not be duplicated")
 	}
 	// check duplicated
-	input := dto.NewCreateInputDto("Test Xxxx", "test", "94786984000", "5511999999999", "test@test.com")
-	client, err := domain.NewClient(repo, &input)
+	input := dto.NewClientCreateInputDto("Test Xxxx", "test", "94786984000", "5511999999999", "test@test.com")
+	client := domain.NewClient(repo)
+	err = client.LoadInput(&input)
 	if err != nil {
 		t.Errorf("Error: %s", err)
 	}
@@ -71,8 +74,9 @@ func TestClientEmailDuplicityQuery(t *testing.T) {
 		t.Errorf("Error: Email should not be duplicated")
 	}
 	// check duplicated
-	input := dto.NewCreateInputDto("Test Xxxx", "test", "94786984000", "5511999999999", "test@test.com")
-	client, err := domain.NewClient(repo, &input)
+	input := dto.NewClientCreateInputDto("Test Xxxx", "test", "94786984000", "5511999999999", "test@test.com")
+	client := domain.NewClient(repo)
+	err = client.LoadInput(&input)
 	if err != nil {
 		t.Errorf("Error: %s", err)
 	}
