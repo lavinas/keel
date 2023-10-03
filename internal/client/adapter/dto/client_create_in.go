@@ -91,29 +91,9 @@ func (c *ClientCreateInputDto) Format() error {
 	return nil
 }
 
-// GetName returns the name of the client
-func (c *ClientCreateInputDto) GetName() string {
-	return c.Name
-}
-
-// GetNickname returns the nickname of the client
-func (c *ClientCreateInputDto) GetNickname() string {
-	return c.Nickname
-}
-
-// GetDocument returns the document of the client
-func (c *ClientCreateInputDto) GetDocument() string {
-	return c.Document
-}
-
-// GetPhone returns the phone of the client
-func (c *ClientCreateInputDto) GetPhone() string {
-	return c.Phone
-}
-
-// GetEmail returns the email of the client
-func (c *ClientCreateInputDto) GetEmail() string {
-	return c.Email
+// Get returns all fields (name, nickname, document, phone, email)
+func (c *ClientCreateInputDto) Get() (string, string, string, string, string) {
+	return c.Name, c.Nickname, c.Document, c.Phone, c.Email
 }
 
 // clearName clears a name

@@ -3,11 +3,7 @@ package port
 type ClientCreateInputDto interface {
 	Validate() error
 	Format() error
-	GetName() string
-	GetNickname() string
-	GetDocument() string
-	GetPhone() string
-	GetEmail() string
+	Get() (string, string, string, string, string)
 }
 
 type ClientCreateOutputDto interface {

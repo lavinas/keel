@@ -37,20 +37,16 @@ func (c *Client) LoadInput(input port.ClientCreateInputDto) error {
 	if err != nil {
 		return err
 	}
-	doc, err := strconv.ParseUint(input.GetDocument(), 10, 64)
+	n, k, d, p, e := input.Get()
+	doc, err := strconv.ParseUint(d, 10, 64)
 	if err != nil {
 		return err
 	}
-	ph, err := strconv.ParseUint(input.GetPhone(), 10, 64)
+	ph, err := strconv.ParseUint(p, 10, 64)
 	if err != nil {
 		return err
 	}
-	c.ID = id.String()
-	c.Name = input.GetName()
-	c.Nickname = input.GetNickname()
-	c.Document = doc
-	c.Phone = ph
-	c.Email = input.GetEmail()
+	c.ID, c.Name, c.Nickname, c.Document, c.Phone, c.Email = id.String(), n, k, doc, ph, e
 	return nil
 }
 
