@@ -10,6 +10,17 @@ type ClientCreateOutputDto struct {
 	Email    string `json:"email" binding:"required"`
 }
 
+func NewClientCreateOutputDto() *ClientCreateOutputDto {
+	return &ClientCreateOutputDto{
+		Id:       "",
+		Name:     "",
+		Nickname: "",
+		Document: "",
+		Phone:    "",
+		Email:    "",
+	}
+}
+
 // ClientCreateInputDto is the input DTO used to create a client
 func (o *ClientCreateOutputDto) Fill(id, name, nick, doc, phone, email string) {
 	o.Id = id

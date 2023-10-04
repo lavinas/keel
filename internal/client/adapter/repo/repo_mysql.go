@@ -2,6 +2,7 @@ package repo
 
 import (
 	"database/sql"
+
 	_ "github.com/go-sql-driver/mysql"
 
 	"github.com/lavinas/keel/internal/client/core/port"
@@ -65,6 +66,24 @@ func (r *RepoMysql) ClientEmailDuplicity(email string) (bool, error) {
 		return false, err
 	}
 	return count > 0, nil
+}
+
+// ClientGetAll gets all clients
+func (r *RepoMysql) ClientLoad(set port.ClientSet) error {
+	row, err := r.db.Query(clientGetAll)
+	if err != nil {
+		return err
+	}
+	defer row.Close()
+	for row.Next() {
+		var id, name, nick, email string
+		var doc, phone uint64
+		if err := row.Scan(&id, &name, &nick, &doc, &phone, &email); err != nil {
+			return err
+		}
+		set.Append(id, name, nick, doc, phone, email)
+	}
+	return nil
 }
 
 // ClientTruncate truncates the client table

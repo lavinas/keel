@@ -47,7 +47,6 @@ func TestCreateError(t *testing.T) {
 		Phone:    "11299999999",
 		Email:    "teste",
 	}
-
 	var res dto.ClientCreateOutputDto
 	err := s.ClientCreate(&input, &res)
 	if err == nil {
@@ -107,10 +106,8 @@ func TestWithDB(t *testing.T) {
 		Phone:    "11999999999",
 		Email:    "teste@teste.com",
 	}
-
 	var res dto.ClientCreateOutputDto
 	err := s.ClientCreate(&input, &res)
-
 	if err != nil {
 		t.Errorf("Error: %s", err)
 	}
@@ -121,5 +118,4 @@ func TestWithDB(t *testing.T) {
 		t.Errorf("Expected 'created', got '%s'", l.msg)
 	}
 	r.ClientTruncate()
-
 }

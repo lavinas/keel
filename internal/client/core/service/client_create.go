@@ -2,11 +2,13 @@ package service
 
 import (
 	"errors"
+	"strconv"
 	"strings"
 
 	"github.com/lavinas/keel/internal/client/core/port"
 )
 
+// ClientCreate is the service for creating a new client
 type ClientCreate struct {
 	log    port.Log
 	client port.Client
@@ -14,6 +16,7 @@ type ClientCreate struct {
 	output port.ClientCreateOutputDto
 }
 
+// NewClientCreate creates a new client create service
 func NewClientCreate(log port.Log, client port.Client, input port.ClientCreateInputDto, output port.ClientCreateOutputDto) *ClientCreate {
 	return &ClientCreate{
 		log:    log,
@@ -23,12 +26,14 @@ func NewClientCreate(log port.Log, client port.Client, input port.ClientCreateIn
 	}
 }
 
+// Execute executes the service
 func (s *ClientCreate) Execute() error {
 	if err := validateInput(s.log, s.input); err != nil {
 		return err
 	}
-	s.input.Format()
-
+	if err := loadClient(s.input, s.client); err != nil {
+		return err
+	}
 	if err := duplicity(s.log, s.client, s.input); err != nil {
 		return err
 	}
@@ -37,6 +42,18 @@ func (s *ClientCreate) Execute() error {
 	}
 	prepareOutput(s.client, s.output)
 	s.log.Infof(s.input, "created")
+	return nil
+}
+
+// loadClient loads a client from the input dto
+func loadClient(input port.ClientCreateInputDto, client port.Client) error {
+	input.Format()
+	name, nick, doc, phone, email := input.Get()
+	idoc, _ := strconv.ParseUint(doc, 10, 64)
+	iphone, _ := strconv.ParseUint(phone, 10, 64)
+	if err := client.Create(name, nick, idoc, iphone, email); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -52,28 +69,48 @@ func validateInput(log port.Log, input port.ClientCreateInputDto) error {
 // duplicity checks if a document or email is already registered
 func duplicity(log port.Log, client port.Client, input port.ClientCreateInputDto) error {
 	message := ""
-	b, err := client.DocumentDuplicity()
+	m, err := duplicityDocument(log, client, input)
 	if err != nil {
-		log.Errorf(input, err)
-		return errors.New("internal server error")
+		return err
 	}
-	if b {
-		message += "document already registered | "
-	}
-	e, err := client.EmailDuplicity()
+	message += m
+	m, err = duplicityEmail(log, client, input)
 	if err != nil {
-		log.Errorf(input, err)
-		return errors.New("internal server error |")
+		return err
 	}
-	if e {
-		message += "email already registered"
-	}
+	message += m
 	if message != "" {
 		message = strings.Trim(message, " |")
 		log.Infof(input, "conflict: "+message)
 		return errors.New("conflict: " + message)
 	}
 	return nil
+}
+
+// duplicityDocument treats the document duplicity
+func duplicityDocument(log port.Log, client port.Client, input port.ClientCreateInputDto) (string, error) {
+	b, err := client.DocumentDuplicity()
+	if err != nil {
+		log.Errorf(input, err)
+		return "", errors.New("internal server error")
+	}
+	if b {
+		return "document already registered | ", nil
+	}
+	return "", nil
+}
+
+// duplicityEmail treats the email duplicity
+func duplicityEmail(log port.Log, client port.Client, input port.ClientCreateInputDto) (string, error) {
+	e, err := client.EmailDuplicity()
+	if err != nil {
+		log.Errorf(input, err)
+		return "", errors.New("internal server error |")
+	}
+	if e {
+		return "email already registered", nil
+	}
+	return "", nil
 }
 
 // store stores a new client

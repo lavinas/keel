@@ -3,7 +3,6 @@ package repo
 import (
 	"testing"
 
-	"github.com/lavinas/keel/internal/client/adapter/dto"
 	"github.com/lavinas/keel/internal/client/core/domain"
 )
 
@@ -12,10 +11,8 @@ func TestClientSave(t *testing.T) {
 	repo := NewRepoMysql(&config)
 	defer repo.Close()
 	repo.ClientTruncate()
-	input := dto.NewClientCreateInputDto("Test Xxxx", "test", "94786984000", "5511999999999", "test@test.com")
-
 	client := domain.NewClient(repo)
-	err := client.LoadInput(&input)
+	err := client.Create("Test Xxxx", "test", 94786984000, 5511999999999, "test@tets.com")
 	if err != nil {
 		t.Errorf("Error: %s", err)
 	}
@@ -40,9 +37,8 @@ func TestClientDocumentDuplicity(t *testing.T) {
 		t.Errorf("Error: Document should not be duplicated")
 	}
 	// check duplicated
-	input := dto.NewClientCreateInputDto("Test Xxxx", "test", "94786984000", "5511999999999", "test@test.com")
 	client := domain.NewClient(repo)
-	err = client.LoadInput(&input)
+	err = client.Create("Test Xxxx", "test", 94786984000, 5511999999999, "test@test.com")
 	if err != nil {
 		t.Errorf("Error: %s", err)
 	}
@@ -74,9 +70,8 @@ func TestClientEmailDuplicityQuery(t *testing.T) {
 		t.Errorf("Error: Email should not be duplicated")
 	}
 	// check duplicated
-	input := dto.NewClientCreateInputDto("Test Xxxx", "test", "94786984000", "5511999999999", "test@test.com")
 	client := domain.NewClient(repo)
-	err = client.LoadInput(&input)
+	err = client.Create("Test Xxxx", "test", 94786984000, 5511999999999, "test@test.com")
 	if err != nil {
 		t.Errorf("Error: %s", err)
 	}

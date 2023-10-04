@@ -9,3 +9,7 @@ type ClientCreateInputDto interface {
 type ClientCreateOutputDto interface {
 	Fill(id, name, nick, doc, phone, email string)
 }
+
+type ClientListOutputDto interface {
+	Append(id, name, nick, doc, phone, email string)
+}

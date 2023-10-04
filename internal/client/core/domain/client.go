@@ -32,22 +32,18 @@ func NewClient(repo port.Repo) *Client {
 	}
 }
 
-func (c *Client) LoadInput(input port.ClientCreateInputDto) error {
+// Create loads a client
+func (c *Client) Create(name, nick string, doc, phone uint64, email string) error {
 	id, err := uuid.NewRandom()
 	if err != nil {
 		return err
 	}
-	n, k, d, p, e := input.Get()
-	doc, err := strconv.ParseUint(d, 10, 64)
-	if err != nil {
-		return err
-	}
-	ph, err := strconv.ParseUint(p, 10, 64)
-	if err != nil {
-		return err
-	}
-	c.ID, c.Name, c.Nickname, c.Document, c.Phone, c.Email = id.String(), n, k, doc, ph, e
+	c.ID, c.Name, c.Nickname, c.Document, c.Phone, c.Email = id.String(), name, nick, doc, phone, email
 	return nil
+}
+
+func (c *Client) Load(id, name, nick string, doc, phone uint64, email string) {
+	c.ID, c.Name, c.Nickname, c.Document, c.Phone, c.Email = id, name, nick, doc, phone, email
 }
 
 // DocumentDuplicity checks if a document is already registered

@@ -96,3 +96,7 @@ func (r *RepoMock) ClientEmailDuplicity(email string) (bool, error) {
 	}
 	return false, nil
 }
+
+func (r *RepoMock) ClientLoad(set port.ClientSet) error {
+	return nil
+}
