@@ -25,3 +25,8 @@ func (s *Service) ClientCreate(input port.ClientCreateInputDto, output port.Clie
 	service_client := NewClientCreate(s.log, s.domain.GetClient(input), input, output)
 	return service_client.Execute()
 }
+
+func (s *Service) ClientList(output port.ClientListOutputDto) error {
+	service_client := NewClientList(s.log, s.domain.GetClientSet(), output)
+	return service_client.Execute()
+}

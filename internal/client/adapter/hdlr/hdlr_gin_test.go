@@ -28,3 +28,22 @@ func TestCreate(t *testing.T) {
 	}
 
 }
+
+func TestClientList(t *testing.T) {
+	w := httptest.NewRecorder()
+	ctx := GetTestGinContext(w)
+	l := LogMock{}
+	s := ServiceMock{}
+
+	h := NewHandlerGin(&l, &s)
+	h.ClientList(ctx)
+
+	if w.Code != http.StatusOK {
+		t.Errorf("Invalid result: %v", w.Code)
+	}
+
+	if w.Body.String() != "{\"clients\":null}" {
+		t.Errorf("Invalid result: %v", w.Body.String())
+	}
+
+}

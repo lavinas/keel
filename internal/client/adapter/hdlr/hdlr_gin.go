@@ -29,6 +29,7 @@ func NewHandlerGin(log port.Log, service port.Service) *HandlerGin {
 
 // MapHandlers maps the handlers
 func (h *HandlerGin) MapHandlers() {
+	h.gin.GET("/client/list", h.ClientList)
 	h.gin.POST("/client/create", h.ClientCreate)
 }
 
@@ -38,7 +39,7 @@ func (h *HandlerGin) Run() {
 	h.gin.ShutDown()
 }
 
-// Create responds for call of creates a new client
+// ClientCreate responds for call of creates a new client
 func (h *HandlerGin) ClientCreate(c *gin.Context) {
 	var input dto.ClientCreateInputDto
 	var output dto.ClientCreateOutputDto
@@ -51,4 +52,14 @@ func (h *HandlerGin) ClientCreate(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusCreated, output)
+}
+
+// ClientList responds for call of list clients
+func (h *HandlerGin) ClientList(c *gin.Context) {
+	var output dto.ClientListOutputDto
+	if err := h.service.ClientList(&output); err != nil {
+		c.JSON(h.gin.MapError(err.Error()), gin_wrapper.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, output)
 }

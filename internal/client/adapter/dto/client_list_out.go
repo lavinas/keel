@@ -20,3 +20,7 @@ func (dto *ClientListOutputDto) Append(id, name, nick, doc, phone, email string)
 	client.Fill(id, name, nick, doc, phone, email)
 	dto.Clients = append(dto.Clients, client)
 }
+
+func (dto *ClientListOutputDto) Count() int {
+	return len(dto.Clients)
+}

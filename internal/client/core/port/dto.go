@@ -12,4 +12,5 @@ type ClientCreateOutputDto interface {
 
 type ClientListOutputDto interface {
 	Append(id, name, nick, doc, phone, email string)
+	Count() int
 }

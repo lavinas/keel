@@ -88,12 +88,12 @@ func (g *GinEngineWrapper) PUT(relativePath string, handlers ...gin.HandlerFunc)
 
 // GET is a wrapper for gin PUT
 func (g *GinEngineWrapper) GET(relativePath string, handlers ...gin.HandlerFunc) {
-	g.engine.PUT(relativePath, handlers...)
+	g.engine.GET(relativePath, handlers...)
 }
 
 // DELETE is a wrapper for gin PUT
 func (g *GinEngineWrapper) DELETE(relativePath string, handlers ...gin.HandlerFunc) {
-	g.engine.PUT(relativePath, handlers...)
+	g.engine.DELETE(relativePath, handlers...)
 }
 
 // H is a shortcut for map[string]interface{} as gin
