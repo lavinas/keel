@@ -2,7 +2,6 @@ package repo
 
 import (
 	"database/sql"
-
 	_ "github.com/go-sql-driver/mysql"
 
 	"github.com/lavinas/keel/internal/client/core/port"
@@ -69,21 +68,20 @@ func (r *RepoMysql) ClientEmailDuplicity(email string) (bool, error) {
 }
 
 // ClientGetAll gets all clients
-func (r *RepoMysql) ClientLoad(page, perPage uint64, set port.ClientSet) error {
-	limit := perPage
-	offset := (page - 1) * perPage
-	row, err := r.db.Query(clientGetAll, limit, offset)
+func (r *RepoMysql) ClientLoad(page, perPage uint64, name, nick, doc, email string, set port.ClientSet) error {
+	query := clientListBase
+	q, args := loadFilters(name, nick, doc, email)
+	query += q
+	q, a := loadPagination(page, perPage)
+	query += q
+	args = append(args, a...)
+	row, err := r.db.Query(query, args...)
 	if err != nil {
 		return err
 	}
 	defer row.Close()
-	for row.Next() {
-		var id, name, nick, email string
-		var doc, phone uint64
-		if err := row.Scan(&id, &name, &nick, &doc, &phone, &email); err != nil {
-			return err
-		}
-		set.Append(id, name, nick, doc, phone, email)
+	if err := loadInterate(row, set); err != nil {
+		return err
 	}
 	return nil
 }
@@ -114,4 +112,51 @@ func getField(c port.Config, field string) string {
 		panic(err)
 	}
 	return r
+}
+
+// loadFilters prepate the filters query Load
+func loadFilters(name, nick, doc, email string) (string, []interface{}) {
+	query := ""
+	args := make([]interface{}, 0)
+	if name != "" {
+		query += clientListFilterName
+		args = append(args, "%"+name+"%")
+	}
+	if nick != "" {
+		query += clientListFilterNick
+		args = append(args, "%"+nick+"%")
+	}
+	if doc != "" {
+		query += clientListFilterDoc
+		args = append(args, "%"+doc+"%")
+	}
+	if email != "" {
+		query += clientListFilterEmail
+		args = append(args, "%"+email+"%")
+	}
+	return query, args
+}
+
+// loadPagination prepate the pagination query Load
+func loadPagination(page, perPage uint64) (string, []interface{}) {
+	query := ""
+	args := make([]interface{}, 0)
+	// Pagination
+	query += clientListPagination
+	args = append(args, perPage)
+	args = append(args, (page-1)*perPage)
+	return query, args
+}
+
+// loadInterate iterates over the rows and append to the set
+func loadInterate(row *sql.Rows, set port.ClientSet) error {
+	var id, name, nick, email string
+	var doc, phone uint64
+	for row.Next() {
+		if err := row.Scan(&id, &name, &nick, &doc, &phone, &email); err != nil {
+			return err
+		}
+		set.Append(id, name, nick, doc, phone, email)
+	}
+	return nil
 }

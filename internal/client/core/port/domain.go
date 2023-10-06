@@ -19,7 +19,7 @@ type Client interface {
 
 // ClientSet is the interface that wraps the methods to interact with the database for the client domain
 type ClientSet interface {
-	Load(page, perPage uint64) error
+	Load(page, perPage uint64, name, nick, doc, email string) error
 	Append(id, name, nick string, doc, phone uint64, email string)
 	SetOutput(output ClientListOutputDto)
 }

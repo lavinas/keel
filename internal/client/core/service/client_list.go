@@ -33,9 +33,9 @@ func (s *ClientList) Execute() error {
 	if err := s.validateInput(s.log, s.input); err != nil {
 		return err
 	}
-	page, perPage := s.getPage(s.config, s.input)
-	if err := s.clients.Load(page, perPage); err != nil {
-		s.log.Error("Error loading clients")
+	page, perPage, name, nick, doc, email := s.getAll(s.config, s.input)
+	if err := s.clients.Load(page, perPage, name, nick, doc, email); err != nil {
+		s.log.Error("Error loading clients: " + err.Error())
 		return errors.New("internal error")
 	}
 	s.clients.SetOutput(s.output)
@@ -52,8 +52,8 @@ func (s *ClientList) validateInput(log port.Log, input port.ClientListInputDto) 
 }
 
 // getPage returns the page and perPage values from the input dto
-func (s *ClientList) getPage(config port.Config, input port.ClientListInputDto) (uint64, uint64) {
-	page, perPage, _, _, _, _, _ := input.Get()
+func (s *ClientList) getAll(config port.Config, input port.ClientListInputDto) (uint64, uint64, string, string, string, string) {
+	page, perPage, name, nick, doc, email := input.Get()
 	if page == "" {
 		page = "1"
 	}
@@ -69,5 +69,5 @@ func (s *ClientList) getPage(config port.Config, input port.ClientListInputDto) 
 	if err != nil {
 		pp = 10
 	}
-	return p, pp
+	return p, pp, name, nick, doc, email
 }

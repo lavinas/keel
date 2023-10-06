@@ -12,7 +12,7 @@ type ClientCreateOutputDto interface {
 
 type ClientListInputDto interface {
 	Validate() error
-	Get() (string, string, string, string, string, string, string)
+	Get() (string, string, string, string, string, string)
 }
 
 type ClientListOutputDto interface {
