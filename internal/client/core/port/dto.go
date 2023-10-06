@@ -1,8 +1,11 @@
 package port
 
 type ClientCreateInputDto interface {
+	IsBlank() bool
 	Validate() error
+	ValidateUpdate() error
 	Format() error
+	FormatUpdate() error
 	Get() (string, string, string, string, string)
 }
 

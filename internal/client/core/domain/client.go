@@ -42,8 +42,17 @@ func (c *Client) Create(name, nick string, doc, phone uint64, email string) erro
 	return nil
 }
 
+// Load loads a client values
 func (c *Client) Load(id, name, nick string, doc, phone uint64, email string) {
 	c.ID, c.Name, c.Nickname, c.Document, c.Phone, c.Email = id, name, nick, doc, phone, email
+}
+
+// GetById loads a client by id from the repository
+func (c *Client) LoadById(id string) error {
+	if err := c.repo.ClientLoadById(id, c); err != nil {
+		return err
+	}
+	return nil
 }
 
 // DocumentDuplicity checks if a document is already registered
@@ -73,4 +82,9 @@ func (c *Client) GetFormatted() (string, string, string, string, string, string)
 // Save saves a client on the repository
 func (c *Client) Save() error {
 	return c.repo.ClientSave(c)
+}
+
+// Update updates a client on the repository
+func (c *Client) Update() error {
+	return c.repo.ClientUpdate(c)
 }

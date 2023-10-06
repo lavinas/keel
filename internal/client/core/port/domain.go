@@ -10,11 +10,13 @@ type Domain interface {
 type Client interface {
 	Create(name, nick string, doc, phone uint64, email string) error
 	Load(id, name, nick string, doc, phone uint64, email string)
+	LoadById(id string) error
 	DocumentDuplicity() (bool, error)
 	EmailDuplicity() (bool, error)
 	Get() (string, string, string, uint64, uint64, string)
 	GetFormatted() (string, string, string, string, string, string)
 	Save() error
+	Update() error
 }
 
 // ClientSet is the interface that wraps the methods to interact with the database for the client domain

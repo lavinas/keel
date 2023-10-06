@@ -47,6 +47,22 @@ func (r *RepoMysql) ClientSave(client port.Client) error {
 	return nil
 }
 
+// Update updates a client on the repository
+func (r *RepoMysql) ClientUpdate(client port.Client) error {
+	tx, err := r.db.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+	id, name, nick, doc, phone, email := client.Get()
+	_, err = tx.Exec(clientUpdateQuery, name, nick, doc, phone, email, id)
+	if err != nil {
+		return err
+	}
+	tx.Commit()
+	return nil
+}
+
 // ClientDocumentDuplicity checks if a document is already registered
 func (r *RepoMysql) ClientDocumentDuplicity(document uint64) (bool, error) {
 	var count int
@@ -68,7 +84,7 @@ func (r *RepoMysql) ClientEmailDuplicity(email string) (bool, error) {
 }
 
 // ClientGetAll gets all clients
-func (r *RepoMysql) ClientLoad(page, perPage uint64, name, nick, doc, email string, set port.ClientSet) error {
+func (r *RepoMysql) ClientLoadSet(page, perPage uint64, name, nick, doc, email string, set port.ClientSet) error {
 	query := clientListBase
 	q, args := loadFilters(name, nick, doc, email)
 	query += q
@@ -83,6 +99,18 @@ func (r *RepoMysql) ClientLoad(page, perPage uint64, name, nick, doc, email stri
 	if err := loadInterate(row, set); err != nil {
 		return err
 	}
+	return nil
+}
+
+// ClientLoadById gets a client by id
+func (r *RepoMysql) ClientLoadById(id string, client port.Client) error {
+	row := r.db.QueryRow(clientLoadById, id)
+	var name, nick, email string
+	var doc, phone uint64
+	if err := row.Scan(&name, &nick, &doc, &phone, &email); err != nil {
+		return err
+	}
+	client.Load(id, name, nick, doc, phone, email)
 	return nil
 }
 

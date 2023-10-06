@@ -97,6 +97,14 @@ func (r *RepoMock) ClientEmailDuplicity(email string) (bool, error) {
 	return false, nil
 }
 
-func (r *RepoMock) ClientLoad(page, perPage uint64, name, nick, doc, email string, set port.ClientSet) error {
+func (r *RepoMock) ClientLoadSet(page, perPage uint64, name, nick, doc, email string, set port.ClientSet) error {
+	return nil
+}
+
+func (r *RepoMock) ClientLoadById(id string, client port.Client) error {
+	return nil
+}
+
+func (r *RepoMock) ClientUpdate(client port.Client) error {
 	return nil
 }

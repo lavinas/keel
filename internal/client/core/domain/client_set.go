@@ -27,7 +27,7 @@ func NewClientSet(repo port.Repo) *ClientSet {
 // Load loads the client set from the repository
 func (c *ClientSet) Load(page, perPage uint64, name, nick, doc, email string) error {
 	c.page, c.perPage, c.name, c.nick, c.doc, c.email = page, perPage, name, nick, doc, email
-	return c.repo.ClientLoad(page, perPage, name, nick, doc, email, c)
+	return c.repo.ClientLoadSet(page, perPage, name, nick, doc, email, c)
 }
 
 // Append appends a new client to the set

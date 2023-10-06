@@ -31,6 +31,7 @@ func NewHandlerGin(log port.Log, service port.Service) *HandlerGin {
 func (h *HandlerGin) MapHandlers() {
 	h.gin.GET("/client/list", h.ClientList)
 	h.gin.POST("/client/create", h.ClientCreate)
+	h.gin.POST("/client/update/:id", h.ClientUpdate)
 }
 
 // Run runs the gin service
@@ -44,6 +45,7 @@ func (h *HandlerGin) ClientCreate(c *gin.Context) {
 	var input dto.ClientCreateInputDto
 	var output dto.ClientCreateOutputDto
 	if err := c.ShouldBindJSON(&input); err != nil {
+		h.log.Infof(input, "bad request: "+err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -59,6 +61,7 @@ func (h *HandlerGin) ClientList(c *gin.Context) {
 	var input dto.ClientListInputDto
 	var output dto.ClientListOutputDto
 	if err := c.ShouldBindQuery(&input); err != nil {
+		h.log.Infof(input, "bad request: "+err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -68,6 +71,23 @@ func (h *HandlerGin) ClientList(c *gin.Context) {
 	}
 	if output.Count() == 0 {
 		c.JSON(http.StatusNoContent, gin.H{})
+		return
+	}
+	c.JSON(http.StatusOK, output)
+}
+
+// ClientUpdate responds for call of updates a client
+func (h *HandlerGin) ClientUpdate(c *gin.Context) {
+	var input dto.ClientCreateInputDto
+	var output dto.ClientCreateOutputDto
+	id := c.Param("id")
+	if err := c.ShouldBindJSON(&input); err != nil {
+		h.log.Infof(input, "bad request: "+err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	if err := h.service.ClientUpdate(id, &input, &output); err != nil {
+		c.JSON(h.gin.MapError(err.Error()), gin_wrapper.H{"error": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, output)

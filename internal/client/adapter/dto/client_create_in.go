@@ -21,11 +21,18 @@ var (
 
 // ClientCreateInputDto is the input DTO used to create a client
 type ClientCreateInputDto struct {
-	Name     string `json:"name" binding:"required"`
-	Nickname string `json:"nickname" binding:"required"`
-	Document string `json:"document" binding:"required"`
-	Phone    string `json:"phone" binding:"required"`
-	Email    string `json:"email" binding:"required"`
+	Name     string `json:"name"`
+	Nickname string `json:"nickname"`
+	Document string `json:"document"`
+	Phone    string `json:"phone"`
+	Email    string `json:"email"`
+}
+
+// IsBlank checks if the input DTO is blank
+func (c *ClientCreateInputDto) IsBlank() bool {
+	return strings.Trim(c.Name, " ") == "" && strings.Trim(c.Nickname, " ") == "" &&
+		strings.Trim(c.Document, " ") == "" && strings.Trim(c.Phone, " ") == "" &&
+		strings.Trim(c.Email, " ") == ""
 }
 
 // Validate validates the input DTO
@@ -53,7 +60,42 @@ func (c *ClientCreateInputDto) Validate() error {
 	return errors.New(msg)
 }
 
-// ClearAll clears all fields (name, nickname, document, phone, email)
+// Validate validates the input DTO for update values
+func (c *ClientCreateInputDto) ValidateUpdate() error {
+	msg := ""
+	if strings.Trim(c.Name, " ") != "" {
+		if _, err := formatName(c.Name); err != nil {
+			msg += err.Error() + " | "
+		}
+	}
+	if strings.Trim(c.Nickname, " ") != "" {
+		if _, err := formatNickname(c.Nickname); err != nil {
+			msg += err.Error() + " | "
+		}
+	}
+	if strings.Trim(c.Document, " ") != "" {
+		if _, err := formatDocument(c.Document); err != nil {
+			msg += err.Error() + " | "
+		}
+	}
+	if strings.Trim(c.Phone, " ") != "" {
+		if _, err := formatPhone(c.Phone); err != nil {
+			msg += err.Error() + " | "
+		}
+	}
+	if strings.Trim(c.Email, " ") != "" {
+		if _, err := formatEmail(c.Email); err != nil {
+			msg += err.Error() + " | "
+		}
+	}
+	if msg == "" {
+		return nil
+	}
+	msg = strings.Trim(msg, " |")
+	return errors.New(msg)
+}
+
+// Format clears all fields (name, nickname, document, phone, email)
 func (c *ClientCreateInputDto) Format() error {
 	var err error
 	var name, nick, doc, phone, email string
@@ -71,6 +113,43 @@ func (c *ClientCreateInputDto) Format() error {
 	}
 	if email, err = formatEmail(c.Email); err != nil {
 		return err
+	}
+	c.Name = name
+	c.Nickname = nick
+	c.Document = doc
+	c.Phone = phone
+	c.Email = email
+	return nil
+}
+
+// FormatUpdate clears all fields (name, nickname, document, phone, email) for update values
+func (c *ClientCreateInputDto) FormatUpdate() error {
+	var err error
+	var name, nick, doc, phone, email string
+	if strings.Trim(c.Name, " ") != "" {
+		if name, err = formatName(c.Name); err != nil {
+			return err
+		}
+	}
+	if strings.Trim(c.Nickname, " ") != "" {
+		if nick, err = formatNickname(c.Nickname); err != nil {
+			return err
+		}
+	}
+	if strings.Trim(c.Document, " ") != "" {
+		if doc, err = formatDocument(c.Document); err != nil {
+			return err
+		}
+	}
+	if strings.Trim(c.Phone, " ") != "" {
+		if phone, err = formatPhone(c.Phone); err != nil {
+			return err
+		}
+	}
+	if strings.Trim(c.Email, " ") != "" {
+		if email, err = formatEmail(c.Email); err != nil {
+			return err
+		}
 	}
 	c.Name = name
 	c.Nickname = nick
@@ -128,7 +207,6 @@ func formatDocument(document string) (string, error) {
 		return "", errors.New("invalid document")
 	}
 	idoc, _ := strconv.ParseUint(doc, 10, 64)
-
 	doc = fmt.Sprintf("%011d", idoc)
 	if cpf_cnpj.ValidateCPF(doc) {
 		return doc, nil
