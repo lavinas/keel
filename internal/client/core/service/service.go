@@ -7,14 +7,16 @@ import (
 // Service are services to orchestrate client domain
 type Service struct {
 	domain port.Domain
+	config port.Config
 	log    port.Log
 	repo   port.Repo
 }
 
 // NewCreate creates a new Create service
-func NewService(domain port.Domain, log port.Log, repo port.Repo) *Service {
+func NewService(domain port.Domain, config port.Config, log port.Log, repo port.Repo) *Service {
 	return &Service{
 		domain: domain,
+		config: config,
 		log:    log,
 		repo:   repo,
 	}
@@ -26,7 +28,7 @@ func (s *Service) ClientCreate(input port.ClientCreateInputDto, output port.Clie
 	return service_client.Execute()
 }
 
-func (s *Service) ClientList(output port.ClientListOutputDto) error {
-	service_client := NewClientList(s.log, s.domain.GetClientSet(), output)
+func (s *Service) ClientList(input port.ClientListInputDto, output port.ClientListOutputDto) error {
+	service_client := NewClientList(s.config, s.log, s.domain.GetClientSet(), input, output)
 	return service_client.Execute()
 }

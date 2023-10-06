@@ -26,7 +26,6 @@ func TestCreate(t *testing.T) {
 	if w.Code != http.StatusCreated {
 		t.Errorf("Invalid result: %v", w.Code)
 	}
-
 }
 
 func TestClientList(t *testing.T) {
@@ -38,12 +37,7 @@ func TestClientList(t *testing.T) {
 	h := NewHandlerGin(&l, &s)
 	h.ClientList(ctx)
 
-	if w.Code != http.StatusOK {
-		t.Errorf("Invalid result: %v", w.Code)
+	if w.Code != http.StatusNoContent {
+		t.Errorf("Invalid result: %v %s", w.Code, w.Body.String())
 	}
-
-	if w.Body.String() != "{\"clients\":null}" {
-		t.Errorf("Invalid result: %v", w.Body.String())
-	}
-
 }

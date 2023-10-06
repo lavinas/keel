@@ -2,5 +2,5 @@ package port
 
 type Service interface {
 	ClientCreate(input ClientCreateInputDto, output ClientCreateOutputDto) error
-	ClientList(output ClientListOutputDto) error
+	ClientList(input ClientListInputDto, output ClientListOutputDto) error
 }

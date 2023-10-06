@@ -5,5 +5,5 @@ type Repo interface {
 	ClientSave(client Client) error
 	ClientDocumentDuplicity(document uint64) (bool, error)
 	ClientEmailDuplicity(email string) (bool, error)
-	ClientLoad(set ClientSet) error
+	ClientLoad(page, perPage uint64, set ClientSet) error
 }

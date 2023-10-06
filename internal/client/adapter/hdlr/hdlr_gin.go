@@ -56,9 +56,18 @@ func (h *HandlerGin) ClientCreate(c *gin.Context) {
 
 // ClientList responds for call of list clients
 func (h *HandlerGin) ClientList(c *gin.Context) {
+	var input dto.ClientListInputDto
 	var output dto.ClientListOutputDto
-	if err := h.service.ClientList(&output); err != nil {
+	if err := c.ShouldBindQuery(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	if err := h.service.ClientList(&input, &output); err != nil {
 		c.JSON(h.gin.MapError(err.Error()), gin_wrapper.H{"error": err.Error()})
+		return
+	}
+	if output.Count() == 0 {
+		c.JSON(http.StatusNoContent, gin.H{})
 		return
 	}
 	c.JSON(http.StatusOK, output)

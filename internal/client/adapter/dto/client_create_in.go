@@ -28,17 +28,6 @@ type ClientCreateInputDto struct {
 	Email    string `json:"email" binding:"required"`
 }
 
-// NewClientCreateInputDto creates a new ClientCreateInputDto
-func NewClientCreateInputDto(name, nickname, document, phone, email string) ClientCreateInputDto {
-	return ClientCreateInputDto{
-		Name:     name,
-		Nickname: nickname,
-		Document: document,
-		Phone:    phone,
-		Email:    email,
-	}
-}
-
 // Validate validates the input DTO
 func (c *ClientCreateInputDto) Validate() error {
 	msg := ""

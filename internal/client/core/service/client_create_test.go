@@ -13,8 +13,9 @@ import (
 func TestCreateOk(t *testing.T) {
 	log := LogMock{}
 	repo := RepoMock{}
+	config := ConfigMock{}
 	domain := domain.NewDomain(&repo)
-	s := NewService(domain, &log, &repo)
+	s := NewService(domain, &config, &log, &repo)
 	input := dto.ClientCreateInputDto{
 		Name:     "Test XXXX",
 		Nickname: "Test",
@@ -38,8 +39,9 @@ func TestCreateOk(t *testing.T) {
 func TestCreateError(t *testing.T) {
 	log := LogMock{}
 	repo := RepoMock{}
+	config := ConfigMock{}
 	domain := domain.NewDomain(&repo)
-	s := NewService(domain, &log, &repo)
+	s := NewService(domain, &config, &log, &repo)
 	input := dto.ClientCreateInputDto{
 		Name:     "Test",
 		Nickname: "Test",
@@ -64,10 +66,11 @@ func TestCreateError(t *testing.T) {
 func TestCreateDuplicity(t *testing.T) {
 	log := LogMock{}
 	repo := RepoMock{}
+	config := ConfigMock{}
 	repo.ClientDocumentDuplicityReturn = true
 	repo.ClientEmailDuplicityReturn = true
 	domain := domain.NewDomain(&repo)
-	s := NewService(domain, &log, &repo)
+	s := NewService(domain, &config, &log, &repo)
 	input := dto.ClientCreateInputDto{
 		Name:     "Test XXXX",
 		Nickname: "Test",
@@ -97,7 +100,7 @@ func TestWithDB(t *testing.T) {
 	r.ClientTruncate()
 	d := domain.NewDomain(r)
 
-	s := NewService(d, &l, r)
+	s := NewService(d, &c, &l, r)
 
 	input := dto.ClientCreateInputDto{
 		Name:     "Test XXXX",

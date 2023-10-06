@@ -28,25 +28,25 @@ func NewClientCreate(log port.Log, client port.Client, input port.ClientCreateIn
 
 // Execute executes the service
 func (s *ClientCreate) Execute() error {
-	if err := validateInput(s.log, s.input); err != nil {
+	if err := s.validateInput(s.log, s.input); err != nil {
 		return err
 	}
-	if err := loadClient(s.input, s.client); err != nil {
+	if err := s.loadClient(s.input, s.client); err != nil {
 		return err
 	}
-	if err := duplicity(s.log, s.client, s.input); err != nil {
+	if err := s.duplicity(s.log, s.client, s.input); err != nil {
 		return err
 	}
-	if err := store(s.log, s.client, s.input); err != nil {
+	if err := s.store(s.log, s.client, s.input); err != nil {
 		return err
 	}
-	prepareOutput(s.client, s.output)
+	s.prepareOutput(s.client, s.output)
 	s.log.Infof(s.input, "created")
 	return nil
 }
 
 // loadClient loads a client from the input dto
-func loadClient(input port.ClientCreateInputDto, client port.Client) error {
+func (s *ClientCreate) loadClient(input port.ClientCreateInputDto, client port.Client) error {
 	input.Format()
 	name, nick, doc, phone, email := input.Get()
 	idoc, _ := strconv.ParseUint(doc, 10, 64)
@@ -58,7 +58,7 @@ func loadClient(input port.ClientCreateInputDto, client port.Client) error {
 }
 
 // validateInput validates input data of Create service
-func validateInput(log port.Log, input port.ClientCreateInputDto) error {
+func (s *ClientCreate) validateInput(log port.Log, input port.ClientCreateInputDto) error {
 	if err := input.Validate(); err != nil {
 		log.Infof(input, "bad request: "+err.Error())
 		return errors.New("bad request: " + err.Error())
@@ -67,14 +67,14 @@ func validateInput(log port.Log, input port.ClientCreateInputDto) error {
 }
 
 // duplicity checks if a document or email is already registered
-func duplicity(log port.Log, client port.Client, input port.ClientCreateInputDto) error {
+func (s *ClientCreate) duplicity(log port.Log, client port.Client, input port.ClientCreateInputDto) error {
 	message := ""
-	m, err := duplicityDocument(log, client, input)
+	m, err := s.duplicityDocument(log, client, input)
 	if err != nil {
 		return err
 	}
 	message += m
-	m, err = duplicityEmail(log, client, input)
+	m, err = s.duplicityEmail(log, client, input)
 	if err != nil {
 		return err
 	}
@@ -88,7 +88,7 @@ func duplicity(log port.Log, client port.Client, input port.ClientCreateInputDto
 }
 
 // duplicityDocument treats the document duplicity
-func duplicityDocument(log port.Log, client port.Client, input port.ClientCreateInputDto) (string, error) {
+func (s *ClientCreate) duplicityDocument(log port.Log, client port.Client, input port.ClientCreateInputDto) (string, error) {
 	b, err := client.DocumentDuplicity()
 	if err != nil {
 		log.Errorf(input, err)
@@ -101,7 +101,7 @@ func duplicityDocument(log port.Log, client port.Client, input port.ClientCreate
 }
 
 // duplicityEmail treats the email duplicity
-func duplicityEmail(log port.Log, client port.Client, input port.ClientCreateInputDto) (string, error) {
+func (s *ClientCreate) duplicityEmail(log port.Log, client port.Client, input port.ClientCreateInputDto) (string, error) {
 	e, err := client.EmailDuplicity()
 	if err != nil {
 		log.Errorf(input, err)
@@ -114,7 +114,7 @@ func duplicityEmail(log port.Log, client port.Client, input port.ClientCreateInp
 }
 
 // store stores a new client
-func store(log port.Log, client port.Client, input port.ClientCreateInputDto) error {
+func (s *ClientCreate) store(log port.Log, client port.Client, input port.ClientCreateInputDto) error {
 	// Store client
 	if err := client.Save(); err != nil {
 		log.Errorf(input, err)
@@ -124,7 +124,7 @@ func store(log port.Log, client port.Client, input port.ClientCreateInputDto) er
 }
 
 // prepareOutput prepares output data of Create service
-func prepareOutput(client port.Client, output port.ClientCreateOutputDto) {
+func (s *ClientCreate) prepareOutput(client port.Client, output port.ClientCreateOutputDto) {
 	id, name, nick, doc, phone, email := client.GetFormatted()
 	output.Fill(id, name, nick, doc, phone, email)
 }

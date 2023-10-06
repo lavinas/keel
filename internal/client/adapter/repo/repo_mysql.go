@@ -69,8 +69,10 @@ func (r *RepoMysql) ClientEmailDuplicity(email string) (bool, error) {
 }
 
 // ClientGetAll gets all clients
-func (r *RepoMysql) ClientLoad(set port.ClientSet) error {
-	row, err := r.db.Query(clientGetAll)
+func (r *RepoMysql) ClientLoad(page, perPage uint64, set port.ClientSet) error {
+	limit := perPage
+	offset := (page - 1) * perPage
+	row, err := r.db.Query(clientGetAll, limit, offset)
 	if err != nil {
 		return err
 	}
