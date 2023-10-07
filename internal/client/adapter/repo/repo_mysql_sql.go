@@ -11,6 +11,6 @@ const (
 	clientListFilterDoc          = ` AND document LIKE ?`
 	clientListFilterEmail        = ` AND email LIKE ?`
 	clientListPagination         = ` LIMIT ? OFFSET ?`
-	clientLoadById               = `SELECT id, name, nickname, document, phone, email FROM client WHERE id = ?`
+	clientLoadById               = `SELECT name, nickname, document, phone, email FROM client WHERE id = ?`
 	clientUpdateQuery            = `UPDATE client SET name = ?, nickname = ?, document = ?, phone = ?, email = ? WHERE id = ?`
 )

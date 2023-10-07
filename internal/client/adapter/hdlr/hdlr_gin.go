@@ -46,7 +46,7 @@ func (h *HandlerGin) ClientCreate(c *gin.Context) {
 	var output dto.ClientCreateOutputDto
 	if err := c.ShouldBindJSON(&input); err != nil {
 		h.log.Infof(input, "bad request: "+err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid json body"})
 		return
 	}
 	if err := h.service.ClientCreate(&input, &output); err != nil {
@@ -62,7 +62,7 @@ func (h *HandlerGin) ClientList(c *gin.Context) {
 	var output dto.ClientListOutputDto
 	if err := c.ShouldBindQuery(&input); err != nil {
 		h.log.Infof(input, "bad request: "+err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid json body"})
 		return
 	}
 	if err := h.service.ClientList(&input, &output); err != nil {
@@ -83,7 +83,7 @@ func (h *HandlerGin) ClientUpdate(c *gin.Context) {
 	id := c.Param("id")
 	if err := c.ShouldBindJSON(&input); err != nil {
 		h.log.Infof(input, "bad request: "+err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid json body"})
 		return
 	}
 	if err := h.service.ClientUpdate(id, &input, &output); err != nil {
