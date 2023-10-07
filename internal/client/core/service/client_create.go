@@ -79,6 +79,11 @@ func (s *ClientCreate) duplicity(log port.Log, client port.Client, input port.Cl
 		return err
 	}
 	message += m
+	m, err = s.duplicityNick(log, client, input)
+	if err != nil {
+		return err
+	}
+	message += m
 	if message != "" {
 		message = strings.Trim(message, " |")
 		log.Infof(input, "conflict: "+message)
@@ -109,6 +114,18 @@ func (s *ClientCreate) duplicityEmail(log port.Log, client port.Client, input po
 	}
 	if e {
 		return "email already registered", nil
+	}
+	return "", nil
+}
+
+func (s *ClientCreate) duplicityNick(log port.Log, client port.Client, input port.ClientCreateInputDto) (string, error) {
+	n, err := client.NickDuplicity()
+	if err != nil {
+		log.Errorf(input, err)
+		return "", errors.New("internal server error |")
+	}
+	if n {
+		return "nickname already registered", nil
 	}
 	return "", nil
 }

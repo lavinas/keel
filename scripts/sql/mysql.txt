@@ -13,3 +13,11 @@ CREATE TABLE cbs_client.client (
 ALTER TABLE cbs_client.client 
   ADD INDEX idx1 (nickname ASC);
 
+ALTER TABLE cbs_client.client 
+  ADD INDEX idx2 (document ASC);
+
+ALTER TABLE cbs_client.client 
+  ADD INDEX idx3 (email ASC);
+
+ALTER TABLE cbs_client.client 
+  ADD INDEX idx4 (phone ASC);

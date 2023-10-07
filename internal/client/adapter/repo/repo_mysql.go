@@ -1,7 +1,10 @@
 package repo
 
 import (
+	"context"
 	"database/sql"
+	"time"
+
 	_ "github.com/go-sql-driver/mysql"
 
 	"github.com/lavinas/keel/internal/client/core/port"
@@ -64,9 +67,9 @@ func (r *RepoMysql) ClientUpdate(client port.Client) error {
 }
 
 // ClientDocumentDuplicity checks if a document is already registered
-func (r *RepoMysql) ClientDocumentDuplicity(document uint64) (bool, error) {
+func (r *RepoMysql) ClientDocumentDuplicity(document uint64, id string) (bool, error) {
 	var count int
-	row := r.db.QueryRow(clientDocumentDuplicityQuery, document)
+	row := r.db.QueryRow(clientDocumentDuplicityQuery, document, id)
 	if err := row.Scan(&count); err != nil {
 		return false, err
 	}
@@ -74,9 +77,19 @@ func (r *RepoMysql) ClientDocumentDuplicity(document uint64) (bool, error) {
 }
 
 // ClientEmailDuplicity checks if an email is already registered
-func (r *RepoMysql) ClientEmailDuplicity(email string) (bool, error) {
+func (r *RepoMysql) ClientEmailDuplicity(email, id string) (bool, error) {
 	var count int
-	row := r.db.QueryRow(clientEmailDuplicityQuery, email)
+	row := r.db.QueryRow(clientEmailDuplicityQuery, email, id)
+	if err := row.Scan(&count); err != nil {
+		return false, err
+	}
+	return count > 0, nil
+}
+
+// ClientNickDuplicity checks if a nick is already registered
+func (r *RepoMysql) ClientNickDuplicity(nick, id string) (bool, error) {
+	var count int
+	row := r.db.QueryRow(clientNickDuplicityQuery, nick, id)
 	if err := row.Scan(&count); err != nil {
 		return false, err
 	}
@@ -85,32 +98,82 @@ func (r *RepoMysql) ClientEmailDuplicity(email string) (bool, error) {
 
 // ClientGetAll gets all clients
 func (r *RepoMysql) ClientLoadSet(page, perPage uint64, name, nick, doc, email string, set port.ClientSet) error {
-	query := clientListBase
-	q, args := loadFilters(name, nick, doc, email)
-	query += q
-	q, a := loadPagination(page, perPage)
-	query += q
-	args = append(args, a...)
-	row, err := r.db.Query(query, args...)
+	query, args := clientLoadSetQuery(page, perPage, name, nick, doc, email)
+	ctx, cancelfunc := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancelfunc()
+	stmt, err := r.db.PrepareContext(ctx, query)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+	row, err := stmt.QueryContext(ctx, args...)
 	if err != nil {
 		return err
 	}
 	defer row.Close()
-	if err := loadInterate(row, set); err != nil {
+	if err := clientLoadSetInterate(row, set); err != nil {
 		return err
 	}
 	return nil
 }
 
-// ClientLoadById gets a client by id
-func (r *RepoMysql) ClientLoadById(id string, client port.Client) error {
-	row := r.db.QueryRow(clientLoadById, id)
-	var name, nick, email string
+// ClientGetById gets a client by id
+func (r *RepoMysql) ClientGetById(id string, client port.Client) error {
+	row := r.db.QueryRow(clientGetById, id)
+	var rid, name, nick, email string
 	var doc, phone uint64
-	if err := row.Scan(&name, &nick, &doc, &phone, &email); err != nil {
+	if err := row.Scan(&rid, &name, &nick, &doc, &phone, &email); err != nil {
 		return err
 	}
-	client.Load(id, name, nick, doc, phone, email)
+	client.Load(rid, name, nick, doc, phone, email)
+	return nil
+}
+
+// ClientGetByNick gets a client by nick
+func (r *RepoMysql) ClientGetByNick(nick string, client port.Client) error {
+	row := r.db.QueryRow(clientGetByNick, nick)
+	var id, rnick, name, email string
+	var doc, phone uint64
+	if err := row.Scan(&id, &rnick, &name, &doc, &phone, &email); err != nil {
+		return err
+	}
+	client.Load(id, name, rnick, doc, phone, email)
+	return nil
+}
+
+// ClientGetByEmail gets a client by email
+func (r *RepoMysql) ClientGetByEmail(email string, client port.Client) error {
+	row := r.db.QueryRow(clientGetByEmail, email)
+	var id, name, nick, remail string
+	var doc, phone uint64
+	if err := row.Scan(&id, &name, &nick, &doc, &phone, &remail); err != nil {
+		return err
+	}
+	client.Load(id, name, nick, doc, phone, remail)
+	return nil
+}
+
+// ClientGetByDoc gets a client by doc
+func (r *RepoMysql) ClientGetByDoc(doc uint64, client port.Client) error {
+	row := r.db.QueryRow(clientGetByDoc, doc)
+	var id, name, nick, email string
+	var rdoc, phone uint64
+	if err := row.Scan(&id, &name, &nick, &rdoc, &phone, &email); err != nil {
+		return err
+	}
+	client.Load(id, name, nick, rdoc, phone, email)
+	return nil
+}
+
+// ClientGetByPhone gets a client by phone
+func (r *RepoMysql) ClientGetByPhone(phone uint64, client port.Client) error {
+	row := r.db.QueryRow(clientGetByPhone, phone)
+	var id, name, nick, email string
+	var doc, rphone uint64
+	if err := row.Scan(&id, &name, &nick, &doc, &rphone, &email); err != nil {
+		return err
+	}
+	client.Load(id, name, nick, doc, rphone, email)
 	return nil
 }
 
@@ -129,8 +192,11 @@ func (r *RepoMysql) ClientTruncate() error {
 }
 
 // Close closes the database connection
-func (r *RepoMysql) Close() {
-	r.db.Close()
+func (r *RepoMysql) Close() error {
+	if err := r.db.Close(); err != nil {
+		return err
+	}
+	return nil
 }
 
 // getField gets a field from a group in config file
@@ -142,8 +208,33 @@ func getField(c port.Config, field string) string {
 	return r
 }
 
-// loadFilters prepate the filters query Load
-func loadFilters(name, nick, doc, email string) (string, []interface{}) {
+// clientLoadSetQuery prepate the query for Load Set
+func clientLoadSetQuery(page, perPage uint64, name, nick, doc, email string) (string, []interface{}) {
+	query := clientListBase
+	q, args := clientLoadSetFilters(name, nick, doc, email)
+	query += q
+	q, a := clientLoadSetPagination(page, perPage)
+	query += q
+	args = append(args, a...)
+	return query, args
+
+}
+
+// clientLoadSetInterate iterates over the rows and append to the set
+func clientLoadSetInterate(row *sql.Rows, set port.ClientSet) error {
+	var id, name, nick, email string
+	var doc, phone uint64
+	for row.Next() {
+		if err := row.Scan(&id, &name, &nick, &doc, &phone, &email); err != nil {
+			return err
+		}
+		set.Append(id, name, nick, doc, phone, email)
+	}
+	return nil
+}
+
+// clientLoadSetFilters prepate the filters query Load
+func clientLoadSetFilters(name, nick, doc, email string) (string, []interface{}) {
 	query := ""
 	args := make([]interface{}, 0)
 	if name != "" {
@@ -165,8 +256,8 @@ func loadFilters(name, nick, doc, email string) (string, []interface{}) {
 	return query, args
 }
 
-// loadPagination prepate the pagination query Load
-func loadPagination(page, perPage uint64) (string, []interface{}) {
+// clientLoadSetPagination prepate the pagination query Load
+func clientLoadSetPagination(page, perPage uint64) (string, []interface{}) {
 	query := ""
 	args := make([]interface{}, 0)
 	// Pagination
@@ -174,17 +265,4 @@ func loadPagination(page, perPage uint64) (string, []interface{}) {
 	args = append(args, perPage)
 	args = append(args, (page-1)*perPage)
 	return query, args
-}
-
-// loadInterate iterates over the rows and append to the set
-func loadInterate(row *sql.Rows, set port.ClientSet) error {
-	var id, name, nick, email string
-	var doc, phone uint64
-	for row.Next() {
-		if err := row.Scan(&id, &name, &nick, &doc, &phone, &email); err != nil {
-			return err
-		}
-		set.Append(id, name, nick, doc, phone, email)
-	}
-	return nil
 }

@@ -47,9 +47,41 @@ func (c *Client) Load(id, name, nick string, doc, phone uint64, email string) {
 	c.ID, c.Name, c.Nickname, c.Document, c.Phone, c.Email = id, name, nick, doc, phone, email
 }
 
-// GetById loads a client by id from the repository
+// LoadById loads a client by id from the repository
 func (c *Client) LoadById(id string) error {
-	if err := c.repo.ClientLoadById(id, c); err != nil {
+	if err := c.repo.ClientGetById(id, c); err != nil {
+		return err
+	}
+	return nil
+}
+
+// LoadByNick loads a client by nick from the repository
+func (c *Client) LoadByNick(nick string) error {
+	if err := c.repo.ClientGetByNick(nick, c); err != nil {
+		return err
+	}
+	return nil
+}
+
+// LoadByEmail loads a client by email from the repository
+func (c *Client) LoadByEmail(email string) error {
+	if err := c.repo.ClientGetByEmail(email, c); err != nil {
+		return err
+	}
+	return nil
+}
+
+// LoadByDoc loads a client by doc from the repository
+func (c *Client) LoadByDoc(doc uint64) error {
+	if err := c.repo.ClientGetByDoc(doc, c); err != nil {
+		return err
+	}
+	return nil
+}
+
+// LoadByDoc loads a client by doc from the repository
+func (c *Client) LoadByPhone(phone uint64) error {
+	if err := c.repo.ClientGetByDoc(phone, c); err != nil {
 		return err
 	}
 	return nil
@@ -57,18 +89,25 @@ func (c *Client) LoadById(id string) error {
 
 // DocumentDuplicity checks if a document is already registered
 func (c *Client) DocumentDuplicity() (bool, error) {
-	return c.repo.ClientDocumentDuplicity(c.Document)
+	return c.repo.ClientDocumentDuplicity(c.Document, c.ID)
 }
 
 // EmailDuplicity checks if a email is already registered
 func (c *Client) EmailDuplicity() (bool, error) {
-	return c.repo.ClientEmailDuplicity(c.Email)
+	return c.repo.ClientEmailDuplicity(c.Email, c.ID)
 }
 
+// NickDuplicity checks if a nick is already registered
+func (c *Client) NickDuplicity() (bool, error) {
+	return c.repo.ClientNickDuplicity(c.Nickname, c.ID)
+}
+
+// Get returns the client values
 func (c *Client) Get() (string, string, string, uint64, uint64, string) {
 	return c.ID, c.Name, c.Nickname, c.Document, c.Phone, c.Email
 }
 
+// GetFormatted returns the client values formatted to string
 func (c *Client) GetFormatted() (string, string, string, string, string, string) {
 	doc := fmt.Sprintf("%d", c.Document)
 	if len(doc) <= 11 {

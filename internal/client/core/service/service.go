@@ -39,3 +39,8 @@ func (s *Service) ClientUpdate(id string, input port.ClientCreateInputDto, outpu
 	service_client := NewClientUpdate(s.log, s.domain.GetClient(input), id, input, output)
 	return service_client.Execute()
 }
+
+func (s *Service) ClientGet(param string, input port.ClientCreateInputDto, output port.ClientCreateOutputDto) error {
+	service_client := NewClientGet(s.log, s.domain.GetClient(input), param, input, output)
+	return service_client.Execute()
+}

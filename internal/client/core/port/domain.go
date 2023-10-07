@@ -11,8 +11,13 @@ type Client interface {
 	Create(name, nick string, doc, phone uint64, email string) error
 	Load(id, name, nick string, doc, phone uint64, email string)
 	LoadById(id string) error
+	LoadByNick(nick string) error
+	LoadByEmail(email string) error
+	LoadByDoc(doc uint64) error
+	LoadByPhone(phone uint64) error
 	DocumentDuplicity() (bool, error)
 	EmailDuplicity() (bool, error)
+	NickDuplicity() (bool, error)
 	Get() (string, string, string, uint64, uint64, string)
 	GetFormatted() (string, string, string, string, string, string)
 	Save() error

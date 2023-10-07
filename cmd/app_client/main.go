@@ -15,6 +15,7 @@ func main() {
 	c := config.NewConfig()
 	l := log.NewlogFile(".", "client", true)
 	r := repo.NewRepoMysql(c)
+	defer r.Close()
 	d := domain.NewDomain(r)
 	s := service.NewService(d, c, l, r)
 	h := hdlr.NewHandlerGin(l, s)

@@ -122,3 +122,8 @@ func (s *ServiceMock) ClientList(input port.ClientListInputDto, output port.Clie
 func (s *ServiceMock) ClientUpdate(id string, input port.ClientCreateInputDto, output port.ClientCreateOutputDto) error {
 	return nil
 }
+
+func (s *ServiceMock) ClientGet(param string, input port.ClientCreateInputDto, output port.ClientCreateOutputDto) error {
+	return nil
+}
+

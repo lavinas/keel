@@ -50,11 +50,12 @@ func (s *ClientUpdate) Execute() error {
 	if err := s.update(); err != nil {
 		return err
 	}
-	s.prepareOutput(s.client, s.output)
+	s.prepareOutput()
 	s.log.Infof(s.input, "updated")
 	return nil
 }
 
+// validateInput validates input data of Update service
 func (s *ClientUpdate) validateInput() error {
 	if err := s.input.ValidateUpdate(); err != nil {
 		s.log.Infof(s.input, "bad request: "+err.Error())
@@ -63,7 +64,12 @@ func (s *ClientUpdate) validateInput() error {
 	return nil
 }
 
+// loadClient loads a client from repository
 func (s *ClientUpdate) loadClient() error {
+	if err := s.input.FormatUpdate(); err != nil {
+		s.log.Infof(s.input, "bad request: "+err.Error())
+		return errors.New("bad request: " + err.Error())
+	}
 	if err := s.client.LoadById(s.id); err != nil {
 		s.log.Infof(s.input, "not found: "+err.Error())
 		return errors.New("not found: " + err.Error())
@@ -74,7 +80,7 @@ func (s *ClientUpdate) loadClient() error {
 // duplicity checks if a document or email is already registered
 func (s *ClientUpdate) duplicity() error {
 	message := ""
-	_, _, doc, _, email := s.input.Get()
+	_, nick, doc, _, email := s.input.Get()
 	if strings.Trim(doc, " ") != "" {
 		m, err := s.duplicityDocument()
 		if err != nil {
@@ -84,6 +90,13 @@ func (s *ClientUpdate) duplicity() error {
 	}
 	if strings.Trim(email, " ") != "" {
 		m, err := s.duplicityEmail()
+		if err != nil {
+			return err
+		}
+		message += m
+	}
+	if strings.Trim(nick, " ") != "" {
+		m, err := s.duplicityNick()
 		if err != nil {
 			return err
 		}
@@ -123,6 +136,19 @@ func (s *ClientUpdate) duplicityEmail() (string, error) {
 	return "", nil
 }
 
+// duplicityNick treats the nickname duplicity
+func (s *ClientUpdate) duplicityNick() (string, error) {
+	n, err := s.client.NickDuplicity()
+	if err != nil {
+		s.log.Errorf(s.input, err)
+		return "", errors.New("internal server error |")
+	}
+	if n {
+		return "nickname already registered", nil
+	}
+	return "", nil
+}
+
 // update updates a client
 func (s *ClientUpdate) update() error {
 	_, uname, unick, udoc, uphone, uemail := s.client.Get()
@@ -151,7 +177,7 @@ func (s *ClientUpdate) update() error {
 }
 
 // prepareOutput prepares output data of Update service
-func (s *ClientUpdate) prepareOutput(client port.Client, output port.ClientCreateOutputDto) {
-	id, name, nick, doc, phone, email := client.GetFormatted()
-	output.Fill(id, name, nick, doc, phone, email)
+func (s *ClientUpdate) prepareOutput() {
+	id, name, nick, doc, phone, email := s.client.GetFormatted()
+	s.output.Fill(id, name, nick, doc, phone, email)
 }
