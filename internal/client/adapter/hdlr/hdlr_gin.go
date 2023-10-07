@@ -32,6 +32,7 @@ func (h *HandlerGin) MapHandlers() {
 	h.gin.GET("/client/list", h.ClientList)
 	h.gin.POST("/client/create", h.ClientCreate)
 	h.gin.POST("/client/update/:id", h.ClientUpdate)
+	h.gin.GET("/client/get/:param", h.ClientGet)
 }
 
 // Run runs the gin service
@@ -87,6 +88,18 @@ func (h *HandlerGin) ClientUpdate(c *gin.Context) {
 		return
 	}
 	if err := h.service.ClientUpdate(id, &input, &output); err != nil {
+		c.JSON(h.gin.MapError(err.Error()), gin_wrapper.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, output)
+}
+
+// ClientGet responds for call of get a client
+func (h *HandlerGin) ClientGet(c *gin.Context) {
+	var input dto.ClientCreateInputDto
+	var output dto.ClientCreateOutputDto
+	param := c.Param("param")
+	if err := h.service.ClientGet(param, &input, &output); err != nil {
 		c.JSON(h.gin.MapError(err.Error()), gin_wrapper.H{"error": err.Error()})
 		return
 	}

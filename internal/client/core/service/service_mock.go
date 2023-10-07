@@ -105,24 +105,24 @@ func (r *RepoMock) ClientLoadSet(page, perPage uint64, name, nick, doc, email st
 	return nil
 }
 
-func (r *RepoMock) ClientGetById(id string, client port.Client) error {
-	return nil
+func (r *RepoMock) ClientGetById(id string, client port.Client) (bool, error) {
+	return false, nil
 }
 
-func (r *RepoMock) ClientGetByNick(nick string, client port.Client) error {
-	return nil
+func (r *RepoMock) ClientGetByNick(nick string, client port.Client) (bool, error) {
+	return false, nil
 }
 
-func (r *RepoMock) ClientGetByEmail(email string, client port.Client) error {
-	return nil
+func (r *RepoMock) ClientGetByEmail(email string, client port.Client) (bool, error) {
+	return false, nil
 }
 
-func (r *RepoMock) ClientGetByDoc(doc uint64, client port.Client) error {
-	return nil
+func (r *RepoMock) ClientGetByDoc(doc uint64, client port.Client) (bool, error) {
+	return false, nil
 }
 
-func (r *RepoMock) ClientGetByPhone(phone uint64, client port.Client) error {
-	return nil
+func (r *RepoMock) ClientGetByPhone(phone uint64, client port.Client) (bool, error) {
+	return false, nil
 }
 
 func (r *RepoMock) ClientUpdate(client port.Client) error {

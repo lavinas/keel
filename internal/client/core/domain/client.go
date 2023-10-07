@@ -48,43 +48,28 @@ func (c *Client) Load(id, name, nick string, doc, phone uint64, email string) {
 }
 
 // LoadById loads a client by id from the repository
-func (c *Client) LoadById(id string) error {
-	if err := c.repo.ClientGetById(id, c); err != nil {
-		return err
-	}
-	return nil
+func (c *Client) LoadById(id string) (bool, error) {
+	return c.repo.ClientGetById(id, c)
 }
 
 // LoadByNick loads a client by nick from the repository
-func (c *Client) LoadByNick(nick string) error {
-	if err := c.repo.ClientGetByNick(nick, c); err != nil {
-		return err
-	}
-	return nil
+func (c *Client) LoadByNick(nick string) (bool, error) {
+	return c.repo.ClientGetByNick(nick, c)
 }
 
 // LoadByEmail loads a client by email from the repository
-func (c *Client) LoadByEmail(email string) error {
-	if err := c.repo.ClientGetByEmail(email, c); err != nil {
-		return err
-	}
-	return nil
+func (c *Client) LoadByEmail(email string) (bool, error) {
+	return c.repo.ClientGetByEmail(email, c)
 }
 
 // LoadByDoc loads a client by doc from the repository
-func (c *Client) LoadByDoc(doc uint64) error {
-	if err := c.repo.ClientGetByDoc(doc, c); err != nil {
-		return err
-	}
-	return nil
+func (c *Client) LoadByDoc(doc uint64) (bool, error) {
+	return c.repo.ClientGetByDoc(doc, c)
 }
 
 // LoadByDoc loads a client by doc from the repository
-func (c *Client) LoadByPhone(phone uint64) error {
-	if err := c.repo.ClientGetByDoc(phone, c); err != nil {
-		return err
-	}
-	return nil
+func (c *Client) LoadByPhone(phone uint64) (bool, error) {
+	return c.repo.ClientGetByDoc(phone, c)
 }
 
 // DocumentDuplicity checks if a document is already registered

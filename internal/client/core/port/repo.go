@@ -7,11 +7,11 @@ type Repo interface {
 	ClientEmailDuplicity(email, id string) (bool, error)
 	ClientNickDuplicity(nick, id string) (bool, error)
 	ClientLoadSet(page, perPage uint64, name, nick, doc, email string, set ClientSet) error
-	ClientGetById(id string, client Client) error
-	ClientGetByNick(nick string, client Client) error
-	ClientGetByEmail(email string, client Client) error
-	ClientGetByDoc(doc uint64, client Client) error
-	ClientGetByPhone(phone uint64, client Client) error
+	ClientGetById(id string, client Client) (bool, error)
+	ClientGetByNick(nick string, client Client) (bool, error)
+	ClientGetByEmail(email string, client Client) (bool, error)
+	ClientGetByDoc(doc uint64, client Client) (bool, error)
+	ClientGetByPhone(phone uint64, client Client) (bool, error)
 	ClientUpdate(client Client) error
 	Close() error
 }

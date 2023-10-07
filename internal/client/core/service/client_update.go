@@ -70,9 +70,14 @@ func (s *ClientUpdate) loadClient() error {
 		s.log.Infof(s.input, "bad request: "+err.Error())
 		return errors.New("bad request: " + err.Error())
 	}
-	if err := s.client.LoadById(s.id); err != nil {
-		s.log.Infof(s.input, "not found: "+err.Error())
-		return errors.New("not found: " + err.Error())
+	result, err := s.client.LoadById(s.id)
+	if err != nil {
+		s.log.Infof(s.input, err.Error())
+		return errors.New("internal error")
+	}
+	if !result {
+		s.log.Infof(s.input, "not found")
+		return errors.New("not found")
 	}
 	return nil
 }

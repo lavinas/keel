@@ -118,63 +118,78 @@ func (r *RepoMysql) ClientLoadSet(page, perPage uint64, name, nick, doc, email s
 }
 
 // ClientGetById gets a client by id
-func (r *RepoMysql) ClientGetById(id string, client port.Client) error {
+func (r *RepoMysql) ClientGetById(id string, client port.Client) (bool, error) {
 	row := r.db.QueryRow(clientGetById, id)
 	var rid, name, nick, email string
 	var doc, phone uint64
 	if err := row.Scan(&rid, &name, &nick, &doc, &phone, &email); err != nil {
-		return err
+		if err == sql.ErrNoRows {
+			return false, nil
+		}
+		return false, err
 	}
 	client.Load(rid, name, nick, doc, phone, email)
-	return nil
+	return true, nil
 }
 
 // ClientGetByNick gets a client by nick
-func (r *RepoMysql) ClientGetByNick(nick string, client port.Client) error {
+func (r *RepoMysql) ClientGetByNick(nick string, client port.Client) (bool, error) {
 	row := r.db.QueryRow(clientGetByNick, nick)
 	var id, rnick, name, email string
 	var doc, phone uint64
 	if err := row.Scan(&id, &rnick, &name, &doc, &phone, &email); err != nil {
-		return err
+		if err == sql.ErrNoRows {
+			return false, nil
+		}
+		return false, err
 	}
 	client.Load(id, name, rnick, doc, phone, email)
-	return nil
+	return true, nil
 }
 
 // ClientGetByEmail gets a client by email
-func (r *RepoMysql) ClientGetByEmail(email string, client port.Client) error {
+func (r *RepoMysql) ClientGetByEmail(email string, client port.Client) (bool, error) {
 	row := r.db.QueryRow(clientGetByEmail, email)
 	var id, name, nick, remail string
 	var doc, phone uint64
 	if err := row.Scan(&id, &name, &nick, &doc, &phone, &remail); err != nil {
-		return err
+		if err == sql.ErrNoRows {
+			return false, nil
+		}
+		return false, err
 	}
 	client.Load(id, name, nick, doc, phone, remail)
-	return nil
+	return true, nil
 }
 
 // ClientGetByDoc gets a client by doc
-func (r *RepoMysql) ClientGetByDoc(doc uint64, client port.Client) error {
+func (r *RepoMysql) ClientGetByDoc(doc uint64, client port.Client) (bool, error) {
 	row := r.db.QueryRow(clientGetByDoc, doc)
 	var id, name, nick, email string
 	var rdoc, phone uint64
 	if err := row.Scan(&id, &name, &nick, &rdoc, &phone, &email); err != nil {
-		return err
+		if err == sql.ErrNoRows {
+			return false, nil
+		}
+		return false, err
 	}
 	client.Load(id, name, nick, rdoc, phone, email)
-	return nil
+	return true, nil
 }
 
 // ClientGetByPhone gets a client by phone
-func (r *RepoMysql) ClientGetByPhone(phone uint64, client port.Client) error {
+func (r *RepoMysql) ClientGetByPhone(phone uint64, client port.Client) (bool, error) {
 	row := r.db.QueryRow(clientGetByPhone, phone)
 	var id, name, nick, email string
 	var doc, rphone uint64
 	if err := row.Scan(&id, &name, &nick, &doc, &rphone, &email); err != nil {
-		return err
+		if err == sql.ErrNoRows {
+			return false, nil
+		}
+		return false, err
 	}
 	client.Load(id, name, nick, doc, rphone, email)
-	return nil
+	return true, nil
 }
 
 // ClientTruncate truncates the client table
