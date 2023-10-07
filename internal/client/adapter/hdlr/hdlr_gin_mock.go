@@ -126,4 +126,3 @@ func (s *ServiceMock) ClientUpdate(id string, input port.ClientCreateInputDto, o
 func (s *ServiceMock) ClientGet(param string, input port.ClientCreateInputDto, output port.ClientCreateOutputDto) error {
 	return nil
 }
-
