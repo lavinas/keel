@@ -17,7 +17,8 @@ const (
 
 // Repo is a service to interact with the database
 type RepoMysql struct {
-	db *sql.DB
+	db     *sql.DB
+	config port.Config
 }
 
 // NewRepo creates a new Repo service
@@ -31,7 +32,7 @@ func NewRepoMysql(c port.Config) *RepoMysql {
 	if err != nil {
 		panic(err)
 	}
-	return &RepoMysql{db: db}
+	return &RepoMysql{db: db, config: c}
 }
 
 // Create creates a new client
@@ -98,7 +99,7 @@ func (r *RepoMysql) ClientNickDuplicity(nick, id string) (bool, error) {
 
 // ClientGetAll gets all clients
 func (r *RepoMysql) ClientLoadSet(page, perPage uint64, name, nick, doc, email string, set port.ClientSet) error {
-	query, args := clientLoadSetQuery(page, perPage, name, nick, doc, email)
+	query, args := r.clientLoadSetQuery(page, perPage, name, nick, doc, email)
 	ctx, cancelfunc := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancelfunc()
 	stmt, err := r.db.PrepareContext(ctx, query)
@@ -111,7 +112,7 @@ func (r *RepoMysql) ClientLoadSet(page, perPage uint64, name, nick, doc, email s
 		return err
 	}
 	defer row.Close()
-	if err := clientLoadSetInterate(row, set); err != nil {
+	if err := r.clientLoadSetInterate(row, set); err != nil {
 		return err
 	}
 	return nil
@@ -214,21 +215,12 @@ func (r *RepoMysql) Close() error {
 	return nil
 }
 
-// getField gets a field from a group in config file
-func getField(c port.Config, field string) string {
-	r, err := c.GetField(groupMysql, field)
-	if err != nil {
-		panic(err)
-	}
-	return r
-}
-
 // clientLoadSetQuery prepate the query for Load Set
-func clientLoadSetQuery(page, perPage uint64, name, nick, doc, email string) (string, []interface{}) {
-	query := clientListBase
-	q, args := clientLoadSetFilters(name, nick, doc, email)
+func (r *RepoMysql) clientLoadSetQuery(page, perPage uint64, name, nick, doc, email string) (string, []interface{}) {
+	query := clientSetBase
+	q, args := r.clientLoadSetFilters(name, nick, doc, email)
 	query += q
-	q, a := clientLoadSetPagination(page, perPage)
+	q, a := r.clientLoadSetPagination(page, perPage)
 	query += q
 	args = append(args, a...)
 	return query, args
@@ -236,7 +228,7 @@ func clientLoadSetQuery(page, perPage uint64, name, nick, doc, email string) (st
 }
 
 // clientLoadSetInterate iterates over the rows and append to the set
-func clientLoadSetInterate(row *sql.Rows, set port.ClientSet) error {
+func (r *RepoMysql) clientLoadSetInterate(row *sql.Rows, set port.ClientSet) error {
 	var id, name, nick, email string
 	var doc, phone uint64
 	for row.Next() {
@@ -249,35 +241,44 @@ func clientLoadSetInterate(row *sql.Rows, set port.ClientSet) error {
 }
 
 // clientLoadSetFilters prepate the filters query Load
-func clientLoadSetFilters(name, nick, doc, email string) (string, []interface{}) {
+func (r *RepoMysql) clientLoadSetFilters(name, nick, doc, email string) (string, []interface{}) {
 	query := ""
 	args := make([]interface{}, 0)
 	if name != "" {
-		query += clientListFilterName
+		query += clientSetFilterName
 		args = append(args, "%"+name+"%")
 	}
 	if nick != "" {
-		query += clientListFilterNick
+		query += clientSetFilterNick
 		args = append(args, "%"+nick+"%")
 	}
 	if doc != "" {
-		query += clientListFilterDoc
+		query += clientSetFilterDoc
 		args = append(args, "%"+doc+"%")
 	}
 	if email != "" {
-		query += clientListFilterEmail
+		query += clientSetFilterEmail
 		args = append(args, "%"+email+"%")
 	}
 	return query, args
 }
 
 // clientLoadSetPagination prepate the pagination query Load
-func clientLoadSetPagination(page, perPage uint64) (string, []interface{}) {
+func (r *RepoMysql) clientLoadSetPagination(page, perPage uint64) (string, []interface{}) {
 	query := ""
 	args := make([]interface{}, 0)
 	// Pagination
-	query += clientListPagination
+	query += clientSetPagination
 	args = append(args, perPage)
 	args = append(args, (page-1)*perPage)
 	return query, args
+}
+
+// getField gets a field from a group in config file
+func getField(c port.Config, field string) string {
+	r, err := c.GetField(groupMysql, field)
+	if err != nil {
+		panic(err)
+	}
+	return r
 }

@@ -14,17 +14,15 @@ type ClientGet struct {
 	log    port.Log
 	client port.Client
 	param  string
-	input  port.ClientCreateInputDto
 	output port.ClientCreateOutputDto
 }
 
 // NewClientGet creates a new client get service
-func NewClientGet(log port.Log, client port.Client, param string, input port.ClientCreateInputDto, output port.ClientCreateOutputDto) *ClientGet {
+func NewClientGet(log port.Log, client port.Client, param string, output port.ClientCreateOutputDto) *ClientGet {
 	return &ClientGet{
 		log:    log,
 		client: client,
 		param:  param,
-		input:  input,
 		output: output,
 	}
 }
@@ -32,14 +30,14 @@ func NewClientGet(log port.Log, client port.Client, param string, input port.Cli
 // Execute executes the service
 func (s *ClientGet) Execute() error {
 	if s.param == "" {
-		s.log.Infof(s.input, "bad request: blank param")
+		s.log.Info("bad request: blank param")
 		return errors.New("bad request: blank param")
 	}
 	if err := s.load(); err != nil {
 		return err
 	}
 	s.prepareOutput(s.client, s.output)
-	s.log.Infof(s.input, "get")
+	s.log.Info("get: " + s.param)
 	return nil
 }
 
@@ -59,7 +57,7 @@ func (s *ClientGet) load() error {
 			return nil
 		}
 	}
-	maps2 := map[string]func(uint64) (bool, error) {
+	maps2 := map[string]func(uint64) (bool, error){
 		"document": s.client.LoadByDoc,
 		"phone":    s.client.LoadByPhone,
 	}
@@ -76,8 +74,8 @@ func (s *ClientGet) load() error {
 			return nil
 		}
 	}
-	s.log.Infof(s.input, "not found")
-	return errors.New("not found")
+	s.log.Info("not found: " + s.param)
+	return errors.New("not found: " + s.param)
 }
 
 // prepareOutput prepares the output data

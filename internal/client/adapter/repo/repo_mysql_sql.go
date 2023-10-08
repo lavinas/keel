@@ -6,12 +6,12 @@ const (
 	clientEmailDuplicityQuery    = `SELECT COUNT(1) count FROM client WHERE email = ? and id != ?`
 	clientNickDuplicityQuery     = `SELECT COUNT(1) count FROM client WHERE nickname = ? and id != ?`
 	clientTruncateQuery          = `TRUNCATE TABLE client`
-	clientListBase               = `SELECT id, name, nickname, document, phone, email FROM client where 1 = 1`
-	clientListFilterName         = ` AND name LIKE ?`
-	clientListFilterNick         = ` AND nickname LIKE ?`
-	clientListFilterDoc          = ` AND document LIKE ?`
-	clientListFilterEmail        = ` AND email LIKE ?`
-	clientListPagination         = ` LIMIT ? OFFSET ?`
+	clientSetBase                = `SELECT id, name, nickname, document, phone, email FROM client where 1 = 1`
+	clientSetFilterName          = ` AND name LIKE ?`
+	clientSetFilterNick          = ` AND nickname LIKE ?`
+	clientSetFilterDoc           = ` AND document LIKE ?`
+	clientSetFilterEmail         = ` AND email LIKE ?`
+	clientSetPagination          = ` LIMIT ? OFFSET ?`
 	clientUpdateQuery            = `UPDATE client SET name = ?, nickname = ?, document = ?, phone = ?, email = ? WHERE id = ?`
 	clientGetById                = `SELECT id, name, nickname, document, phone, email FROM client WHERE id = ?`
 	clientGetByNick              = `SELECT id, name, nickname, document, phone, email FROM client WHERE nickname = ?`

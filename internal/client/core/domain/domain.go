@@ -17,7 +17,7 @@ func NewDomain(repo port.Repo) *Domain {
 }
 
 // GetClient returns a new client domain model when a input dto is provided
-func (c *Domain) GetClient(input port.ClientCreateInputDto) port.Client {
+func (c *Domain) GetClient() port.Client {
 	return NewClient(c.repo)
 }
 

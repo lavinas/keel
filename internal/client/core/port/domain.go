@@ -2,7 +2,7 @@ package port
 
 // Domain is the interface that wraps the methods to interact with the database for the client domain
 type Domain interface {
-	GetClient(input ClientCreateInputDto) Client
+	GetClient() Client
 	GetClientSet() ClientSet
 }
 
