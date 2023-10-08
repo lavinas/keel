@@ -29,9 +29,9 @@ func NewHandlerGin(log port.Log, service port.Service) *HandlerGin {
 
 // MapHandlers maps the handlers
 func (h *HandlerGin) MapHandlers() {
-	h.gin.GET("/client/list", h.ClientList)
 	h.gin.POST("/client/insert", h.ClientInsert)
 	h.gin.POST("/client/update/:id", h.ClientUpdate)
+	h.gin.GET("/client/list", h.ClientList)
 	h.gin.GET("/client/get/:param", h.ClientGet)
 }
 
