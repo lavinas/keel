@@ -21,21 +21,21 @@ func TestInsert(t *testing.T) {
 	s := ServiceMock{}
 
 	h := NewHandlerGin(&l, &s)
-	h.ClientInsert(ctx)
+	h.Insert(ctx)
 
 	if w.Code != http.StatusCreated {
 		t.Errorf("Invalid result: %v", w.Code)
 	}
 }
 
-func TestClientList(t *testing.T) {
+func TestFind(t *testing.T) {
 	w := httptest.NewRecorder()
 	ctx := GetTestGinContext(w)
 	l := LogMock{}
 	s := ServiceMock{}
 
 	h := NewHandlerGin(&l, &s)
-	h.ClientList(ctx)
+	h.Find(ctx)
 
 	if w.Code != http.StatusNoContent {
 		t.Errorf("Invalid result: %v %s", w.Code, w.Body.String())

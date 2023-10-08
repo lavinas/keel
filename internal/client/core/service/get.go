@@ -9,17 +9,17 @@ import (
 	"github.com/lavinas/keel/internal/client/core/port"
 )
 
-// ClientGet is the service for getting a client
-type ClientGet struct {
+// Get is the service for getting a client
+type Get struct {
 	log    port.Log
 	client port.Client
 	param  string
-	output port.ClientInserOutputDto
+	output port.InsertOutputDto
 }
 
-// NewClientGet creates a new client get service
-func NewClientGet(log port.Log, client port.Client, param string, output port.ClientInserOutputDto) *ClientGet {
-	return &ClientGet{
+// NewGet creates a new client get service
+func NewGet(log port.Log, client port.Client, param string, output port.InsertOutputDto) *Get {
+	return &Get{
 		log:    log,
 		client: client,
 		param:  param,
@@ -28,7 +28,7 @@ func NewClientGet(log port.Log, client port.Client, param string, output port.Cl
 }
 
 // Execute executes the service
-func (s *ClientGet) Execute() error {
+func (s *Get) Execute() error {
 	if s.param == "" {
 		s.log.Info("bad request: blank param")
 		return errors.New("bad request: blank param")
@@ -42,7 +42,7 @@ func (s *ClientGet) Execute() error {
 }
 
 // loadClient loads a client from the repository
-func (s *ClientGet) load() error {
+func (s *Get) load() error {
 	maps := map[string]func(string) (bool, error){
 		"id":       s.client.LoadById,
 		"nickname": s.client.LoadByNick,
@@ -79,7 +79,7 @@ func (s *ClientGet) load() error {
 }
 
 // prepareOutput prepares the output data
-func (s *ClientGet) prepareOutput() {
+func (s *Get) prepareOutput() {
 	id, name, nick, doc, phone, email := s.client.GetFormatted()
 	s.output.Fill(id, name, nick, doc, phone, email)
 }

@@ -8,18 +8,18 @@ import (
 	"github.com/lavinas/keel/internal/client/core/port"
 )
 
-// ClientList is the service used to list all clients
-type ClientList struct {
+// Find is the service used to list all clients
+type Find struct {
 	config  port.Config
 	log     port.Log
 	clients port.ClientSet
-	input   port.ClientListInputDto
-	output  port.ClientListOutputDto
+	input   port.FindInputDto
+	output  port.FindOutputDto
 }
 
-// NewClientList creates a new ClientList
-func NewClientList(config port.Config, log port.Log, clients port.ClientSet, input port.ClientListInputDto, output port.ClientListOutputDto) *ClientList {
-	return &ClientList{
+// NewFind creates a new Find
+func NewFind(config port.Config, log port.Log, clients port.ClientSet, input port.FindInputDto, output port.FindOutputDto) *Find {
+	return &Find{
 		config:  config,
 		log:     log,
 		clients: clients,
@@ -29,7 +29,7 @@ func NewClientList(config port.Config, log port.Log, clients port.ClientSet, inp
 }
 
 // Execute executes the service to list all clients
-func (s *ClientList) Execute() error {
+func (s *Find) Execute() error {
 	if err := s.validateInput(s.log, s.input); err != nil {
 		return err
 	}
@@ -43,7 +43,7 @@ func (s *ClientList) Execute() error {
 	return nil
 }
 
-func (s *ClientList) validateInput(log port.Log, input port.ClientListInputDto) error {
+func (s *Find) validateInput(log port.Log, input port.FindInputDto) error {
 	if err := input.Validate(); err != nil {
 		log.Infof(input, "bad request: "+err.Error())
 		return errors.New("bad request: " + err.Error())
@@ -52,7 +52,7 @@ func (s *ClientList) validateInput(log port.Log, input port.ClientListInputDto) 
 }
 
 // getPage returns the page and perPage values from the input dto
-func (s *ClientList) getAll() (uint64, uint64, string, string, string, string) {
+func (s *Find) getAll() (uint64, uint64, string, string, string, string) {
 	page, perPage, name, nick, doc, email := s.input.Get()
 	if page == "" {
 		page = "1"

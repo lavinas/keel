@@ -1,8 +1,8 @@
 package port
 
 type Service interface {
-	ClientInsert(input ClientInsertInputDto, output ClientInserOutputDto) error
-	ClientList(input ClientListInputDto, output ClientListOutputDto) error
-	ClientUpdate(id string, input ClientInsertInputDto, output ClientInserOutputDto) error
-	ClientGet(param string, input ClientInsertInputDto, output ClientInserOutputDto) error
+	Insert(input InsertInputDto, output InsertOutputDto) error
+	Find(input FindInputDto, output FindOutputDto) error
+	Update(id string, input InsertInputDto, output InsertOutputDto) error
+	Get(param string, input InsertInputDto, output InsertOutputDto) error
 }

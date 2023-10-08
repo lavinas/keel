@@ -22,26 +22,26 @@ func NewService(domain port.Domain, config port.Config, log port.Log, repo port.
 	}
 }
 
-// ClientInsert is orquestration of Creating a new client
-func (s *Service) ClientInsert(input port.ClientInsertInputDto, output port.ClientInserOutputDto) error {
-	service_client := NewClientInsert(s.log, s.domain.GetClient(), input, output)
+// Insert is orquestration of Creating a new client
+func (s *Service) Insert(input port.InsertInputDto, output port.InsertOutputDto) error {
+	service_client := NewInsert(s.log, s.domain.GetClient(), input, output)
 	return service_client.Execute()
 }
 
-// ClientList is orquestration of Updating a client
-func (s *Service) ClientList(input port.ClientListInputDto, output port.ClientListOutputDto) error {
-	service_client := NewClientList(s.config, s.log, s.domain.GetClientSet(), input, output)
+// Find is orquestration of Updating a client
+func (s *Service) Find(input port.FindInputDto, output port.FindOutputDto) error {
+	service_client := NewFind(s.config, s.log, s.domain.GetClientSet(), input, output)
 	return service_client.Execute()
 }
 
-// ClientUpdate is orquestration of Updating a client
-func (s *Service) ClientUpdate(id string, input port.ClientInsertInputDto, output port.ClientInserOutputDto) error {
-	service_client := NewClientUpdate(s.log, s.domain.GetClient(), id, input, output)
+// Update is orquestration of Updating a client
+func (s *Service) Update(id string, input port.InsertInputDto, output port.InsertOutputDto) error {
+	service_client := NewUpdate(s.log, s.domain.GetClient(), id, input, output)
 	return service_client.Execute()
 }
 
-// ClientGet is orquestration of Getting a client
-func (s *Service) ClientGet(param string, input port.ClientInsertInputDto, output port.ClientInserOutputDto) error {
-	service_client := NewClientGet(s.log, s.domain.GetClient(), param, output)
+// Get is orquestration of Getting a client
+func (s *Service) Get(param string, input port.InsertInputDto, output port.InsertOutputDto) error {
+	service_client := NewGet(s.log, s.domain.GetClient(), param, output)
 	return service_client.Execute()
 }

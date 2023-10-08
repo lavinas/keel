@@ -8,17 +8,17 @@ import (
 	"github.com/lavinas/keel/internal/client/core/port"
 )
 
-// ClientInsert is the service for creating a new client
-type ClientInsert struct {
+// Insert is the service for creating a new client
+type Insert struct {
 	log    port.Log
 	client port.Client
-	input  port.ClientInsertInputDto
-	output port.ClientInserOutputDto
+	input  port.InsertInputDto
+	output port.InsertOutputDto
 }
 
-// NewClientInsert creates a new client create service
-func NewClientInsert(log port.Log, client port.Client, input port.ClientInsertInputDto, output port.ClientInserOutputDto) *ClientInsert {
-	return &ClientInsert{
+// NewInsert creates a new client create service
+func NewInsert(log port.Log, client port.Client, input port.InsertInputDto, output port.InsertOutputDto) *Insert {
+	return &Insert{
 		log:    log,
 		client: client,
 		input:  input,
@@ -27,7 +27,7 @@ func NewClientInsert(log port.Log, client port.Client, input port.ClientInsertIn
 }
 
 // Execute executes the service
-func (s *ClientInsert) Execute() error {
+func (s *Insert) Execute() error {
 	if err := s.validateInput(); err != nil {
 		return err
 	}
@@ -46,7 +46,7 @@ func (s *ClientInsert) Execute() error {
 }
 
 // loadClient loads a client from the input dto
-func (s *ClientInsert) loadClient() error {
+func (s *Insert) loadClient() error {
 	s.input.Format()
 	name, nick, doc, phone, email := s.input.Get()
 	idoc, _ := strconv.ParseUint(doc, 10, 64)
@@ -58,7 +58,7 @@ func (s *ClientInsert) loadClient() error {
 }
 
 // validateInput validates input data of Insert service
-func (s *ClientInsert) validateInput() error {
+func (s *Insert) validateInput() error {
 	if err := s.input.Validate(); err != nil {
 		s.log.Infof(s.input, "bad request: "+err.Error())
 		return errors.New("bad request: " + err.Error())
@@ -67,7 +67,7 @@ func (s *ClientInsert) validateInput() error {
 }
 
 // duplicity checks if a document or email is already registered
-func (s *ClientInsert) duplicity() error {
+func (s *Insert) duplicity() error {
 	message := ""
 	m, err := s.duplicityDocument()
 	if err != nil {
@@ -93,7 +93,7 @@ func (s *ClientInsert) duplicity() error {
 }
 
 // duplicityDocument treats the document duplicity
-func (s *ClientInsert) duplicityDocument() (string, error) {
+func (s *Insert) duplicityDocument() (string, error) {
 	b, err := s.client.DocumentDuplicity()
 	if err != nil {
 		s.log.Errorf(s.input, err)
@@ -106,7 +106,7 @@ func (s *ClientInsert) duplicityDocument() (string, error) {
 }
 
 // duplicityEmail treats the email duplicity
-func (s *ClientInsert) duplicityEmail() (string, error) {
+func (s *Insert) duplicityEmail() (string, error) {
 	e, err := s.client.EmailDuplicity()
 	if err != nil {
 		s.log.Errorf(s.input, err)
@@ -118,7 +118,7 @@ func (s *ClientInsert) duplicityEmail() (string, error) {
 	return "", nil
 }
 
-func (s *ClientInsert) duplicityNick() (string, error) {
+func (s *Insert) duplicityNick() (string, error) {
 	n, err := s.client.NickDuplicity()
 	if err != nil {
 		s.log.Errorf(s.input, err)
@@ -131,7 +131,7 @@ func (s *ClientInsert) duplicityNick() (string, error) {
 }
 
 // store stores a new client
-func (s *ClientInsert) store() error {
+func (s *Insert) store() error {
 	// Store client
 	if err := s.client.Save(); err != nil {
 		s.log.Errorf(s.input, err)
@@ -141,7 +141,7 @@ func (s *ClientInsert) store() error {
 }
 
 // prepareOutput prepares output data of Insert service
-func (s *ClientInsert) prepareOutput() {
+func (s *Insert) prepareOutput() {
 	id, name, nick, doc, phone, email := s.client.GetFormatted()
 	s.output.Fill(id, name, nick, doc, phone, email)
 }

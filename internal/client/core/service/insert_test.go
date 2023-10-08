@@ -16,15 +16,15 @@ func TestInsertOk(t *testing.T) {
 	config := ConfigMock{}
 	domain := domain.NewDomain(&repo)
 	s := NewService(domain, &config, &log, &repo)
-	input := dto.ClientInsertInputDto{
+	input := dto.InsertInputDto{
 		Name:     "Test XXXX",
 		Nickname: "Test",
 		Document: "947.869.840-00",
 		Phone:    "11999999999",
 		Email:    "teste@teste.com",
 	}
-	var res dto.ClientInserOutputDto
-	err := s.ClientInsert(&input, &res)
+	var res dto.InsertOutputDto
+	err := s.Insert(&input, &res)
 	if err != nil {
 		t.Errorf("Error: %s", err)
 	}
@@ -42,15 +42,15 @@ func TestInsertError(t *testing.T) {
 	config := ConfigMock{}
 	domain := domain.NewDomain(&repo)
 	s := NewService(domain, &config, &log, &repo)
-	input := dto.ClientInsertInputDto{
+	input := dto.InsertInputDto{
 		Name:     "Test",
 		Nickname: "Test",
 		Document: "947.869.840-01",
 		Phone:    "11299999999",
 		Email:    "teste",
 	}
-	var res dto.ClientInserOutputDto
-	err := s.ClientInsert(&input, &res)
+	var res dto.InsertOutputDto
+	err := s.Insert(&input, &res)
 	if err == nil {
 		t.Errorf("Error: %s", err)
 	}
@@ -71,15 +71,15 @@ func TestInsertDuplicity(t *testing.T) {
 	repo.ClientEmailDuplicityReturn = true
 	domain := domain.NewDomain(&repo)
 	s := NewService(domain, &config, &log, &repo)
-	input := dto.ClientInsertInputDto{
+	input := dto.InsertInputDto{
 		Name:     "Test XXXX",
 		Nickname: "Test",
 		Document: "947.869.840-00",
 		Phone:    "11999999999",
 		Email:    "test@test.com",
 	}
-	var res dto.ClientInserOutputDto
-	err := s.ClientInsert(&input, &res)
+	var res dto.InsertOutputDto
+	err := s.Insert(&input, &res)
 	if err == nil {
 		t.Errorf("Error: %s", err)
 	}
@@ -102,15 +102,15 @@ func TestWithDB(t *testing.T) {
 
 	s := NewService(d, &c, &l, r)
 
-	input := dto.ClientInsertInputDto{
+	input := dto.InsertInputDto{
 		Name:     "Test XXXX",
 		Nickname: "Test",
 		Document: "947.869.840-00",
 		Phone:    "11999999999",
 		Email:    "teste@teste.com",
 	}
-	var res dto.ClientInserOutputDto
-	err := s.ClientInsert(&input, &res)
+	var res dto.InsertOutputDto
+	err := s.Insert(&input, &res)
 	if err != nil {
 		t.Errorf("Error: %s", err)
 	}

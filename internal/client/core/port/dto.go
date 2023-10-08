@@ -1,6 +1,6 @@
 package port
 
-type ClientInsertInputDto interface {
+type InsertInputDto interface {
 	IsBlank() bool
 	Validate() error
 	ValidateUpdate() error
@@ -9,16 +9,16 @@ type ClientInsertInputDto interface {
 	Get() (string, string, string, string, string)
 }
 
-type ClientInserOutputDto interface {
+type InsertOutputDto interface {
 	Fill(id, name, nick, doc, phone, email string)
 }
 
-type ClientListInputDto interface {
+type FindInputDto interface {
 	Validate() error
 	Get() (string, string, string, string, string, string)
 }
 
-type ClientListOutputDto interface {
+type FindOutputDto interface {
 	SetPage(page, perPage uint64)
 	Append(id, name, nick, doc, phone, email string)
 	Count() int

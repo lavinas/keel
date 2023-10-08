@@ -5,8 +5,8 @@ import (
 	"strconv"
 )
 
-// ClientListInputDto is the input DTO used to list all clients
-type ClientListInputDto struct {
+// FindInputDto is the input DTO used to list all clients
+type FindInputDto struct {
 	Page     string `form:"page"`
 	PerPage  string `form:"per_page"`
 	Name     string `form:"name"`
@@ -16,7 +16,7 @@ type ClientListInputDto struct {
 }
 
 // Validate validates the input DTO for client list
-func (c *ClientListInputDto) Validate() error {
+func (c *FindInputDto) Validate() error {
 	msg := ""
 	if err := validatePage(c.Page); err != nil {
 		msg += err.Error() + " | "
@@ -35,7 +35,7 @@ func (c *ClientListInputDto) Validate() error {
 }
 
 // Get returns the input DTO values
-func (c *ClientListInputDto) Get() (string, string, string, string, string, string) {
+func (c *FindInputDto) Get() (string, string, string, string, string, string) {
 	return c.Page, c.PerPage, c.Name, c.Nickname, c.Document, c.Email
 }
 

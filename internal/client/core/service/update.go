@@ -8,18 +8,18 @@ import (
 	"github.com/lavinas/keel/internal/client/core/port"
 )
 
-// ClientUpdate is the service for updating a client
-type ClientUpdate struct {
+// Update is the service for updating a client
+type Update struct {
 	log    port.Log
 	client port.Client
 	id     string
-	input  port.ClientInsertInputDto
-	output port.ClientInserOutputDto
+	input  port.InsertInputDto
+	output port.InsertOutputDto
 }
 
-// NewClientUpdate creates a new client update service
-func NewClientUpdate(log port.Log, client port.Client, id string, input port.ClientInsertInputDto, output port.ClientInserOutputDto) *ClientUpdate {
-	return &ClientUpdate{
+// NewUpdate creates a new client update service
+func NewUpdate(log port.Log, client port.Client, id string, input port.InsertInputDto, output port.InsertOutputDto) *Update {
+	return &Update{
 		log:    log,
 		client: client,
 		id:     id,
@@ -29,7 +29,7 @@ func NewClientUpdate(log port.Log, client port.Client, id string, input port.Cli
 }
 
 // Execute executes the service
-func (s *ClientUpdate) Execute() error {
+func (s *Update) Execute() error {
 	if s.id == "" {
 		s.log.Infof(s.input, "bad request: blnk id")
 		return errors.New("bad request: blank id")
@@ -56,7 +56,7 @@ func (s *ClientUpdate) Execute() error {
 }
 
 // validateInput validates input data of Update service
-func (s *ClientUpdate) validateInput() error {
+func (s *Update) validateInput() error {
 	if err := s.input.ValidateUpdate(); err != nil {
 		s.log.Infof(s.input, "bad request: "+err.Error())
 		return errors.New("bad request: " + err.Error())
@@ -65,7 +65,7 @@ func (s *ClientUpdate) validateInput() error {
 }
 
 // loadClient loads a client from repository
-func (s *ClientUpdate) loadClient() error {
+func (s *Update) loadClient() error {
 	if err := s.input.FormatUpdate(); err != nil {
 		s.log.Infof(s.input, "bad request: "+err.Error())
 		return errors.New("bad request: " + err.Error())
@@ -83,7 +83,7 @@ func (s *ClientUpdate) loadClient() error {
 }
 
 // duplicity checks if a document or email is already registered
-func (s *ClientUpdate) duplicity() error {
+func (s *Update) duplicity() error {
 	message := ""
 	_, nick, doc, _, email := s.input.Get()
 	if strings.Trim(doc, " ") != "" {
@@ -116,7 +116,7 @@ func (s *ClientUpdate) duplicity() error {
 }
 
 // duplicityDocument treats the document duplicity
-func (s *ClientUpdate) duplicityDocument() (string, error) {
+func (s *Update) duplicityDocument() (string, error) {
 	b, err := s.client.DocumentDuplicity()
 	if err != nil {
 		s.log.Errorf(s.input, err)
@@ -129,7 +129,7 @@ func (s *ClientUpdate) duplicityDocument() (string, error) {
 }
 
 // duplicityEmail treats the email duplicity
-func (s *ClientUpdate) duplicityEmail() (string, error) {
+func (s *Update) duplicityEmail() (string, error) {
 	e, err := s.client.EmailDuplicity()
 	if err != nil {
 		s.log.Errorf(s.input, err)
@@ -142,7 +142,7 @@ func (s *ClientUpdate) duplicityEmail() (string, error) {
 }
 
 // duplicityNick treats the nickname duplicity
-func (s *ClientUpdate) duplicityNick() (string, error) {
+func (s *Update) duplicityNick() (string, error) {
 	n, err := s.client.NickDuplicity()
 	if err != nil {
 		s.log.Errorf(s.input, err)
@@ -155,7 +155,7 @@ func (s *ClientUpdate) duplicityNick() (string, error) {
 }
 
 // update updates a client
-func (s *ClientUpdate) update() error {
+func (s *Update) update() error {
 	_, uname, unick, udoc, uphone, uemail := s.client.Get()
 	name, nick, doc, phone, email := s.input.Get()
 	if strings.Trim(name, " ") != "" {
@@ -182,7 +182,7 @@ func (s *ClientUpdate) update() error {
 }
 
 // prepareOutput prepares output data of Update service
-func (s *ClientUpdate) prepareOutput() {
+func (s *Update) prepareOutput() {
 	id, name, nick, doc, phone, email := s.client.GetFormatted()
 	s.output.Fill(id, name, nick, doc, phone, email)
 }

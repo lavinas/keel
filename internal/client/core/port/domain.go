@@ -28,5 +28,5 @@ type Client interface {
 type ClientSet interface {
 	Load(page, perPage uint64, name, nick, doc, email string) error
 	Append(id, name, nick string, doc, phone uint64, email string)
-	SetOutput(output ClientListOutputDto)
+	SetOutput(output FindOutputDto)
 }

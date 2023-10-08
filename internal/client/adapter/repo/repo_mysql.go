@@ -52,7 +52,7 @@ func (r *RepoMysql) ClientSave(client port.Client) error {
 }
 
 // Update updates a client on the repository
-func (r *RepoMysql) ClientUpdate(client port.Client) error {
+func (r *RepoMysql) Update(client port.Client) error {
 	tx, err := r.db.Begin()
 	if err != nil {
 		return err
@@ -97,7 +97,7 @@ func (r *RepoMysql) ClientNickDuplicity(nick, id string) (bool, error) {
 	return count > 0, nil
 }
 
-// ClientGetAll gets all clients
+// GetAll gets all clients
 func (r *RepoMysql) ClientLoadSet(page, perPage uint64, name, nick, doc, email string, set port.ClientSet) error {
 	query, args := r.clientLoadSetQuery(page, perPage, name, nick, doc, email)
 	ctx, cancelfunc := context.WithTimeout(context.Background(), 5*time.Second)
@@ -118,8 +118,8 @@ func (r *RepoMysql) ClientLoadSet(page, perPage uint64, name, nick, doc, email s
 	return nil
 }
 
-// ClientGetById gets a client by id
-func (r *RepoMysql) ClientGetById(id string, client port.Client) (bool, error) {
+// GetById gets a client by id
+func (r *RepoMysql) GetById(id string, client port.Client) (bool, error) {
 	row := r.db.QueryRow(clientGetById, id)
 	var rid, name, nick, email string
 	var doc, phone uint64
@@ -133,8 +133,8 @@ func (r *RepoMysql) ClientGetById(id string, client port.Client) (bool, error) {
 	return true, nil
 }
 
-// ClientGetByNick gets a client by nick
-func (r *RepoMysql) ClientGetByNick(nick string, client port.Client) (bool, error) {
+// GetByNick gets a client by nick
+func (r *RepoMysql) GetByNick(nick string, client port.Client) (bool, error) {
 	row := r.db.QueryRow(clientGetByNick, nick)
 	var id, rnick, name, email string
 	var doc, phone uint64
@@ -148,8 +148,8 @@ func (r *RepoMysql) ClientGetByNick(nick string, client port.Client) (bool, erro
 	return true, nil
 }
 
-// ClientGetByEmail gets a client by email
-func (r *RepoMysql) ClientGetByEmail(email string, client port.Client) (bool, error) {
+// GetByEmail gets a client by email
+func (r *RepoMysql) GetByEmail(email string, client port.Client) (bool, error) {
 	row := r.db.QueryRow(clientGetByEmail, email)
 	var id, name, nick, remail string
 	var doc, phone uint64
@@ -163,8 +163,8 @@ func (r *RepoMysql) ClientGetByEmail(email string, client port.Client) (bool, er
 	return true, nil
 }
 
-// ClientGetByDoc gets a client by doc
-func (r *RepoMysql) ClientGetByDoc(doc uint64, client port.Client) (bool, error) {
+// GetByDoc gets a client by doc
+func (r *RepoMysql) GetByDoc(doc uint64, client port.Client) (bool, error) {
 	row := r.db.QueryRow(clientGetByDoc, doc)
 	var id, name, nick, email string
 	var rdoc, phone uint64
@@ -178,8 +178,8 @@ func (r *RepoMysql) ClientGetByDoc(doc uint64, client port.Client) (bool, error)
 	return true, nil
 }
 
-// ClientGetByPhone gets a client by phone
-func (r *RepoMysql) ClientGetByPhone(phone uint64, client port.Client) (bool, error) {
+// GetByPhone gets a client by phone
+func (r *RepoMysql) GetByPhone(phone uint64, client port.Client) (bool, error) {
 	row := r.db.QueryRow(clientGetByPhone, phone)
 	var id, name, nick, email string
 	var doc, rphone uint64

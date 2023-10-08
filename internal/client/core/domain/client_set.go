@@ -38,7 +38,7 @@ func (c *ClientSet) Append(id, name, nick string, doc, phone uint64, email strin
 }
 
 // SetOutput sets the output for the client set
-func (c *ClientSet) SetOutput(output port.ClientListOutputDto) {
+func (c *ClientSet) SetOutput(output port.FindOutputDto) {
 	output.SetPage(c.page, c.perPage)
 	for _, client := range c.set {
 		id, name, nick, doc, phone, email := client.GetFormatted()

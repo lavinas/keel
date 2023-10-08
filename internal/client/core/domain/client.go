@@ -49,27 +49,27 @@ func (c *Client) Load(id, name, nick string, doc, phone uint64, email string) {
 
 // LoadById loads a client by id from the repository
 func (c *Client) LoadById(id string) (bool, error) {
-	return c.repo.ClientGetById(id, c)
+	return c.repo.GetById(id, c)
 }
 
 // LoadByNick loads a client by nick from the repository
 func (c *Client) LoadByNick(nick string) (bool, error) {
-	return c.repo.ClientGetByNick(nick, c)
+	return c.repo.GetByNick(nick, c)
 }
 
 // LoadByEmail loads a client by email from the repository
 func (c *Client) LoadByEmail(email string) (bool, error) {
-	return c.repo.ClientGetByEmail(email, c)
+	return c.repo.GetByEmail(email, c)
 }
 
 // LoadByDoc loads a client by doc from the repository
 func (c *Client) LoadByDoc(doc uint64) (bool, error) {
-	return c.repo.ClientGetByDoc(doc, c)
+	return c.repo.GetByDoc(doc, c)
 }
 
 // LoadByDoc loads a client by doc from the repository
 func (c *Client) LoadByPhone(phone uint64) (bool, error) {
-	return c.repo.ClientGetByDoc(phone, c)
+	return c.repo.GetByDoc(phone, c)
 }
 
 // DocumentDuplicity checks if a document is already registered
@@ -110,5 +110,5 @@ func (c *Client) Save() error {
 
 // Update updates a client on the repository
 func (c *Client) Update() error {
-	return c.repo.ClientUpdate(c)
+	return c.repo.Update(c)
 }

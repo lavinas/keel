@@ -1,7 +1,7 @@
 package dto
 
-// ClientInserOutputDto is the output DTO used to create a client
-type ClientInserOutputDto struct {
+// InsertOutputDto is the output DTO used to create a client
+type InsertOutputDto struct {
 	Id       string `json:"id" binding:"required"`
 	Name     string `json:"name" binding:"required"`
 	Nickname string `json:"nickname" binding:"required"`
@@ -10,8 +10,8 @@ type ClientInserOutputDto struct {
 	Email    string `json:"email" binding:"required"`
 }
 
-func NewClientInserOutputDto() *ClientInserOutputDto {
-	return &ClientInserOutputDto{
+func NewInsertOutputDto() *InsertOutputDto {
+	return &InsertOutputDto{
 		Id:       "",
 		Name:     "",
 		Nickname: "",
@@ -21,8 +21,8 @@ func NewClientInserOutputDto() *ClientInserOutputDto {
 	}
 }
 
-// ClientInsertInputDto is the input DTO used to create a client
-func (o *ClientInserOutputDto) Fill(id, name, nick, doc, phone, email string) {
+// InsertInputDto is the input DTO used to create a client
+func (o *InsertOutputDto) Fill(id, name, nick, doc, phone, email string) {
 	o.Id = id
 	o.Name = name
 	o.Nickname = nick

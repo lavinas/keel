@@ -19,8 +19,8 @@ var (
 	countries = []string{"BR"}
 )
 
-// ClientInsertInputDto is the input DTO used to create a client
-type ClientInsertInputDto struct {
+// InsertInputDto is the input DTO used to create a client
+type InsertInputDto struct {
 	Name     string `json:"name"`
 	Nickname string `json:"nickname"`
 	Document string `json:"document"`
@@ -29,14 +29,14 @@ type ClientInsertInputDto struct {
 }
 
 // IsBlank checks if the input DTO is blank
-func (c *ClientInsertInputDto) IsBlank() bool {
+func (c *InsertInputDto) IsBlank() bool {
 	return strings.Trim(c.Name, " ") == "" && strings.Trim(c.Nickname, " ") == "" &&
 		strings.Trim(c.Document, " ") == "" && strings.Trim(c.Phone, " ") == "" &&
 		strings.Trim(c.Email, " ") == ""
 }
 
 // Validate validates the input DTO
-func (c *ClientInsertInputDto) Validate() error {
+func (c *InsertInputDto) Validate() error {
 	msg := ""
 	if _, err := formatName(c.Name); err != nil {
 		msg += err.Error() + " | "
@@ -61,7 +61,7 @@ func (c *ClientInsertInputDto) Validate() error {
 }
 
 // Validate validates the input DTO for update values
-func (c *ClientInsertInputDto) ValidateUpdate() error {
+func (c *InsertInputDto) ValidateUpdate() error {
 	msg := ""
 	if strings.Trim(c.Name, " ") != "" {
 		if _, err := formatName(c.Name); err != nil {
@@ -96,7 +96,7 @@ func (c *ClientInsertInputDto) ValidateUpdate() error {
 }
 
 // Format clears all fields (name, nickname, document, phone, email)
-func (c *ClientInsertInputDto) Format() error {
+func (c *InsertInputDto) Format() error {
 	var err error
 	var name, nick, doc, phone, email string
 	if name, err = formatName(c.Name); err != nil {
@@ -123,7 +123,7 @@ func (c *ClientInsertInputDto) Format() error {
 }
 
 // FormatUpdate clears all fields (name, nickname, document, phone, email) for update values
-func (c *ClientInsertInputDto) FormatUpdate() error {
+func (c *InsertInputDto) FormatUpdate() error {
 	var err error
 	var name, nick, doc, phone, email string
 	if strings.Trim(c.Name, " ") != "" {
@@ -160,7 +160,7 @@ func (c *ClientInsertInputDto) FormatUpdate() error {
 }
 
 // Get returns all fields (name, nickname, document, phone, email)
-func (c *ClientInsertInputDto) Get() (string, string, string, string, string) {
+func (c *InsertInputDto) Get() (string, string, string, string, string) {
 	return c.Name, c.Nickname, c.Document, c.Phone, c.Email
 }
 
