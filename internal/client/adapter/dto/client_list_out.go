@@ -6,14 +6,14 @@ import (
 
 // ListAllOutputDto is the output DTO used to list all clients
 type ClientListOutputDto struct {
-	Page    uint64                       `json:"page" binding:"required"`
-	PerPage uint64                       `json:"per_page" binding:"required"`
-	Clients []port.ClientCreateOutputDto `json:"clients" binding:"required"`
+	Page    uint64                      `json:"page" binding:"required"`
+	PerPage uint64                      `json:"per_page" binding:"required"`
+	Clients []port.ClientInserOutputDto `json:"clients" binding:"required"`
 }
 
 // Append appends a new client to the set
 func (dto *ClientListOutputDto) Append(id, name, nick, doc, phone, email string) {
-	client := NewClientCreateOutputDto()
+	client := NewClientInserOutputDto()
 	client.Fill(id, name, nick, doc, phone, email)
 	dto.Clients = append(dto.Clients, client)
 }

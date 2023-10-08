@@ -35,7 +35,7 @@ func NewRepoMysql(c port.Config) *RepoMysql {
 	return &RepoMysql{db: db, config: c}
 }
 
-// Create creates a new client
+// Insert creates a new client
 func (r *RepoMysql) ClientSave(client port.Client) error {
 	tx, err := r.db.Begin()
 	if err != nil {

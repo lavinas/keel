@@ -8,25 +8,25 @@ import (
 )
 
 type ProductHandler struct {
-	CreateProductService *service.CreateProductService
+	InsertProductService *service.InsertProductService
 	ListProductService   *service.ListProductService
 }
 
-func NewProductService(createProductService *service.CreateProductService, listProductService *service.ListProductService) *ProductHandler {
+func NewProductService(createProductService *service.InsertProductService, listProductService *service.ListProductService) *ProductHandler {
 	return &ProductHandler{
-		CreateProductService: createProductService,
+		InsertProductService: createProductService,
 		ListProductService:   listProductService,
 	}
 }
 
-func (h *ProductHandler) CreateProductHandler(w http.ResponseWriter, r *http.Request) {
-	var input service.CreateProductInputDto
+func (h *ProductHandler) InsertProductHandler(w http.ResponseWriter, r *http.Request) {
+	var input service.InsertProductInputDto
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	output, err := h.CreateProductService.Execute(input)
+	output, err := h.InsertProductService.Execute(input)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return

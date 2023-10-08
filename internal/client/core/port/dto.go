@@ -1,6 +1,6 @@
 package port
 
-type ClientCreateInputDto interface {
+type ClientInsertInputDto interface {
 	IsBlank() bool
 	Validate() error
 	ValidateUpdate() error
@@ -9,7 +9,7 @@ type ClientCreateInputDto interface {
 	Get() (string, string, string, string, string)
 }
 
-type ClientCreateOutputDto interface {
+type ClientInserOutputDto interface {
 	Fill(id, name, nick, doc, phone, email string)
 }
 

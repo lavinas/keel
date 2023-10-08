@@ -19,8 +19,8 @@ var (
 	countries = []string{"BR"}
 )
 
-// ClientCreateInputDto is the input DTO used to create a client
-type ClientCreateInputDto struct {
+// ClientInsertInputDto is the input DTO used to create a client
+type ClientInsertInputDto struct {
 	Name     string `json:"name"`
 	Nickname string `json:"nickname"`
 	Document string `json:"document"`
@@ -29,14 +29,14 @@ type ClientCreateInputDto struct {
 }
 
 // IsBlank checks if the input DTO is blank
-func (c *ClientCreateInputDto) IsBlank() bool {
+func (c *ClientInsertInputDto) IsBlank() bool {
 	return strings.Trim(c.Name, " ") == "" && strings.Trim(c.Nickname, " ") == "" &&
 		strings.Trim(c.Document, " ") == "" && strings.Trim(c.Phone, " ") == "" &&
 		strings.Trim(c.Email, " ") == ""
 }
 
 // Validate validates the input DTO
-func (c *ClientCreateInputDto) Validate() error {
+func (c *ClientInsertInputDto) Validate() error {
 	msg := ""
 	if _, err := formatName(c.Name); err != nil {
 		msg += err.Error() + " | "
@@ -61,7 +61,7 @@ func (c *ClientCreateInputDto) Validate() error {
 }
 
 // Validate validates the input DTO for update values
-func (c *ClientCreateInputDto) ValidateUpdate() error {
+func (c *ClientInsertInputDto) ValidateUpdate() error {
 	msg := ""
 	if strings.Trim(c.Name, " ") != "" {
 		if _, err := formatName(c.Name); err != nil {
@@ -96,7 +96,7 @@ func (c *ClientCreateInputDto) ValidateUpdate() error {
 }
 
 // Format clears all fields (name, nickname, document, phone, email)
-func (c *ClientCreateInputDto) Format() error {
+func (c *ClientInsertInputDto) Format() error {
 	var err error
 	var name, nick, doc, phone, email string
 	if name, err = formatName(c.Name); err != nil {
@@ -123,7 +123,7 @@ func (c *ClientCreateInputDto) Format() error {
 }
 
 // FormatUpdate clears all fields (name, nickname, document, phone, email) for update values
-func (c *ClientCreateInputDto) FormatUpdate() error {
+func (c *ClientInsertInputDto) FormatUpdate() error {
 	var err error
 	var name, nick, doc, phone, email string
 	if strings.Trim(c.Name, " ") != "" {
@@ -160,7 +160,7 @@ func (c *ClientCreateInputDto) FormatUpdate() error {
 }
 
 // Get returns all fields (name, nickname, document, phone, email)
-func (c *ClientCreateInputDto) Get() (string, string, string, string, string) {
+func (c *ClientInsertInputDto) Get() (string, string, string, string, string) {
 	return c.Name, c.Nickname, c.Document, c.Phone, c.Email
 }
 

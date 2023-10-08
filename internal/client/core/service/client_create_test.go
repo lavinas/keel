@@ -10,21 +10,21 @@ import (
 	"github.com/lavinas/keel/internal/client/core/domain"
 )
 
-func TestCreateOk(t *testing.T) {
+func TestInsertOk(t *testing.T) {
 	log := LogMock{}
 	repo := RepoMock{}
 	config := ConfigMock{}
 	domain := domain.NewDomain(&repo)
 	s := NewService(domain, &config, &log, &repo)
-	input := dto.ClientCreateInputDto{
+	input := dto.ClientInsertInputDto{
 		Name:     "Test XXXX",
 		Nickname: "Test",
 		Document: "947.869.840-00",
 		Phone:    "11999999999",
 		Email:    "teste@teste.com",
 	}
-	var res dto.ClientCreateOutputDto
-	err := s.ClientCreate(&input, &res)
+	var res dto.ClientInserOutputDto
+	err := s.ClientInsert(&input, &res)
 	if err != nil {
 		t.Errorf("Error: %s", err)
 	}
@@ -36,21 +36,21 @@ func TestCreateOk(t *testing.T) {
 	}
 }
 
-func TestCreateError(t *testing.T) {
+func TestInsertError(t *testing.T) {
 	log := LogMock{}
 	repo := RepoMock{}
 	config := ConfigMock{}
 	domain := domain.NewDomain(&repo)
 	s := NewService(domain, &config, &log, &repo)
-	input := dto.ClientCreateInputDto{
+	input := dto.ClientInsertInputDto{
 		Name:     "Test",
 		Nickname: "Test",
 		Document: "947.869.840-01",
 		Phone:    "11299999999",
 		Email:    "teste",
 	}
-	var res dto.ClientCreateOutputDto
-	err := s.ClientCreate(&input, &res)
+	var res dto.ClientInserOutputDto
+	err := s.ClientInsert(&input, &res)
 	if err == nil {
 		t.Errorf("Error: %s", err)
 	}
@@ -63,7 +63,7 @@ func TestCreateError(t *testing.T) {
 	}
 }
 
-func TestCreateDuplicity(t *testing.T) {
+func TestInsertDuplicity(t *testing.T) {
 	log := LogMock{}
 	repo := RepoMock{}
 	config := ConfigMock{}
@@ -71,15 +71,15 @@ func TestCreateDuplicity(t *testing.T) {
 	repo.ClientEmailDuplicityReturn = true
 	domain := domain.NewDomain(&repo)
 	s := NewService(domain, &config, &log, &repo)
-	input := dto.ClientCreateInputDto{
+	input := dto.ClientInsertInputDto{
 		Name:     "Test XXXX",
 		Nickname: "Test",
 		Document: "947.869.840-00",
 		Phone:    "11999999999",
 		Email:    "test@test.com",
 	}
-	var res dto.ClientCreateOutputDto
-	err := s.ClientCreate(&input, &res)
+	var res dto.ClientInserOutputDto
+	err := s.ClientInsert(&input, &res)
 	if err == nil {
 		t.Errorf("Error: %s", err)
 	}
@@ -102,15 +102,15 @@ func TestWithDB(t *testing.T) {
 
 	s := NewService(d, &c, &l, r)
 
-	input := dto.ClientCreateInputDto{
+	input := dto.ClientInsertInputDto{
 		Name:     "Test XXXX",
 		Nickname: "Test",
 		Document: "947.869.840-00",
 		Phone:    "11999999999",
 		Email:    "teste@teste.com",
 	}
-	var res dto.ClientCreateOutputDto
-	err := s.ClientCreate(&input, &res)
+	var res dto.ClientInserOutputDto
+	err := s.ClientInsert(&input, &res)
 	if err != nil {
 		t.Errorf("Error: %s", err)
 	}

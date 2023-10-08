@@ -14,11 +14,11 @@ type ClientGet struct {
 	log    port.Log
 	client port.Client
 	param  string
-	output port.ClientCreateOutputDto
+	output port.ClientInserOutputDto
 }
 
 // NewClientGet creates a new client get service
-func NewClientGet(log port.Log, client port.Client, param string, output port.ClientCreateOutputDto) *ClientGet {
+func NewClientGet(log port.Log, client port.Client, param string, output port.ClientInserOutputDto) *ClientGet {
 	return &ClientGet{
 		log:    log,
 		client: client,
@@ -36,7 +36,7 @@ func (s *ClientGet) Execute() error {
 	if err := s.load(); err != nil {
 		return err
 	}
-	s.prepareOutput(s.client, s.output)
+	s.prepareOutput()
 	s.log.Info("get: " + s.param)
 	return nil
 }
@@ -79,7 +79,7 @@ func (s *ClientGet) load() error {
 }
 
 // prepareOutput prepares the output data
-func (s *ClientGet) prepareOutput(client port.Client, output port.ClientCreateOutputDto) {
+func (s *ClientGet) prepareOutput() {
 	id, name, nick, doc, phone, email := s.client.GetFormatted()
 	s.output.Fill(id, name, nick, doc, phone, email)
 }

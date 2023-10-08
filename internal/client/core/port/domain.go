@@ -8,7 +8,7 @@ type Domain interface {
 
 // Client is the interface that wraps the methods to interact with the database for the client domain
 type Client interface {
-	Create(name, nick string, doc, phone uint64, email string) error
+	Insert(name, nick string, doc, phone uint64, email string) error
 	Load(id, name, nick string, doc, phone uint64, email string)
 	LoadById(id string) (bool, error)
 	LoadByNick(nick string) (bool, error)

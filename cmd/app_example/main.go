@@ -24,12 +24,12 @@ func main() {
 	defer db.Close()
 
 	repository := repository.NewProductRepositoryMysql(db)
-	createProductService := service.NewCreateProductService(repository)
+	createProductService := service.NewInsertProductService(repository)
 	listProductService := service.NewListProductService(repository)
 
 	productHandler := web.NewProductService(createProductService, listProductService)
 	r := chi.NewRouter()
-	r.Post("/products", productHandler.CreateProductHandler)
+	r.Post("/products", productHandler.InsertProductHandler)
 	r.Get("/products", productHandler.ListProductHandler)
 
 	go http.ListenAndServe(":8000", r)
@@ -38,7 +38,7 @@ func main() {
 	go akafka.Consume([]string{"products"}, "host.docker.internal:9094", msgChan)
 
 	for msg := range msgChan {
-		dto := service.CreateProductInputDto{}
+		dto := service.InsertProductInputDto{}
 		err := json.Unmarshal(msg.Value, &dto)
 		if err != nil {
 			panic(err)

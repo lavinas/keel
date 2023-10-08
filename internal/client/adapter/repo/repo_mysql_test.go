@@ -12,7 +12,7 @@ func TestClientSave(t *testing.T) {
 	defer repo.Close()
 	repo.ClientTruncate()
 	client := domain.NewClient(repo)
-	err := client.Create("Test Xxxx", "test", 94786984000, 5511999999999, "test@tets.com")
+	err := client.Insert("Test Xxxx", "test", 94786984000, 5511999999999, "test@tets.com")
 	if err != nil {
 		t.Errorf("Error: %s", err)
 	}
@@ -38,7 +38,7 @@ func TestClientDocumentDuplicity(t *testing.T) {
 	}
 	// check duplicated
 	client := domain.NewClient(repo)
-	err = client.Create("Test Xxxx", "test", 94786984000, 5511999999999, "test@test.com")
+	err = client.Insert("Test Xxxx", "test", 94786984000, 5511999999999, "test@test.com")
 	if err != nil {
 		t.Errorf("Error: %s", err)
 	}
@@ -71,7 +71,7 @@ func TestClientEmailDuplicityQuery(t *testing.T) {
 	}
 	// check duplicated
 	client := domain.NewClient(repo)
-	err = client.Create("Test Xxxx", "test", 94786984000, 5511999999999, "test@test.com")
+	err = client.Insert("Test Xxxx", "test", 94786984000, 5511999999999, "test@test.com")
 	if err != nil {
 		t.Errorf("Error: %s", err)
 	}

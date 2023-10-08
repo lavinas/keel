@@ -30,7 +30,7 @@ func NewHandlerGin(log port.Log, service port.Service) *HandlerGin {
 // MapHandlers maps the handlers
 func (h *HandlerGin) MapHandlers() {
 	h.gin.GET("/client/list", h.ClientList)
-	h.gin.POST("/client/create", h.ClientCreate)
+	h.gin.POST("/client/insert", h.ClientInsert)
 	h.gin.POST("/client/update/:id", h.ClientUpdate)
 	h.gin.GET("/client/get/:param", h.ClientGet)
 }
@@ -41,16 +41,16 @@ func (h *HandlerGin) Run() {
 	h.gin.ShutDown()
 }
 
-// ClientCreate responds for call of creates a new client
-func (h *HandlerGin) ClientCreate(c *gin.Context) {
-	var input dto.ClientCreateInputDto
-	var output dto.ClientCreateOutputDto
+// ClientInsert responds for call of creates a new client
+func (h *HandlerGin) ClientInsert(c *gin.Context) {
+	var input dto.ClientInsertInputDto
+	var output dto.ClientInserOutputDto
 	if err := c.ShouldBindJSON(&input); err != nil {
 		h.log.Infof(input, "bad request: "+err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid json body"})
 		return
 	}
-	if err := h.service.ClientCreate(&input, &output); err != nil {
+	if err := h.service.ClientInsert(&input, &output); err != nil {
 		c.JSON(h.gin.MapError(err.Error()), gin_wrapper.H{"error": err.Error()})
 		return
 	}
@@ -79,8 +79,8 @@ func (h *HandlerGin) ClientList(c *gin.Context) {
 
 // ClientUpdate responds for call of updates a client
 func (h *HandlerGin) ClientUpdate(c *gin.Context) {
-	var input dto.ClientCreateInputDto
-	var output dto.ClientCreateOutputDto
+	var input dto.ClientInsertInputDto
+	var output dto.ClientInserOutputDto
 	id := c.Param("id")
 	if err := c.ShouldBindJSON(&input); err != nil {
 		h.log.Infof(input, "bad request: "+err.Error())
@@ -96,8 +96,8 @@ func (h *HandlerGin) ClientUpdate(c *gin.Context) {
 
 // ClientGet responds for call of get a client
 func (h *HandlerGin) ClientGet(c *gin.Context) {
-	var input dto.ClientCreateInputDto
-	var output dto.ClientCreateOutputDto
+	var input dto.ClientInsertInputDto
+	var output dto.ClientInserOutputDto
 	param := c.Param("param")
 	if err := h.service.ClientGet(param, &input, &output); err != nil {
 		c.JSON(h.gin.MapError(err.Error()), gin_wrapper.H{"error": err.Error()})

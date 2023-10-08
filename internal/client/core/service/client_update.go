@@ -13,12 +13,12 @@ type ClientUpdate struct {
 	log    port.Log
 	client port.Client
 	id     string
-	input  port.ClientCreateInputDto
-	output port.ClientCreateOutputDto
+	input  port.ClientInsertInputDto
+	output port.ClientInserOutputDto
 }
 
 // NewClientUpdate creates a new client update service
-func NewClientUpdate(log port.Log, client port.Client, id string, input port.ClientCreateInputDto, output port.ClientCreateOutputDto) *ClientUpdate {
+func NewClientUpdate(log port.Log, client port.Client, id string, input port.ClientInsertInputDto, output port.ClientInserOutputDto) *ClientUpdate {
 	return &ClientUpdate{
 		log:    log,
 		client: client,

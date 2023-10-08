@@ -3,7 +3,7 @@ package domain
 import "github.com/google/uuid"
 
 type ProductRepository interface {
-	Create(product *Product) error
+	Insert(product *Product) error
 	FindAll() ([]*Product, error)
 }
 

@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestCreate(t *testing.T) {
+func TestInsert(t *testing.T) {
 	w := httptest.NewRecorder()
 	ctx := GetTestGinContext(w)
 	content := map[string]interface{}{
@@ -21,7 +21,7 @@ func TestCreate(t *testing.T) {
 	s := ServiceMock{}
 
 	h := NewHandlerGin(&l, &s)
-	h.ClientCreate(ctx)
+	h.ClientInsert(ctx)
 
 	if w.Code != http.StatusCreated {
 		t.Errorf("Invalid result: %v", w.Code)

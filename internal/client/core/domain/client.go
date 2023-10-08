@@ -32,8 +32,8 @@ func NewClient(repo port.Repo) *Client {
 	}
 }
 
-// Create loads a client
-func (c *Client) Create(name, nick string, doc, phone uint64, email string) error {
+// Insert loads a client
+func (c *Client) Insert(name, nick string, doc, phone uint64, email string) error {
 	id, err := uuid.NewRandom()
 	if err != nil {
 		return err

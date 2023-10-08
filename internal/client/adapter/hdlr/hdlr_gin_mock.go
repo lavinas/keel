@@ -110,7 +110,7 @@ func (l *LogMock) Close() {
 type ServiceMock struct {
 }
 
-func (s *ServiceMock) ClientCreate(input port.ClientCreateInputDto, output port.ClientCreateOutputDto) error {
+func (s *ServiceMock) ClientInsert(input port.ClientInsertInputDto, output port.ClientInserOutputDto) error {
 	output.Fill("1", "name", "nickname", "document", "phone", "email")
 	return nil
 }
@@ -119,10 +119,10 @@ func (s *ServiceMock) ClientList(input port.ClientListInputDto, output port.Clie
 	return nil
 }
 
-func (s *ServiceMock) ClientUpdate(id string, input port.ClientCreateInputDto, output port.ClientCreateOutputDto) error {
+func (s *ServiceMock) ClientUpdate(id string, input port.ClientInsertInputDto, output port.ClientInserOutputDto) error {
 	return nil
 }
 
-func (s *ServiceMock) ClientGet(param string, input port.ClientCreateInputDto, output port.ClientCreateOutputDto) error {
+func (s *ServiceMock) ClientGet(param string, input port.ClientInsertInputDto, output port.ClientInserOutputDto) error {
 	return nil
 }
