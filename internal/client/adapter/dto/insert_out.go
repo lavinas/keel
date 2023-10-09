@@ -1,3 +1,4 @@
+// Package dto is the package that defines the DTOs for the client adapter
 package dto
 
 // InsertOutputDto is the output DTO used to create a client
@@ -29,4 +30,9 @@ func (o *InsertOutputDto) Fill(id, name, nick, doc, phone, email string) {
 	o.Document = doc
 	o.Phone = phone
 	o.Email = email
+}
+
+// Get returns the values of the output DTO
+func (o *InsertOutputDto) Get() (string, string, string, string, string, string) {
+	return o.Id, o.Name, o.Nickname, o.Document, o.Phone, o.Email
 }

@@ -1,3 +1,4 @@
+// Package dto is the package that defines the DTOs for the client adapter
 package dto
 
 // UpdateOutputDto is the output DTO used to update a client

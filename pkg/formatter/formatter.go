@@ -44,9 +44,6 @@ func FormatNickname(nickname string) (string, error) {
 	r := regexp.MustCompile(`\s+`)
 	nick = r.ReplaceAllString(nick, " ")
 	nick = strings.Replace(nick, " ", "_", -1)
-	if n := strings.Split(nick, " "); len(n) != 1 {
-		return "", errors.New("invalid nickname")
-	}
 	nick = strings.ToLower(nick)
 	return nick, nil
 }

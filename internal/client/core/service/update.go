@@ -13,8 +13,8 @@ type Update struct {
 	log    port.Log
 	client port.Client
 	id     string
-	input  port.InsertInputDto
-	output port.InsertOutputDto
+	input  port.UpdateInputDto
+	output port.UpdateOutputDto
 }
 
 // NewUpdate creates a new client update service

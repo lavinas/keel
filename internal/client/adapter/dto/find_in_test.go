@@ -1,20 +1,20 @@
+// Package dto is the package that defines the DTOs for the client adapter
 package dto
 
 import (
 	"testing"
 )
 
-
-func TestFindInValidate(t *testing.T) {
+func TestFindInDtoValidate(t *testing.T) {
 	t.Run("should return nil when the input is valid", func(t *testing.T) {
 		input := FindInputDto{
-			Page: "1",
-			PerPage: "10",
-			Name: "John Doe",
+			Page:     "1",
+			PerPage:  "10",
+			Name:     "John Doe",
 			Nickname: "John",
 			Document: "12345678901",
-			Phone: "11987654321",
-			Email: "test@test.com",
+			Phone:    "11987654321",
+			Email:    "test@test.com",
 		}
 		err := input.Validate()
 		if err != nil {
@@ -23,13 +23,13 @@ func TestFindInValidate(t *testing.T) {
 	})
 	t.Run("should return error when the page is not a number", func(t *testing.T) {
 		input := FindInputDto{
-			Page: "a",
-			PerPage: "10",
-			Name: "John Doe",
+			Page:     "a",
+			PerPage:  "10",
+			Name:     "John Doe",
 			Nickname: "John",
 			Document: "12345678901",
-			Phone: "11987654321",
-			Email: "test@test.com",
+			Phone:    "11987654321",
+			Email:    "test@test.com",
 		}
 		err := input.Validate()
 		if err.Error() != "page must be a number" {
@@ -38,13 +38,13 @@ func TestFindInValidate(t *testing.T) {
 	})
 	t.Run("should return error when the perPage is not a number", func(t *testing.T) {
 		input := FindInputDto{
-			Page: "1",
-			PerPage: "a",
-			Name: "John Doe",
+			Page:     "1",
+			PerPage:  "a",
+			Name:     "John Doe",
 			Nickname: "John",
 			Document: "12345678901",
-			Phone: "11987654321",
-			Email: "test@test.com",
+			Phone:    "11987654321",
+			Email:    "test@test.com",
 		}
 		err := input.Validate()
 		if err.Error() != "perPage must be a number" {
@@ -53,13 +53,13 @@ func TestFindInValidate(t *testing.T) {
 	})
 	t.Run("should return error when the document is not a number", func(t *testing.T) {
 		input := FindInputDto{
-			Page: "1",
-			PerPage: "10",
-			Name: "John Doe",
+			Page:     "1",
+			PerPage:  "10",
+			Name:     "John Doe",
 			Nickname: "John",
 			Document: "a",
-			Phone: "11987654321",
-			Email: "test@test.com",
+			Phone:    "11987654321",
+			Email:    "test@test.com",
 		}
 		err := input.Validate()
 		if err.Error() != "document must be a number" {
@@ -68,13 +68,13 @@ func TestFindInValidate(t *testing.T) {
 	})
 	t.Run("should return error when the phone is not a number", func(t *testing.T) {
 		input := FindInputDto{
-			Page: "1",
-			PerPage: "10",
-			Name: "John Doe",
+			Page:     "1",
+			PerPage:  "10",
+			Name:     "John Doe",
 			Nickname: "John",
 			Document: "12345678901",
-			Phone: "a",
-			Email: "test@tes.com",
+			Phone:    "a",
+			Email:    "test@tes.com",
 		}
 		err := input.Validate()
 		if err.Error() != "phone must be a number" {
@@ -83,15 +83,15 @@ func TestFindInValidate(t *testing.T) {
 	})
 }
 
-func TestFindInGet(t *testing.T) {
+func TestFindInDtoGet(t *testing.T) {
 	input := FindInputDto{
-		Page: "1",
-		PerPage: "10",
-		Name: "John Doe",
+		Page:     "1",
+		PerPage:  "10",
+		Name:     "John Doe",
 		Nickname: "John",
 		Document: "12345678901",
-		Phone: "11987654321",
-		Email: "test@test.com",
+		Phone:    "11987654321",
+		Email:    "test@test.com",
 	}
 	page, perPage, name, nick, doc, email := input.Get()
 	if page != "1" {

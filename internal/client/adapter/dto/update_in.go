@@ -1,3 +1,4 @@
+// Package dto is the package that defines the DTOs for the client adapter
 package dto
 
 import (
@@ -25,14 +26,12 @@ func (c *UpdateInputDto) IsBlank() bool {
 
 // Validate validates the input DTO fields (name, nickname, document, phone, email)
 func (c *UpdateInputDto) Validate() error {
+	if c.IsBlank() {
+		return errors.New("at least one field must be filled")
+	}
 	msg := ""
 	if strings.Trim(c.Name, " ") != "" {
 		if _, err := formatter.FormatName(c.Name); err != nil {
-			msg += err.Error() + " | "
-		}
-	}
-	if strings.Trim(c.Nickname, " ") != "" {
-		if _, err := formatter.FormatNickname(c.Nickname); err != nil {
 			msg += err.Error() + " | "
 		}
 	}
@@ -60,38 +59,38 @@ func (c *UpdateInputDto) Validate() error {
 
 // FormatUpdate formats all fields (name, nickname, document, phone, email) for update values
 func (c *UpdateInputDto) Format() error {
+	if c.IsBlank() {
+		return errors.New("at least one field must be filled")
+	}
 	var err error
-	var name, nick, doc, phone, email string
+	var name, doc, phone, email string
 	if strings.Trim(c.Name, " ") != "" {
 		if name, err = formatter.FormatName(c.Name); err != nil {
 			return err
 		}
+		c.Name = name
 	}
 	if strings.Trim(c.Nickname, " ") != "" {
-		if nick, err = formatter.FormatNickname(c.Nickname); err != nil {
-			return err
-		}
+		c.Nickname, _ = formatter.FormatNickname(c.Nickname)
 	}
 	if strings.Trim(c.Document, " ") != "" {
 		if doc, err = formatter.FormatDocument(c.Document); err != nil {
 			return err
 		}
+		c.Document = doc
 	}
 	if strings.Trim(c.Phone, " ") != "" {
 		if phone, err = formatter.FormatPhone(c.Phone); err != nil {
 			return err
 		}
+		c.Phone = phone
 	}
 	if strings.Trim(c.Email, " ") != "" {
 		if email, err = formatter.FormatEmail(c.Email); err != nil {
 			return err
 		}
+		c.Email = email
 	}
-	c.Name = name
-	c.Nickname = nick
-	c.Document = doc
-	c.Phone = phone
-	c.Email = email
 	return nil
 }
 

@@ -7,15 +7,16 @@ type InsertInputDto interface {
 	Get() (string, string, string, string, string)
 }
 
+type InsertOutputDto interface {
+	Fill(id, name, nick, doc, phone, email string)
+	Get() (string, string, string, string, string, string)
+}
+
 type UpdateInputDto interface {
 	IsBlank() bool
 	Validate() error
 	Format() error
 	Get() (string, string, string, string, string)
-}
-
-type InsertOutputDto interface {
-	Fill(id, name, nick, doc, phone, email string)
 }
 
 type UpdateOutputDto interface {
