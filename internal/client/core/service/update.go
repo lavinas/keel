@@ -18,7 +18,7 @@ type Update struct {
 }
 
 // NewUpdate creates a new client update service
-func NewUpdate(log port.Log, client port.Client, id string, input port.InsertInputDto, output port.InsertOutputDto) *Update {
+func NewUpdate(log port.Log, client port.Client, id string, input port.UpdateInputDto, output port.UpdateOutputDto) *Update {
 	return &Update{
 		log:    log,
 		client: client,
@@ -57,7 +57,7 @@ func (s *Update) Execute() error {
 
 // validateInput validates input data of Update service
 func (s *Update) validateInput() error {
-	if err := s.input.ValidateUpdate(); err != nil {
+	if err := s.input.Validate(); err != nil {
 		s.log.Infof(s.input, "bad request: "+err.Error())
 		return errors.New("bad request: " + err.Error())
 	}
@@ -66,7 +66,7 @@ func (s *Update) validateInput() error {
 
 // loadClient loads a client from repository
 func (s *Update) loadClient() error {
-	if err := s.input.FormatUpdate(); err != nil {
+	if err := s.input.Format(); err != nil {
 		s.log.Infof(s.input, "bad request: "+err.Error())
 		return errors.New("bad request: " + err.Error())
 	}
