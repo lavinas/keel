@@ -35,7 +35,7 @@ func (s *Service) Find(input port.FindInputDto, output port.FindOutputDto) error
 }
 
 // Update is orquestration of Updating a client
-func (s *Service) Update(id string, input port.InsertInputDto, output port.InsertOutputDto) error {
+func (s *Service) Update(id string, input port.UpdateInputDto, output port.UpdateOutputDto) error {
 	service_client := NewUpdate(s.log, s.domain.GetClient(), id, input, output)
 	return service_client.Execute()
 }

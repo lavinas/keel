@@ -33,8 +33,8 @@ func (s *Find) Execute() error {
 	if err := s.validateInput(s.log, s.input); err != nil {
 		return err
 	}
-	page, perPage, name, nick, doc, email := s.getAll()
-	if err := s.clients.Load(page, perPage, name, nick, doc, email); err != nil {
+	page, perPage, name, nick, doc, phone, email := s.getAll()
+	if err := s.clients.Load(page, perPage, name, nick, doc, phone, email); err != nil {
 		s.log.Error("Error loading clients: " + err.Error())
 		return errors.New("internal error")
 	}
@@ -52,8 +52,8 @@ func (s *Find) validateInput(log port.Log, input port.FindInputDto) error {
 }
 
 // getPage returns the page and perPage values from the input dto
-func (s *Find) getAll() (uint64, uint64, string, string, string, string) {
-	page, perPage, name, nick, doc, email := s.input.Get()
+func (s *Find) getAll() (uint64, uint64, string, string, string, string, string) {
+	page, perPage, name, nick, doc, phone, email := s.input.Get()
 	if page == "" {
 		page = "1"
 	}
@@ -69,5 +69,5 @@ func (s *Find) getAll() (uint64, uint64, string, string, string, string) {
 	if err != nil {
 		pp = 10
 	}
-	return p, pp, name, nick, doc, email
+	return p, pp, name, nick, doc, phone, email
 }

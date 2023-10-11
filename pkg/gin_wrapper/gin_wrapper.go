@@ -97,4 +97,8 @@ func (g *GinEngineWrapper) DELETE(relativePath string, handlers ...gin.HandlerFu
 }
 
 // H is a shortcut for map[string]interface{} as gin
-type H map[string]any
+func (g *GinEngineWrapper) H(idx string, ctx any) map[string]any {
+	return map[string]any{
+		idx: ctx,
+	}
+}

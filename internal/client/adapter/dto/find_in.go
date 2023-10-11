@@ -40,8 +40,8 @@ func (c *FindInputDto) Validate() error {
 }
 
 // Get returns the input DTO values
-func (c *FindInputDto) Get() (string, string, string, string, string, string) {
-	return c.Page, c.PerPage, c.Name, c.Nickname, c.Document, c.Email
+func (c *FindInputDto) Get() (string, string, string, string, string, string, string) {
+	return c.Page, c.PerPage, c.Name, c.Nickname, c.Document, c.Phone, c.Email
 }
 
 // validatePage validates the page field for client list

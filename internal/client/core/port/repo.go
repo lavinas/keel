@@ -2,11 +2,11 @@ package port
 
 // Repo is the interface that wraps the methods to interact with the database for the client domain
 type Repo interface {
-	ClientSave(client Client) error
-	ClientDocumentDuplicity(document uint64, id string) (bool, error)
-	ClientEmailDuplicity(email, id string) (bool, error)
-	ClientNickDuplicity(nick, id string) (bool, error)
-	ClientLoadSet(page, perPage uint64, name, nick, doc, email string, set ClientSet) error
+	Save(client Client) error
+	DocumentDuplicity(document uint64, id string) (bool, error)
+	EmailDuplicity(email, id string) (bool, error)
+	NickDuplicity(nick, id string) (bool, error)
+	LoadSet(page, perPage uint64, name, nick, doc, phone, email string, set ClientSet) error
 	GetById(id string, client Client) (bool, error)
 	GetByNick(nick string, client Client) (bool, error)
 	GetByEmail(email string, client Client) (bool, error)

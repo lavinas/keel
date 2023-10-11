@@ -130,7 +130,7 @@ func TestInsertInDtoIsBlank(t *testing.T) {
 		t.Error("Expected IsBlank to be true, got false")
 	}
 	c = InsertInputDto{
-		Name:     "Jose da Silva",
+		Name: "Jose da Silva",
 	}
 	if c.IsBlank() {
 		t.Error("Expected IsBlank to be false, got true")

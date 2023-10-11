@@ -13,6 +13,7 @@ type ClientSet struct {
 	name    string
 	nick    string
 	doc     string
+	phone   string
 	email   string
 }
 
@@ -25,9 +26,9 @@ func NewClientSet(repo port.Repo) *ClientSet {
 }
 
 // Load loads the client set from the repository
-func (c *ClientSet) Load(page, perPage uint64, name, nick, doc, email string) error {
-	c.page, c.perPage, c.name, c.nick, c.doc, c.email = page, perPage, name, nick, doc, email
-	return c.repo.ClientLoadSet(page, perPage, name, nick, doc, email, c)
+func (c *ClientSet) Load(page, perPage uint64, name, nick, doc, phone, email string) error {
+	c.page, c.perPage, c.name, c.nick, c.doc, c.phone, c.email = page, perPage, name, nick, doc, phone, email
+	return c.repo.LoadSet(page, perPage, name, nick, doc, phone, email, c)
 }
 
 // Append appends a new client to the set
@@ -44,4 +45,9 @@ func (c *ClientSet) SetOutput(output port.FindOutputDto) {
 		id, name, nick, doc, phone, email := client.GetFormatted()
 		output.Append(id, name, nick, doc, phone, email)
 	}
+}
+
+// Count returns the number of clients in the set
+func (c *ClientSet) Count() int {
+	return len(c.set)
 }

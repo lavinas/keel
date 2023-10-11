@@ -3,6 +3,7 @@ package hdlr
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -16,7 +17,6 @@ import (
 // mock gin context
 func GetTestGinContext(w *httptest.ResponseRecorder) *gin.Context {
 	gin.SetMode(gin.TestMode)
-
 	ctx, _ := gin.CreateTestContext(w)
 	ctx.Request = &http.Request{
 		Header: make(http.Header),
@@ -43,12 +43,12 @@ func MockJsonPost(c *gin.Context, content interface{}) {
 }
 
 // mock GET request
-func MockJsonGet(c *gin.Context) {
+func MockJsonGet(c *gin.Context, content map[string]string) {
 	c.Request.Method = "GET"
 	c.Request.Header.Set("Content-Type", "application/json")
-	c.Set("user_id", 1)
-
-	// set query params
+	for k, v := range content {
+		c.Params = append(c.Params, gin.Param{Key: k, Value: v})
+	}
 	u := url.Values{}
 	u.Add("skip", "5")
 	u.Add("limit", "10")
@@ -108,21 +108,85 @@ func (l *LogMock) Close() {
 
 // Service Mock
 type ServiceMock struct {
+	Status string
 }
 
 func (s *ServiceMock) Insert(input port.InsertInputDto, output port.InsertOutputDto) error {
-	output.Fill("1", "name", "nickname", "document", "phone", "email")
+	if s.Status == "ok" {
+		name, nick, doc, phone, email := input.Get()
+		output.Fill("1", name, nick, doc, phone, email)
+		return nil
+	}
+	if s.Status == "bad request" {
+		return errors.New("bad request: invalid json body")
+	}
+	if s.Status == "internal error" {
+		return errors.New("internal error")
+	}
 	return nil
 }
-
 func (s *ServiceMock) Find(input port.FindInputDto, output port.FindOutputDto) error {
+	if s.Status == "no content" {
+		return nil
+	}
+	if s.Status == "ok" {
+		output.Append("1", "Jose da Silva", "jose_da_silva_222", "206.656.600-49", "+5511999999999", "test@test.com")
+		output.SetPage(1, 10)
+		return nil
+	}
+	if s.Status == "bad request" {
+		return errors.New("bad request: invalid xxxx")
+	}
 	return nil
 }
-
-func (s *ServiceMock) Update(id string, input port.InsertInputDto, output port.InsertOutputDto) error {
+func (s *ServiceMock) Update(id string, input port.UpdateInputDto, output port.UpdateOutputDto) error {
+	if s.Status == "ok" {
+		name, nick, doc, phone, email := input.Get()
+		output.Fill(id, name, nick, doc, phone, email)
+		return nil
+	}
+	if s.Status == "bad request" {
+		return errors.New("bad request: invalid json body")
+	}
 	return nil
 }
-
 func (s *ServiceMock) Get(param string, input port.InsertInputDto, output port.InsertOutputDto) error {
+	if s.Status == "ok" {
+		name, nick, doc, phone, email := input.Get()
+		output.Fill("1", name, nick, doc, phone, email)
+		return nil
+	}
+	if s.Status == "bad request" {
+		return errors.New("bad request: invalid json body")
+	}
 	return nil
+}
+
+// GinEngineWrapper Mock
+type GinEngineWrapperMock struct {
+	Maps map[string]interface{}
+}
+
+func NewGinEngineWrapperMock() *GinEngineWrapperMock {
+	return &GinEngineWrapperMock{
+		Maps: make(map[string]interface{}),
+	}
+}
+
+func (g *GinEngineWrapperMock) Run() *http.Server {
+	return nil
+}
+func (g *GinEngineWrapperMock) ShutDown()               {}
+func (g *GinEngineWrapperMock) MapError(message string) {}
+func (g *GinEngineWrapperMock) POST(relativePath string, handlers ...gin.HandlerFunc) {
+	g.Maps["relativePath"] = handlers
+}
+func (g *GinEngineWrapperMock) PUT(relativePath string, handlers ...gin.HandlerFunc) {
+	g.Maps["relativePath"] = handlers
+}
+func (g *GinEngineWrapperMock) GET(relativePath string, handlers ...gin.HandlerFunc) {
+	g.Maps["relativePath"] = handlers
+}
+func (g *GinEngineWrapperMock) DELETE(relativePath string, handlers ...gin.HandlerFunc) {
+	g.Maps["relativePath"] = handlers
 }

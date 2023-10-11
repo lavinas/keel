@@ -74,17 +74,17 @@ func (c *Client) LoadByPhone(phone uint64) (bool, error) {
 
 // DocumentDuplicity checks if a document is already registered
 func (c *Client) DocumentDuplicity() (bool, error) {
-	return c.repo.ClientDocumentDuplicity(c.Document, c.ID)
+	return c.repo.DocumentDuplicity(c.Document, c.ID)
 }
 
 // EmailDuplicity checks if a email is already registered
 func (c *Client) EmailDuplicity() (bool, error) {
-	return c.repo.ClientEmailDuplicity(c.Email, c.ID)
+	return c.repo.EmailDuplicity(c.Email, c.ID)
 }
 
 // NickDuplicity checks if a nick is already registered
 func (c *Client) NickDuplicity() (bool, error) {
-	return c.repo.ClientNickDuplicity(c.Nickname, c.ID)
+	return c.repo.NickDuplicity(c.Nickname, c.ID)
 }
 
 // Get returns the client values
@@ -105,7 +105,7 @@ func (c *Client) GetFormatted() (string, string, string, string, string, string)
 
 // Save saves a client on the repository
 func (c *Client) Save() error {
-	return c.repo.ClientSave(c)
+	return c.repo.Save(c)
 }
 
 // Update updates a client on the repository

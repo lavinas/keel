@@ -97,7 +97,7 @@ func TestWithDB(t *testing.T) {
 	l := LogMock{}
 	r := repo.NewRepoMysql(&c)
 	defer r.Close()
-	r.ClientTruncate()
+	r.Truncate()
 	d := domain.NewDomain(r)
 
 	s := NewService(d, &c, &l, r)
@@ -120,5 +120,5 @@ func TestWithDB(t *testing.T) {
 	if !strings.Contains(l.msg, "created") {
 		t.Errorf("Expected 'created', got '%s'", l.msg)
 	}
-	r.ClientTruncate()
+	r.Truncate()
 }

@@ -93,7 +93,7 @@ func TestFindInDtoGet(t *testing.T) {
 		Phone:    "11987654321",
 		Email:    "test@test.com",
 	}
-	page, perPage, name, nick, doc, email := input.Get()
+	page, perPage, name, nick, doc, phone, email := input.Get()
 	if page != "1" {
 		t.Errorf("expected 1, got %s", page)
 	}
@@ -108,6 +108,9 @@ func TestFindInDtoGet(t *testing.T) {
 	}
 	if doc != "12345678901" {
 		t.Errorf("expected 12345678901, got %s", doc)
+	}
+	if phone != "11987654321" {
+		t.Errorf("expected 11987654321, got %s", phone)
 	}
 	if email != "test@test.com" {
 		t.Errorf("expected test@test.com, got %s", email)

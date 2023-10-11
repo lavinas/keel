@@ -47,11 +47,11 @@ func (h *HandlerGin) Insert(c *gin.Context) {
 	var output dto.InsertOutputDto
 	if err := c.ShouldBindJSON(&input); err != nil {
 		h.log.Infof(input, "bad request: "+err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid json body"})
+		c.JSON(http.StatusBadRequest, h.gin.H("error", "invalid json body"))
 		return
 	}
 	if err := h.service.Insert(&input, &output); err != nil {
-		c.JSON(h.gin.MapError(err.Error()), gin_wrapper.H{"error": err.Error()})
+		c.JSON(h.gin.MapError(err.Error()), h.gin.H("error", err.Error()))
 		return
 	}
 	c.JSON(http.StatusCreated, output)
@@ -63,15 +63,15 @@ func (h *HandlerGin) Find(c *gin.Context) {
 	var output dto.FindOutputDto
 	if err := c.ShouldBindQuery(&input); err != nil {
 		h.log.Infof(input, "bad request: "+err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid json body"})
+		c.JSON(http.StatusBadRequest, h.gin.H("error", "invalid json body"))
 		return
 	}
 	if err := h.service.Find(&input, &output); err != nil {
-		c.JSON(h.gin.MapError(err.Error()), gin_wrapper.H{"error": err.Error()})
+		c.JSON(h.gin.MapError(err.Error()), h.gin.H("error", err.Error()))
 		return
 	}
 	if output.Count() == 0 {
-		c.JSON(http.StatusNoContent, gin.H{})
+		c.JSON(http.StatusNoContent, h.gin.H("", ""))
 		return
 	}
 	c.JSON(http.StatusOK, output)
@@ -79,16 +79,16 @@ func (h *HandlerGin) Find(c *gin.Context) {
 
 // Update responds for call of updates a client
 func (h *HandlerGin) Update(c *gin.Context) {
-	var input dto.InsertInputDto
-	var output dto.InsertOutputDto
+	var input dto.UpdateInputDto
+	var output dto.UpdateOutputDto
 	id := c.Param("id")
 	if err := c.ShouldBindJSON(&input); err != nil {
 		h.log.Infof(input, "bad request: "+err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid json body"})
+		c.JSON(http.StatusBadRequest, h.gin.H("error", "invalid json body"))
 		return
 	}
 	if err := h.service.Update(id, &input, &output); err != nil {
-		c.JSON(h.gin.MapError(err.Error()), gin_wrapper.H{"error": err.Error()})
+		c.JSON(h.gin.MapError(err.Error()), h.gin.H("error", err.Error()))
 		return
 	}
 	c.JSON(http.StatusOK, output)
@@ -100,7 +100,7 @@ func (h *HandlerGin) Get(c *gin.Context) {
 	var output dto.InsertOutputDto
 	param := c.Param("param")
 	if err := h.service.Get(param, &input, &output); err != nil {
-		c.JSON(h.gin.MapError(err.Error()), gin_wrapper.H{"error": err.Error()})
+		c.JSON(h.gin.MapError(err.Error()), h.gin.H("error", err.Error()))
 		return
 	}
 	c.JSON(http.StatusOK, output)

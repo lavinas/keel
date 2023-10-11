@@ -25,7 +25,7 @@ type UpdateOutputDto interface {
 
 type FindInputDto interface {
 	Validate() error
-	Get() (string, string, string, string, string, string)
+	Get() (string, string, string, string, string, string, string)
 }
 
 type FindOutputDto interface {

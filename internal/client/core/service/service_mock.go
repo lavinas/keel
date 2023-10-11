@@ -78,30 +78,30 @@ type RepoMock struct {
 	ClientEmailDuplicityReturn    bool
 }
 
-func (r *RepoMock) ClientSave(client port.Client) error {
+func (r *RepoMock) Save(client port.Client) error {
 	r.client = client
 	return nil
 }
 
-func (r *RepoMock) ClientDocumentDuplicity(document uint64, id string) (bool, error) {
+func (r *RepoMock) DocumentDuplicity(document uint64, id string) (bool, error) {
 	if r.ClientDocumentDuplicityReturn {
 		return true, nil
 	}
 	return false, nil
 }
 
-func (r *RepoMock) ClientEmailDuplicity(email, id string) (bool, error) {
+func (r *RepoMock) EmailDuplicity(email, id string) (bool, error) {
 	if r.ClientEmailDuplicityReturn {
 		return true, nil
 	}
 	return false, nil
 }
 
-func (r *RepoMock) ClientNickDuplicity(nick, id string) (bool, error) {
+func (r *RepoMock) NickDuplicity(nick, id string) (bool, error) {
 	return false, nil
 }
 
-func (r *RepoMock) ClientLoadSet(page, perPage uint64, name, nick, doc, email string, set port.ClientSet) error {
+func (r *RepoMock) LoadSet(page, perPage uint64, name, nick, doc, phone, email string, set port.ClientSet) error {
 	return nil
 }
 

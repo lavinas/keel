@@ -1,6 +1,8 @@
 package port
 
 import (
+	"github.com/gin-gonic/gin"
+	"net/http"
 	"os"
 )
 
@@ -17,4 +19,14 @@ type Log interface {
 type Config interface {
 	GetGroup(group string) (map[string]interface{}, error)
 	GetField(group string, field string) (string, error)
+}
+
+type GinEngineWrapper interface {
+	Run() *http.Server
+	ShutDown()
+	MapError(message string)
+	POST(relativePath string, handlers ...gin.HandlerFunc)
+	PUT(relativePath string, handlers ...gin.HandlerFunc)
+	GET(relativePath string, handlers ...gin.HandlerFunc)
+	DELETE(relativePath string, handlers ...gin.HandlerFunc)
 }

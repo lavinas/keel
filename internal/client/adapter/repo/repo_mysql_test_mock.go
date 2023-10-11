@@ -6,6 +6,7 @@ import (
 
 // Config Mock
 type ConfigMock struct {
+	ConnectionOk bool
 }
 
 var ConfigFields = map[string]string{

@@ -130,9 +130,6 @@ func TestUpdateInDtoFormat(t *testing.T) {
 	}
 }
 
-
-
-
 func TestUpdateInDtoGet(t *testing.T) {
 	c := UpdateInputDto{
 		Name:     "Jose da Silva",

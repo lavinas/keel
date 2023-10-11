@@ -36,7 +36,7 @@ func NewRepoMysql(c port.Config) *RepoMysql {
 }
 
 // Insert creates a new client
-func (r *RepoMysql) ClientSave(client port.Client) error {
+func (r *RepoMysql) Save(client port.Client) error {
 	tx, err := r.db.Begin()
 	if err != nil {
 		return err
@@ -68,7 +68,7 @@ func (r *RepoMysql) Update(client port.Client) error {
 }
 
 // ClientDocumentDuplicity checks if a document is already registered
-func (r *RepoMysql) ClientDocumentDuplicity(document uint64, id string) (bool, error) {
+func (r *RepoMysql) DocumentDuplicity(document uint64, id string) (bool, error) {
 	var count int
 	row := r.db.QueryRow(clientDocumentDuplicityQuery, document, id)
 	if err := row.Scan(&count); err != nil {
@@ -78,7 +78,7 @@ func (r *RepoMysql) ClientDocumentDuplicity(document uint64, id string) (bool, e
 }
 
 // ClientEmailDuplicity checks if an email is already registered
-func (r *RepoMysql) ClientEmailDuplicity(email, id string) (bool, error) {
+func (r *RepoMysql) EmailDuplicity(email, id string) (bool, error) {
 	var count int
 	row := r.db.QueryRow(clientEmailDuplicityQuery, email, id)
 	if err := row.Scan(&count); err != nil {
@@ -88,7 +88,7 @@ func (r *RepoMysql) ClientEmailDuplicity(email, id string) (bool, error) {
 }
 
 // ClientNickDuplicity checks if a nick is already registered
-func (r *RepoMysql) ClientNickDuplicity(nick, id string) (bool, error) {
+func (r *RepoMysql) NickDuplicity(nick, id string) (bool, error) {
 	var count int
 	row := r.db.QueryRow(clientNickDuplicityQuery, nick, id)
 	if err := row.Scan(&count); err != nil {
@@ -98,8 +98,8 @@ func (r *RepoMysql) ClientNickDuplicity(nick, id string) (bool, error) {
 }
 
 // GetAll gets all clients
-func (r *RepoMysql) ClientLoadSet(page, perPage uint64, name, nick, doc, email string, set port.ClientSet) error {
-	query, args := r.clientLoadSetQuery(page, perPage, name, nick, doc, email)
+func (r *RepoMysql) LoadSet(page, perPage uint64, name, nick, doc, phone, email string, set port.ClientSet) error {
+	query, args := r.clientLoadSetQuery(page, perPage, name, nick, doc, phone, email)
 	ctx, cancelfunc := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancelfunc()
 	stmt, err := r.db.PrepareContext(ctx, query)
@@ -138,7 +138,7 @@ func (r *RepoMysql) GetByNick(nick string, client port.Client) (bool, error) {
 	row := r.db.QueryRow(clientGetByNick, nick)
 	var id, rnick, name, email string
 	var doc, phone uint64
-	if err := row.Scan(&id, &rnick, &name, &doc, &phone, &email); err != nil {
+	if err := row.Scan(&id, &name, &rnick, &doc, &phone, &email); err != nil {
 		if err == sql.ErrNoRows {
 			return false, nil
 		}
@@ -194,7 +194,7 @@ func (r *RepoMysql) GetByPhone(phone uint64, client port.Client) (bool, error) {
 }
 
 // ClientTruncate truncates the client table
-func (r *RepoMysql) ClientTruncate() error {
+func (r *RepoMysql) Truncate() error {
 	tx, err := r.db.Begin()
 	if err != nil {
 		return err
@@ -216,9 +216,9 @@ func (r *RepoMysql) Close() error {
 }
 
 // clientLoadSetQuery prepate the query for Load Set
-func (r *RepoMysql) clientLoadSetQuery(page, perPage uint64, name, nick, doc, email string) (string, []interface{}) {
+func (r *RepoMysql) clientLoadSetQuery(page, perPage uint64, name, nick, doc, phone, email string) (string, []interface{}) {
 	query := clientSetBase
-	q, args := r.clientLoadSetFilters(name, nick, doc, email)
+	q, args := r.clientLoadSetFilters(name, nick, doc, phone, email)
 	query += q
 	q, a := r.clientLoadSetPagination(page, perPage)
 	query += q
@@ -241,7 +241,7 @@ func (r *RepoMysql) clientLoadSetInterate(row *sql.Rows, set port.ClientSet) err
 }
 
 // clientLoadSetFilters prepate the filters query Load
-func (r *RepoMysql) clientLoadSetFilters(name, nick, doc, email string) (string, []interface{}) {
+func (r *RepoMysql) clientLoadSetFilters(name, nick, doc, phone, email string) (string, []interface{}) {
 	query := ""
 	args := make([]interface{}, 0)
 	if name != "" {
@@ -255,6 +255,10 @@ func (r *RepoMysql) clientLoadSetFilters(name, nick, doc, email string) (string,
 	if doc != "" {
 		query += clientSetFilterDoc
 		args = append(args, "%"+doc+"%")
+	}
+	if phone != "" {
+		query += clientSetFilterPhone
+		args = append(args, "%"+phone+"%")
 	}
 	if email != "" {
 		query += clientSetFilterEmail

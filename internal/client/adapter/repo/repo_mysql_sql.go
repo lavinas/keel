@@ -10,6 +10,7 @@ const (
 	clientSetFilterName          = ` AND name LIKE ?`
 	clientSetFilterNick          = ` AND nickname LIKE ?`
 	clientSetFilterDoc           = ` AND document LIKE ?`
+	clientSetFilterPhone         = ` AND phone LIKE ?`
 	clientSetFilterEmail         = ` AND email LIKE ?`
 	clientSetPagination          = ` LIMIT ? OFFSET ?`
 	clientUpdateQuery            = `UPDATE client SET name = ?, nickname = ?, document = ?, phone = ?, email = ? WHERE id = ?`
