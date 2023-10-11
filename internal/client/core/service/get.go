@@ -63,7 +63,8 @@ func (s *Get) load() error {
 	}
 	iparam, err := toNumber(s.param)
 	if err != nil {
-		return nil
+		s.log.Info("not found: " + s.param)
+		return errors.New("not found: " + s.param)
 	}
 	for _, value := range maps2 {
 		found, err := value(iparam)
