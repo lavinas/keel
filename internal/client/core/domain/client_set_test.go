@@ -2,30 +2,71 @@ package domain
 
 import (
 	"testing"
+
+
 )
 
-func TestLoad(t *testing.T) {
+func TestClientSetLoad(t *testing.T) {
 	t.Run("should load a client", func(t *testing.T) {
 		repo := &RepoMock{}
-		client := NewClient(repo)
-		client.Load("1", "John Doe", "John", 12345678901, 11987654321, "test@test.com")
-		if client.ID != "1" {
-			t.Errorf("expected 1, got %s", client.ID)
+		clientSet := NewClientSet(repo)
+		err := clientSet.Load(1, 10, "John Doe", "John", "12345678901", "11987654321", "test@test.com")
+		if err != nil {
+			t.Errorf("Error: %s", err.Error())
 		}
-		if client.Name != "John Doe" {
-			t.Errorf("expected John Doe, got %s", client.Name)
+	})
+}
+
+func TestClientSetAppend(t *testing.T) {
+	t.Run("should append a client", func(t *testing.T) {
+		repo := &RepoMock{}
+		clientSet := NewClientSet(repo)
+		clientSet.Append("1", "John Doe", "John", 12345678901, 11987654321, "test@test.com")
+		if clientSet.Count() != 1 {
+			t.Errorf("Error: %d", clientSet.Count())
 		}
-		if client.Nickname != "John" {
-			t.Errorf("expected John, got %s", client.Nickname)
+		if clientSet.set[0].Name != "John Doe" {
+			t.Errorf("Error: %s", clientSet.set[0].Name)
 		}
-		if client.Document != 12345678901 {
-			t.Errorf("expected 12345678901, got %d", client.Document)
+		if clientSet.set[0].Nickname != "John" {
+			t.Errorf("Error: %s", clientSet.set[0].Nickname)
 		}
-		if client.Phone != 11987654321 {
-			t.Errorf("expected 11987654321, got %d", client.Phone)
+		if clientSet.set[0].Document != 12345678901 {
+			t.Errorf("Error: %d", clientSet.set[0].Document)
 		}
-		if client.Email != "test@test.com" {
-			t.Errorf("expected test@test.com, got %s", client.Email)
+		if clientSet.set[0].Phone != 11987654321 {
+			t.Errorf("Error: %d", clientSet.set[0].Phone)
+		}
+		if clientSet.set[0].Email != "test@test.com" {
+			t.Errorf("Error: %s", clientSet.set[0].Email)
+		}
+	})
+}
+
+func TestClientSetSetOutput(t *testing.T) {
+	t.Run("should set output", func(t *testing.T) {
+		repo := &RepoMock{}
+		clientSet := NewClientSet(repo)
+		clientSet.Append("1", "John Doe", "John", 12345678901, 11987654321, "test@test.com")
+		output := FindOutputDtoMock{}
+		clientSet.SetOutput(&output)
+		if output.Count() != 1 {
+			t.Errorf("Error: %d", output.Count())
+		}
+		if output.Clients[0].Name != "John Doe" {
+			t.Errorf("Error: %s", output.Clients[0].Name)
+		}
+		if output.Clients[0].Nickname != "John" {
+			t.Errorf("Error: %s", output.Clients[0].Nickname)
+		}
+		if output.Clients[0].Document != 12345678901 {
+			t.Errorf("Error: %d", output.Clients[0].Document)
+		}
+		if output.Clients[0].Phone != 11987654321 {
+			t.Errorf("Error: %d", output.Clients[0].Phone)
+		}
+		if output.Clients[0].Email != "test@test.com" {
+			t.Errorf("Error: %s", output.Clients[0].Email)
 		}
 	})
 }

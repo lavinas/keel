@@ -1,6 +1,8 @@
 package domain
 
 import (
+	"strconv"
+
 	"github.com/lavinas/keel/internal/client/core/port"
 )
 
@@ -64,4 +66,27 @@ func (r *RepoMock) Update(client port.Client) error {
 
 func (r *RepoMock) Close() error {
 	return nil
+}
+
+type FindOutputDtoMock struct {
+	Page    uint64
+	PerPage uint64
+	Clients []Client
+}
+
+func (f *FindOutputDtoMock) SetPage(page, perPage uint64) {
+	f.Page = page
+	f.PerPage = perPage
+}
+
+func (f *FindOutputDtoMock) Append(id, name, nick, doc, phone, email string) {
+	client := NewClient(&RepoMock{})
+	idoc, _ := strconv.ParseUint(doc, 10, 64)
+	iphone, _ := strconv.ParseUint(phone, 10, 64)
+	client.Load(id, name, nick, idoc, iphone, email)
+	f.Clients = append(f.Clients, *client)
+}
+
+func (f *FindOutputDtoMock) Count() int {
+	return len(f.Clients)
 }
