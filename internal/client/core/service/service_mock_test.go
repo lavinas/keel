@@ -121,22 +121,49 @@ func (r *RepoMock) Close() error {
 	return nil
 }
 
-type ClientMock struct {
+// Domain Mock
+type DomainMock struct {
 	Status string
 }
+func (d *DomainMock) GetClient() port.Client {
+	c := &ClientMock{}
+	c.Status = d.Status
+	return c
+}
 
+func (d *DomainMock) GetClientSet() port.ClientSet {
+	c := &ClientSetMock{}
+	c.Status = d.Status
+	return c
+}
+
+// Client Mock
+type ClientMock struct {
+	Status string
+	Id   string
+	Name string
+	Nick string
+	Doc  uint64
+	Phone uint64
+	Email string
+}
 func (c *ClientMock) Insert(name, nick string, doc, phone uint64, email string) error {
 	if c.Status == "ok" {
 		return nil
 	}
-	if c.Status == "internal" {
+	if c.Status == "loaderror" {
 		return fmt.Errorf("internal error")
 	}
 	return nil
 }
 func (c *ClientMock) Load(id, name, nick string, doc, phone uint64, email string) {
+	c.Id = id
+	c.Name = name
+	c.Nick = nick
+	c.Doc = doc
+	c.Phone = phone
+	c.Email = email
 }
-
 func (c *ClientMock) LoadById(id string) (bool, error) {
 	if c.Status == "findbyid" {
 		return true, nil
@@ -183,12 +210,30 @@ func (c *ClientMock) LoadByPhone(phone uint64) (bool, error) {
 	return false, nil
 }
 func (c *ClientMock) DocumentDuplicity() (bool, error) {
+	if c.Status == "duplicitydocument" {
+		return true, nil
+	}
+	if c.Status == "duplicitydocumenterror" {
+		return false, errors.New("duplicitydocument error")
+	}
 	return false, nil
 }
 func (c *ClientMock) EmailDuplicity() (bool, error) {
+	if c.Status == "duplicityemail" {
+		return true, nil
+	}
+	if c.Status == "duplicityemailerror" {
+		return false, errors.New("duplicitydocument error")
+	}
 	return false, nil
 }
 func (c *ClientMock) NickDuplicity() (bool, error) {
+	if c.Status == "duplicitynick" {
+		return true, nil
+	}
+	if c.Status == "duplicitynickerror" {
+		return false, errors.New("duplicitydocument error")
+	}
 	return false, nil
 }
 func (c *ClientMock) Get() (string, string, string, uint64, uint64, string) {
@@ -198,6 +243,9 @@ func (c *ClientMock) GetFormatted() (string, string, string, string, string, str
 	return "0", "0", "Test Name", "Test", "00222222222", "eeqwewqewqe"
 }
 func (c *ClientMock) Save() error {
+	if c.Status == "saveerror" {
+		return fmt.Errorf("internal error")
+	}
 	return nil
 }
 func (c *ClientMock) Update() error {
@@ -255,19 +303,10 @@ func (f *FindOutputDtoMock) Count() int {
 	return 0
 }
 
-type InsertOutputDtoMock struct {
-	Status string
-}
-func (i *InsertOutputDtoMock) Fill(id, name, nick, doc, phone, email string) {
-}
-func (i *InsertOutputDtoMock) Get() (string, string, string, string, string, string) {
-	return "0", "0", "Test Name", "Test", "00222222222", "eeqwewqewqe"
-}
-
+// Insert input dto mock
 type InsertInputDtoMock struct {
 	Status string
 }
-
 func (i *InsertInputDtoMock) IsBlank() bool {
 	return i.Status == "blank"
 }
@@ -280,7 +319,6 @@ func (i *InsertInputDtoMock) Validate() error {
 	}
 	return nil
 }
-
 func (i *InsertInputDtoMock) Format() error {
 	if i.Status == "ok" {
 		return nil
@@ -290,7 +328,6 @@ func (i *InsertInputDtoMock) Format() error {
 	}
 	return nil
 }
-
 func (i *InsertInputDtoMock) Get() (string, string, string, string, string) {
 	if i.Status == "blank" {
 		return "", "", "", "", ""
@@ -298,8 +335,83 @@ func (i *InsertInputDtoMock) Get() (string, string, string, string, string) {
 	if i.Status == "invalid" {
 		return "a", "b", "c", "d", "e"
 	}
-	return "Test Name", "Test", "00222222222", "eeqwewqewqe", "eqeqwewewe"	
+	return "name", "nick", "doc", "phone", "email"	
 }
 
+// Insert output dto mock
+type InsertOutputDtoMock struct {
+	Status string
+	Id    string
+	Name  string
+	Nick  string
+	Doc   string
+	Phone string
+	Email string
+}
+func (i *InsertOutputDtoMock) Fill(id, name, nick, doc, phone, email string) {
+	i.Id = id
+	i.Name = name
+	i.Nick = nick
+	i.Doc = doc
+	i.Phone = phone
+	i.Email = email
+}
+func (i *InsertOutputDtoMock) Get() (string, string, string, string, string, string) {
+	return i.Id, i.Name, i.Nick, i.Doc, i.Phone, i.Email
+}
+
+// Update input dto mock
+type UpdateInputDtoMock struct {
+	Status string
+}
+func (u *UpdateInputDtoMock) Validate() error {
+	if u.Status == "ok" {
+		return nil
+	}
+	if u.Status == "invalid" {
+		return fmt.Errorf("invalid input")
+	}
+	return nil
+}
+func (u *UpdateInputDtoMock) Get() (string, string, string, string, string) {
+	if u.Status == "blank" {
+		return "", "", "", "", ""
+	}
+	if u.Status == "invalid" {
+		return "a", "b", "c", "d", "e"
+	}
+	return "name", "nick", "doc", "phone", "email"
+}
+func (u *UpdateInputDtoMock) Format() error {
+	if u.Status == "ok" {
+		return nil
+	}
+	if u.Status == "invalid" {
+		return fmt.Errorf("invalid input")
+	}
+	return nil
+}
+func (u *UpdateInputDtoMock) IsBlank() bool {
+	return u.Status == "blank"
+}
+
+// Update output dto mock
+type UpdateOutputDtoMock struct {
+	Status string
+	Id    string
+	Name  string
+	Nick  string
+	Doc   string
+	Phone string
+	Email string
+}
+func (u *UpdateOutputDtoMock) Fill(id, name, nick, doc, phone, email string) {
+	u.Id = id
+	u.Name = name
+	u.Nick = nick
+	u.Doc = doc
+	u.Phone = phone
+	u.Email = email
+}
 
 

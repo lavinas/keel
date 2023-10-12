@@ -52,7 +52,8 @@ func (s *Insert) loadClient() error {
 	idoc, _ := strconv.ParseUint(doc, 10, 64)
 	iphone, _ := strconv.ParseUint(phone, 10, 64)
 	if err := s.client.Insert(name, nick, idoc, iphone, email); err != nil {
-		return err
+		s.log.Errorf(s.input, err)
+		return errors.New("internal server error")
 	}
 	return nil
 }
