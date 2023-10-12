@@ -39,7 +39,7 @@ func TestInsertExecute(t *testing.T) {
 		fmt.Println(s)
 		err := s.Execute()
 		if err == nil {
-			t.Errorf("Error: %s", err)
+			t.Errorf("Error should not be nil")
 		}
 		if log.mtype != "Info" {
 			t.Errorf("Expected Info, got %s", log.mtype)
@@ -59,7 +59,7 @@ func TestInsertExecute(t *testing.T) {
 		s := NewInsert(&log, &client, &input, &output)
 		err := s.Execute()
 		if err == nil {
-			t.Errorf("Error: %s", err)
+			t.Errorf("Error should not be nil")
 		}
 		if log.mtype != "Error" {
 			t.Errorf("Expected Error, got %s", log.mtype)
@@ -79,7 +79,7 @@ func TestInsertExecute(t *testing.T) {
 		s := NewInsert(&log, &client, &input, &output)
 		err := s.Execute()
 		if err == nil {
-			t.Errorf("Error: %s", err)
+			t.Errorf("Error should not be nil")
 		}
 		if log.mtype != "Error" {
 			t.Errorf("Expected Error, got %s", log.mtype)
@@ -100,7 +100,7 @@ func TestInsertExecute(t *testing.T) {
 		s := NewInsert(&log, &client, &input, &output)
 		err := s.Execute()
 		if err == nil {
-			t.Errorf("Error: %s", err)
+			t.Errorf("Error should not be nil")
 		}
 		if log.mtype != "Info" {
 			t.Errorf("Expected Error, got %s", log.mtype)
@@ -120,7 +120,7 @@ func TestInsertExecute(t *testing.T) {
 		s := NewInsert(&log, &client, &input, &output)
 		err := s.Execute()
 		if err == nil {
-			t.Errorf("Error: %s", err)
+			t.Errorf("Error should not be nil")
 		}
 		if log.mtype != "Error" {
 			t.Errorf("Expected Error, got %s", log.mtype)
@@ -141,7 +141,7 @@ func TestInsertExecute(t *testing.T) {
 		s := NewInsert(&log, &client, &input, &output)
 		err := s.Execute()
 		if err == nil {
-			t.Errorf("Error: %s", err)
+			t.Errorf("Error should not be nil")
 		}
 		if log.mtype != "Info" {
 			t.Errorf("Expected Error, got %s", log.mtype)
@@ -161,7 +161,7 @@ func TestInsertExecute(t *testing.T) {
 		s := NewInsert(&log, &client, &input, &output)
 		err := s.Execute()
 		if err == nil {
-			t.Errorf("Error: %s", err)
+			t.Errorf("Error should not be nil")
 		}
 		if log.mtype != "Error" {
 			t.Errorf("Expected Error, got %s", log.mtype)
@@ -181,7 +181,7 @@ func TestInsertExecute(t *testing.T) {
 		s := NewInsert(&log, &client, &input, &output)
 		err := s.Execute()
 		if err == nil {
-			t.Errorf("Error: %s", err)
+			t.Errorf("Error should not be nil")
 		}
 		if log.mtype != "Info" {
 			t.Errorf("Expected Error, got %s", log.mtype)
@@ -201,7 +201,7 @@ func TestInsertExecute(t *testing.T) {
 		s := NewInsert(&log, &client, &input, &output)
 		err := s.Execute()
 		if err == nil {
-			t.Errorf("Error: %s", err)
+			t.Errorf("Error should not be nil")
 		}
 		if log.mtype != "Error" {
 			t.Errorf("Expected Error, got %s", log.mtype)

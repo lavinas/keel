@@ -33,9 +33,9 @@ func TestFindExecute(t *testing.T) {
 		service := NewFind(config, log, client, input, output)
 		err := service.Execute()
 		if err == nil {
-			t.Errorf("Error: %s", err.Error())
+			t.Errorf("Error should not be nil")
 		}
-		if err.Error() != "bad request: invalid input" {
+		if err != nil && err.Error() != "bad request: invalid input" {
 			t.Errorf("Error: %s", err.Error())
 		}
 	})
@@ -52,13 +52,12 @@ func TestFindExecute(t *testing.T) {
 		service := NewFind(config, log, client, input, output)
 		err := service.Execute()
 		if err == nil {
-			t.Errorf("Error: %s", err.Error())
+			t.Errorf("Error should not be nil")
 		}
-		if err.Error() != "internal error" {
+		if err != nil && err.Error() != "internal error" {
 			t.Errorf("Error: %s", err.Error())
 		}
 	})
-
 }
 
 func TestFindGetAll(t *testing.T) {

@@ -131,7 +131,6 @@ func (d *DomainMock) GetClient() port.Client {
 	c.Status = d.Status
 	return c
 }
-
 func (d *DomainMock) GetClientSet() port.ClientSet {
 	c := &ClientSetMock{}
 	c.Status = d.Status

@@ -30,7 +30,7 @@ func TestServiceInsert(t *testing.T){
 		service := NewService(domain, config, log, repo)
 		err := service.Insert(input, output)
 		if err == nil {
-			t.Errorf("Error: %s", err.Error())
+			t.Errorf("Error should not be nil")
 		}
 	})
 }
@@ -61,7 +61,7 @@ func TestServiceFind(t *testing.T){
 		service := NewService(domain, config, log, repo)
 		err := service.Find(input, output)
 		if err == nil {
-			t.Errorf("Error: %s", err.Error())
+			t.Errorf("Error should not be nil")
 		}
 	})
 }
@@ -79,7 +79,7 @@ func TestServiceUpdate(t *testing.T){
 		service := NewService(domain, config, log, repo)
 		err := service.Update("957134b5-8de1-4121-80e0-275bb16e1b11", input, output)
 		if err != nil {
-			t.Errorf("Error: %s", err.Error())
+			t.Errorf("Error should not be nil")
 		}
 	})
 	t.Run("should not update", func(t *testing.T) {
@@ -93,7 +93,7 @@ func TestServiceUpdate(t *testing.T){
 		service := NewService(domain, config, log, repo)
 		err := service.Update("957134b5-8de1-4121-80e0-275bb16e1b11", input, output)
 		if err == nil {
-			t.Errorf("Error: %s", err.Error())
+			t.Errorf("Error should not be nil")
 		}
 	})
 }
@@ -111,7 +111,7 @@ func TestServiceGet(t *testing.T){
 		service := NewService(domain, config, log, repo)
 		err := service.Get("1", input, output)
 		if err != nil {
-			t.Errorf("Error: %s", err.Error())
+			t.Errorf("Error should not be nil")
 		}
 	})
 	t.Run("should not get", func(t *testing.T) {
@@ -125,7 +125,7 @@ func TestServiceGet(t *testing.T){
 		service := NewService(domain, config, log, repo)
 		err := service.Get("1", input, output)
 		if err == nil {
-			t.Errorf("Error: %s", err.Error())
+			t.Errorf("Error should not be nil")
 		}
 	})
 

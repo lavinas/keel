@@ -87,9 +87,9 @@ func TestGetExecute(t *testing.T) {
 		service := NewGet(log, client, param, output)
 		err := service.Execute()
 		if err == nil {
-			t.Errorf("Error: %s", err.Error())
+			t.Errorf("Error should not be nil")
 		}
-		if err.Error() != "not found: "+param {
+		if err != nil && err.Error() != "not found: "+param {
 			t.Errorf("Error: %s", err.Error())
 		}
 	})
@@ -104,9 +104,9 @@ func TestGetExecute(t *testing.T) {
 		service := NewGet(log, client, param, output)
 		err := service.Execute()
 		if err == nil {
-			t.Errorf("Error: %s", err.Error())
+			t.Errorf("Error should not be nil")
 		}
-		if err.Error() != "not found: "+param {
+		if err != nil && err.Error() != "not found: "+param {
 			t.Errorf("Error: %s", err.Error())
 		}
 	})
@@ -122,9 +122,9 @@ func TestGetExecute(t *testing.T) {
 		service := NewGet(log, client, param, output)
 		err := service.Execute()
 		if err == nil {
-			t.Errorf("Error: %s", err.Error())
+			t.Errorf("Error should not be nil")
 		}
-		if err.Error() != "bad request: blank param" {
+		if err != nil && err.Error() != "bad request: blank param" {
 			t.Errorf("Error: %s", err.Error())
 		}
 	})
@@ -140,9 +140,9 @@ func TestGetExecute(t *testing.T) {
 		service := NewGet(log, client, param, output)
 		err := service.Execute()
 		if err == nil {
-			t.Errorf("Error: %s", err.Error())
+			t.Errorf("Error should not be nil")
 		}
-		if err.Error() != "findbyid error" {
+		if err != nil && err.Error() != "findbyid error" {
 			t.Errorf("Error: %s", err.Error())
 		}
 	})
@@ -158,9 +158,9 @@ func TestGetExecute(t *testing.T) {
 		service := NewGet(log, client, param, output)
 		err := service.Execute()
 		if err == nil {
-			t.Errorf("Error: %s", err.Error())
+			t.Errorf("Error should not be nil")
 		}
-		if err.Error() != "findbynick error" {
+		if err != nil && err.Error() != "findbynick error" {
 			t.Errorf("Error: %s", err.Error())
 		}
 	})
@@ -176,9 +176,9 @@ func TestGetExecute(t *testing.T) {
 		service := NewGet(log, client, param, output)
 		err := service.Execute()
 		if err == nil {
-			t.Errorf("Error: %s", err.Error())
+			t.Errorf("Error should not be nil")
 		}
-		if err.Error() != "findbyemail error" {
+		if err != nil && err.Error() != "findbyemail error" {
 			t.Errorf("Error: %s", err.Error())
 		}
 	})
@@ -194,9 +194,9 @@ func TestGetExecute(t *testing.T) {
 		service := NewGet(log, client, param, output)
 		err := service.Execute()
 		if err == nil {
-			t.Errorf("Error: %s", err.Error())
+			t.Errorf("Error should not be nil")
 		}
-		if err.Error() != "findbydoc error" {
+		if err != nil && err.Error() != "findbydoc error" {
 			t.Errorf("Error: %s", err.Error())
 		}
 	})
@@ -212,9 +212,9 @@ func TestGetExecute(t *testing.T) {
 		service := NewGet(log, client, param, output)
 		err := service.Execute()
 		if err == nil {
-			t.Errorf("Error: %s", err.Error())
+			t.Errorf("Error should not be nil")
 		}
-		if err.Error() != "findbyphone error" {
+		if err != nil && err.Error() != "findbyphone error" {
 			t.Errorf("Error: %s", err.Error())
 		}
 	})
