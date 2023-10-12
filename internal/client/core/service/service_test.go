@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestServiceInsert(t *testing.T){
+func TestServiceInsert(t *testing.T) {
 	t.Run("should insert", func(t *testing.T) {
 		domain := &DomainMock{}
 		config := &ConfigMock{}
@@ -35,7 +35,7 @@ func TestServiceInsert(t *testing.T){
 	})
 }
 
-func TestServiceFind(t *testing.T){
+func TestServiceFind(t *testing.T) {
 	t.Run("should find", func(t *testing.T) {
 		domain := &DomainMock{}
 		config := &ConfigMock{}
@@ -66,7 +66,7 @@ func TestServiceFind(t *testing.T){
 	})
 }
 
-func TestServiceUpdate(t *testing.T){
+func TestServiceUpdate(t *testing.T) {
 	t.Run("should update", func(t *testing.T) {
 		domain := &DomainMock{}
 		domain.Status = "findbyid"
@@ -98,7 +98,7 @@ func TestServiceUpdate(t *testing.T){
 	})
 }
 
-func TestServiceGet(t *testing.T){
+func TestServiceGet(t *testing.T) {
 	t.Run("should get", func(t *testing.T) {
 		domain := &DomainMock{}
 		domain.Status = "findbyid"

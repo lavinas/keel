@@ -2,10 +2,10 @@ package service
 
 import (
 	"encoding/json"
-	"strings"
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/lavinas/keel/internal/client/core/port"
 )
@@ -15,6 +15,7 @@ type LogMock struct {
 	mtype string
 	msg   string
 }
+
 func (l *LogMock) GetFile() *os.File {
 	return nil
 }
@@ -42,6 +43,7 @@ func (l *LogMock) Close() {
 type ConfigMock struct {
 	Status string
 }
+
 var ConfigFields = map[string]string{
 	"host":      "127.0.0.1",
 	"port":      "3306",
@@ -50,6 +52,7 @@ var ConfigFields = map[string]string{
 	"dbname":    "cbs_client",
 	"pool_size": "3",
 }
+
 func (c *ConfigMock) GetField(group string, field string) (string, error) {
 	if c.Status == "invalid" {
 		return "", fmt.Errorf("invalid config")
@@ -75,6 +78,7 @@ type RepoMock struct {
 	ClientEmailDuplicityReturn    bool
 	ClientNicknameDuplicityReturn bool
 }
+
 func (r *RepoMock) Save(client port.Client) error {
 	r.client = client
 	return nil
@@ -126,6 +130,7 @@ func (r *RepoMock) Close() error {
 type DomainMock struct {
 	Status string
 }
+
 func (d *DomainMock) GetClient() port.Client {
 	c := &ClientMock{}
 	c.Status = d.Status
@@ -140,13 +145,14 @@ func (d *DomainMock) GetClientSet() port.ClientSet {
 // Client Mock
 type ClientMock struct {
 	Status string
-	Id   string
-	Name string
-	Nick string
-	Doc  uint64
-	Phone uint64
-	Email string
+	Id     string
+	Name   string
+	Nick   string
+	Doc    uint64
+	Phone  uint64
+	Email  string
 }
+
 func (c *ClientMock) Insert(name, nick string, doc, phone uint64, email string) error {
 	if c.Status == "ok" {
 		return nil
@@ -265,6 +271,7 @@ func (c *ClientMock) Update() error {
 type ClientSetMock struct {
 	Status string
 }
+
 func (c *ClientSetMock) Load(page, perPage uint64, name, nick, doc, phone, email string) error {
 	if c.Status == "ok" {
 		return nil
@@ -283,6 +290,7 @@ func (c *ClientSetMock) SetOutput(output port.FindOutputDto) {
 type FindInputDtoMock struct {
 	Status string
 }
+
 func (f *FindInputDtoMock) Validate() error {
 	if f.Status == "ok" {
 		return nil
@@ -304,6 +312,7 @@ func (f *FindInputDtoMock) Get() (string, string, string, string, string, string
 
 type FindOutputDtoMock struct {
 }
+
 func (f *FindOutputDtoMock) SetPage(page, perPage uint64) {
 }
 func (f *FindOutputDtoMock) Append(id, name, nick, doc, phone, email string) {
@@ -316,6 +325,7 @@ func (f *FindOutputDtoMock) Count() int {
 type InsertInputDtoMock struct {
 	Status string
 }
+
 func (i *InsertInputDtoMock) IsBlank() bool {
 	return i.Status == "blank"
 }
@@ -344,19 +354,20 @@ func (i *InsertInputDtoMock) Get() (string, string, string, string, string) {
 	if i.Status == "invalid" {
 		return "a", "b", "c", "d", "e"
 	}
-	return "name", "nick", "doc", "phone", "email"	
+	return "name", "nick", "doc", "phone", "email"
 }
 
 // Insert output dto mock
 type InsertOutputDtoMock struct {
 	Status string
-	Id    string
-	Name  string
-	Nick  string
-	Doc   string
-	Phone string
-	Email string
+	Id     string
+	Name   string
+	Nick   string
+	Doc    string
+	Phone  string
+	Email  string
 }
+
 func (i *InsertOutputDtoMock) Fill(id, name, nick, doc, phone, email string) {
 	i.Id = id
 	i.Name = name
@@ -373,6 +384,7 @@ func (i *InsertOutputDtoMock) Get() (string, string, string, string, string, str
 type UpdateInputDtoMock struct {
 	Status string
 }
+
 func (u *UpdateInputDtoMock) Validate() error {
 	if u.Status == "ok" {
 		return nil
@@ -407,13 +419,14 @@ func (u *UpdateInputDtoMock) IsBlank() bool {
 // Update output dto mock
 type UpdateOutputDtoMock struct {
 	Status string
-	Id    string
-	Name  string
-	Nick  string
-	Doc   string
-	Phone string
-	Email string
+	Id     string
+	Name   string
+	Nick   string
+	Doc    string
+	Phone  string
+	Email  string
 }
+
 func (u *UpdateOutputDtoMock) Fill(id, name, nick, doc, phone, email string) {
 	u.Id = id
 	u.Name = name
@@ -422,5 +435,3 @@ func (u *UpdateOutputDtoMock) Fill(id, name, nick, doc, phone, email string) {
 	u.Phone = phone
 	u.Email = email
 }
-
-

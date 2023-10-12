@@ -33,7 +33,6 @@ func TestClientGetFormated(t *testing.T) {
 	}
 }
 
-
 func TestClientInsert(t *testing.T) {
 	t.Run("should insert a client", func(t *testing.T) {
 		repo := &RepoMock{}
@@ -212,8 +211,7 @@ func TestClientEmailDuplicity(t *testing.T) {
 
 func TestClientNickDuplicity(t *testing.T) {
 	t.Run("should return true for nick duplicity", func(t *testing.T) {
-		repo := &RepoMock{
-		}
+		repo := &RepoMock{}
 		client := NewClient(repo)
 		b, err := client.NickDuplicity()
 		if err != nil {
@@ -246,7 +244,7 @@ func TestClientGet(t *testing.T) {
 		if phone != 5511999999999 {
 			t.Errorf("Error: Phone should be 5511999999999. It was %d", phone)
 		}
-		if email != "test@test.com"{
+		if email != "test@test.com" {
 			t.Errorf("Error: Email should be test@test.com. It was %s", email)
 		}
 	})

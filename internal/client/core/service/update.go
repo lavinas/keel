@@ -58,7 +58,7 @@ func (s *Update) validateId() error {
 		return errors.New("bad request: blank id")
 	}
 	if _, err := uuid.Parse(s.id); err != nil {
-		s.log.Infof(s.input, "bad request: invalid id " + s.id)
+		s.log.Infof(s.input, "bad request: invalid id "+s.id)
 		return errors.New("bad request: invalid id")
 	}
 	return nil

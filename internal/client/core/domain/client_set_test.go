@@ -2,8 +2,6 @@ package domain
 
 import (
 	"testing"
-
-
 )
 
 func TestClientSetLoad(t *testing.T) {

@@ -1,10 +1,9 @@
 package service
 
 import (
-	"testing"
 	"strings"
+	"testing"
 )
-
 
 func TestUpdateExecute(t *testing.T) {
 	t.Run("should update ok", func(t *testing.T) {
