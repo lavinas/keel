@@ -19,6 +19,5 @@ func main() {
 	d := domain.NewDomain(r)
 	s := service.NewService(d, c, l, r)
 	h := hdlr.NewHandlerGin(l, s)
-	h.MapHandlers()
 	h.Run()
 }

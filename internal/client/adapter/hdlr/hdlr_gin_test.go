@@ -10,7 +10,6 @@ func TestRun(t *testing.T) {
 	l := LogMock{}
 	s := ServiceMock{}
 	h := NewHandlerGin(&l, &s)
-	h.MapHandlers()
 	h.Run()
 }
 

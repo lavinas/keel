@@ -37,6 +37,7 @@ func (h *HandlerGin) MapHandlers() {
 
 // Run runs the gin service
 func (h *HandlerGin) Run() {
+	h.MapHandlers()
 	h.gin.Run()
 	h.gin.ShutDown()
 }
