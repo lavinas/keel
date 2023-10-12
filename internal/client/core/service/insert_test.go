@@ -28,7 +28,7 @@ func TestInsertExecute(t *testing.T) {
 		}
 	})
 	// should validate error
-	t.Run("should insert", func(t *testing.T) {
+	t.Run("should validate error", func(t *testing.T) {
 		log := LogMock{}
 		client := ClientMock{}
 		client.Status = "ok"
@@ -210,5 +210,7 @@ func TestInsertExecute(t *testing.T) {
 			t.Errorf("Expected 'error', got '%s'", log.msg)
 		}
 	})
+
+
 
 }

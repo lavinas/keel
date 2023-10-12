@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/json"
+	"strings"
 	"errors"
 	"fmt"
 	"os"
@@ -168,6 +169,12 @@ func (c *ClientMock) LoadById(id string) (bool, error) {
 	if c.Status == "findbyid" {
 		return true, nil
 	}
+	if strings.Contains(c.Status, "duplicity") {
+		return true, nil
+	}
+	if strings.Contains(c.Status, "update") {
+		return true, nil
+	}
 	if c.Status == "findbyiderror" {
 		return false, errors.New("findbyid error")
 	}
@@ -249,6 +256,9 @@ func (c *ClientMock) Save() error {
 	return nil
 }
 func (c *ClientMock) Update() error {
+	if c.Status == "updateerror" {
+		return fmt.Errorf("internal error")
+	}
 	return nil
 }
 
@@ -386,10 +396,10 @@ func (u *UpdateInputDtoMock) Format() error {
 	if u.Status == "ok" {
 		return nil
 	}
-	if u.Status == "invalid" {
+	if u.Status == "formaterror" {
 		return fmt.Errorf("invalid input")
 	}
-	return nil
+	return fmt.Errorf("internal error")
 }
 func (u *UpdateInputDtoMock) IsBlank() bool {
 	return u.Status == "blank"

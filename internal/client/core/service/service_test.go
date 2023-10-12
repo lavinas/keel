@@ -77,7 +77,7 @@ func TestServiceUpdate(t *testing.T){
 		input.Status = "ok"
 		output := &UpdateOutputDtoMock{}
 		service := NewService(domain, config, log, repo)
-		err := service.Update("1", input, output)
+		err := service.Update("957134b5-8de1-4121-80e0-275bb16e1b11", input, output)
 		if err != nil {
 			t.Errorf("Error: %s", err.Error())
 		}
@@ -91,9 +91,42 @@ func TestServiceUpdate(t *testing.T){
 		input.Status = "invalid"
 		output := &UpdateOutputDtoMock{}
 		service := NewService(domain, config, log, repo)
-		err := service.Update("1", input, output)
+		err := service.Update("957134b5-8de1-4121-80e0-275bb16e1b11", input, output)
 		if err == nil {
 			t.Errorf("Error: %s", err.Error())
 		}
 	})
+}
+
+func TestServiceGet(t *testing.T){
+	t.Run("should get", func(t *testing.T) {
+		domain := &DomainMock{}
+		domain.Status = "findbyid"
+		config := &ConfigMock{}
+		log := &LogMock{}
+		repo := &RepoMock{}
+		input := &InsertInputDtoMock{}
+		input.Status = "ok"
+		output := &InsertOutputDtoMock{}
+		service := NewService(domain, config, log, repo)
+		err := service.Get("1", input, output)
+		if err != nil {
+			t.Errorf("Error: %s", err.Error())
+		}
+	})
+	t.Run("should not get", func(t *testing.T) {
+		domain := &DomainMock{}
+		config := &ConfigMock{}
+		log := &LogMock{}
+		repo := &RepoMock{}
+		input := &InsertInputDtoMock{}
+		input.Status = "invalid"
+		output := &InsertOutputDtoMock{}
+		service := NewService(domain, config, log, repo)
+		err := service.Get("1", input, output)
+		if err == nil {
+			t.Errorf("Error: %s", err.Error())
+		}
+	})
+
 }

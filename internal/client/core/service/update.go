@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/google/uuid"
 	"github.com/lavinas/keel/internal/client/core/port"
 )
 
@@ -30,13 +31,8 @@ func NewUpdate(log port.Log, client port.Client, id string, input port.UpdateInp
 
 // Execute executes the service
 func (s *Update) Execute() error {
-	if s.id == "" {
-		s.log.Infof(s.input, "bad request: blnk id")
-		return errors.New("bad request: blank id")
-	}
-	if s.input.IsBlank() {
-		s.log.Infof(s.input, "bad request: blank input ")
-		return errors.New("bad request: blank input")
+	if err := s.validateId(); err != nil {
+		return err
 	}
 	if err := s.validateInput(); err != nil {
 		return err
@@ -55,21 +51,38 @@ func (s *Update) Execute() error {
 	return nil
 }
 
+// validateId validates id of Update service
+func (s *Update) validateId() error {
+	if s.id == "" {
+		s.log.Infof(s.input, "bad request: blank id")
+		return errors.New("bad request: blank id")
+	}
+	if _, err := uuid.Parse(s.id); err != nil {
+		s.log.Infof(s.input, "bad request: invalid id " + s.id)
+		return errors.New("bad request: invalid id")
+	}
+	return nil
+}
+
 // validateInput validates input data of Update service
 func (s *Update) validateInput() error {
+	if s.input.IsBlank() {
+		s.log.Infof(s.input, "bad request: blank input ")
+		return errors.New("bad request: blank input")
+	}
 	if err := s.input.Validate(); err != nil {
 		s.log.Infof(s.input, "bad request: "+err.Error())
 		return errors.New("bad request: " + err.Error())
+	}
+	if err := s.input.Format(); err != nil {
+		s.log.Infof(s.input, err.Error())
+		return errors.New("internal error")
 	}
 	return nil
 }
 
 // loadClient loads a client from repository
 func (s *Update) loadClient() error {
-	if err := s.input.Format(); err != nil {
-		s.log.Infof(s.input, "bad request: "+err.Error())
-		return errors.New("bad request: " + err.Error())
-	}
 	result, err := s.client.LoadById(s.id)
 	if err != nil {
 		s.log.Infof(s.input, err.Error())
