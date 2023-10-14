@@ -49,7 +49,7 @@ var ConfigFields = map[string]string{
 	"port":      "3306",
 	"user":      "root",
 	"pass":      "pwd22Adm",
-	"dbname":    "cbs_client",
+	"dbname":    "keel_client",
 	"pool_size": "3",
 }
 

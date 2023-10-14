@@ -1,6 +1,6 @@
-CREATE SCHEMA cbs_client;
+# CLIENTS
 
-CREATE TABLE cbs_client.client (
+CREATE TABLE keel_client.client (
   id VARCHAR(50) NOT NULL PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
   nickname VARCHAR(50) NOT NULL,
@@ -10,14 +10,16 @@ CREATE TABLE cbs_client.client (
   PRIMARY KEY (id)
 );
 
-ALTER TABLE cbs_client.client 
-  ADD INDEX idx1 (nickname ASC);
+ALTER TABLE keel_client.client 
+  ADD INDEX idx_nick (nickname ASC);
 
-ALTER TABLE cbs_client.client 
+ALTER TABLE keel_client.client 
   ADD INDEX idx2 (document ASC);
 
-ALTER TABLE cbs_client.client 
+ALTER TABLE keel_client.client 
   ADD INDEX idx3 (email ASC);
 
-ALTER TABLE cbs_client.client 
+ALTER TABLE keel_client.client 
   ADD INDEX idx4 (phone ASC);
+
+  
