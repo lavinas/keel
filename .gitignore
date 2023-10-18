@@ -20,8 +20,11 @@
 # Go workspace file
 go.work
 
-# log fille
+# log file
 *.log
 
 # config file
 *.json
+
+# data
+*.data
