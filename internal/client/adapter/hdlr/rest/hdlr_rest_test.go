@@ -1,4 +1,4 @@
-package hdlr
+package rest
 
 import (
 	"net/http"
@@ -9,14 +9,14 @@ import (
 func TestRun(t *testing.T) {
 	l := LogMock{}
 	s := ServiceMock{}
-	h := NewHandlerGin(&l, &s)
+	h := NewHandlerRest(&l, &s)
 	h.Run()
 }
 
 func TestInsert(t *testing.T) {
 	l := LogMock{}
 	s := ServiceMock{}
-	h := NewHandlerGin(&l, &s)
+	h := NewHandlerRest(&l, &s)
 	// Test ok
 	w := httptest.NewRecorder()
 	ctx := GetTestGinContext(w)
@@ -76,7 +76,7 @@ func TestFind(t *testing.T) {
 	w := httptest.NewRecorder()
 	ctx := GetTestGinContext(w)
 	s.Status = "no content"
-	h := NewHandlerGin(&l, &s)
+	h := NewHandlerRest(&l, &s)
 	h.Find(ctx)
 	if w.Code != http.StatusNoContent {
 		t.Errorf("Invalid result: %v %s", w.Code, w.Body.String())
@@ -85,7 +85,7 @@ func TestFind(t *testing.T) {
 	w = httptest.NewRecorder()
 	ctx = GetTestGinContext(w)
 	s.Status = "ok"
-	h = NewHandlerGin(&l, &s)
+	h = NewHandlerRest(&l, &s)
 	MockJsonGet(ctx, nil)
 	h.Find(ctx)
 	if w.Code != http.StatusOK {
@@ -98,7 +98,7 @@ func TestFind(t *testing.T) {
 	w = httptest.NewRecorder()
 	ctx = GetTestGinContext(w)
 	s.Status = "bad request"
-	h = NewHandlerGin(&l, &s)
+	h = NewHandlerRest(&l, &s)
 	MockJsonGet(ctx, nil)
 	h.Find(ctx)
 	if w.Code != http.StatusBadRequest {
@@ -113,7 +113,7 @@ func TestUpdate(t *testing.T) {
 	w := httptest.NewRecorder()
 	ctx := GetTestGinContext(w)
 	s.Status = "ok"
-	h := NewHandlerGin(&l, &s)
+	h := NewHandlerRest(&l, &s)
 	MockJsonPost(ctx, nil)
 	h.Update(ctx)
 	if w.Code != http.StatusOK {
@@ -131,7 +131,7 @@ func TestUpdate(t *testing.T) {
 	w = httptest.NewRecorder()
 	ctx = GetTestGinContext(w)
 	s.Status = "bad request"
-	h = NewHandlerGin(&l, &s)
+	h = NewHandlerRest(&l, &s)
 	MockJsonPost(ctx, nil)
 	h.Update(ctx)
 	if w.Code != http.StatusBadRequest {
@@ -146,7 +146,7 @@ func TestGet(t *testing.T) {
 	w := httptest.NewRecorder()
 	ctx := GetTestGinContext(w)
 	s.Status = "ok"
-	h := NewHandlerGin(&l, &s)
+	h := NewHandlerRest(&l, &s)
 	h.Get(ctx)
 	if w.Code != http.StatusOK {
 		t.Errorf("Invalid result: %v %s", w.Code, w.Body.String())
@@ -155,7 +155,7 @@ func TestGet(t *testing.T) {
 	w = httptest.NewRecorder()
 	ctx = GetTestGinContext(w)
 	s.Status = "bad request"
-	h = NewHandlerGin(&l, &s)
+	h = NewHandlerRest(&l, &s)
 	MockJsonPost(ctx, nil)
 	h.Get(ctx)
 	if w.Code != http.StatusBadRequest {

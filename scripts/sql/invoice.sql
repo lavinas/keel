@@ -25,7 +25,6 @@ CREATE TABLE keel_invoice.invoice(
     INDEX idx_date (date ASC),
     INDEX idx_due (due ASC),
     INDEX idx_status (status_id ASC),
-    FOREIGN KEY (client_id) REFERENCES keel_client.client(id),
     FOREIGN KEY (status_id) REFERENCES keel_invoice.invoice_status(id)
 );
 

@@ -1,4 +1,4 @@
-package hdlr
+package rest
 
 import (
 	"bytes"

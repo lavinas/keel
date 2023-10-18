@@ -1,25 +1,25 @@
-package hdlr
+package rest
 
 import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/lavinas/keel/internal/client/adapter/dto"
+	"github.com/lavinas/keel/internal/client/core/dto"
 	"github.com/lavinas/keel/internal/client/core/port"
 	"github.com/lavinas/keel/pkg/gin_wrapper"
 )
 
-// HandlerGin is a handler for gin framework
-type HandlerGin struct {
+// HandlerRest is a handler for gin framework
+type HandlerRest struct {
 	log     port.Log
 	service port.Service
 	gin     *gin_wrapper.GinEngineWrapper
 }
 
-// NewHandlerGin creates a new HandlerGin
-func NewHandlerGin(log port.Log, service port.Service) *HandlerGin {
+// NewHandlerGin creates a new HandlerRest
+func NewHandlerRest(log port.Log, service port.Service) *HandlerRest {
 	r := gin_wrapper.NewGinEngineWrapper(log)
-	h := HandlerGin{
+	h := HandlerRest{
 		log:     log,
 		service: service,
 		gin:     r,
@@ -28,7 +28,7 @@ func NewHandlerGin(log port.Log, service port.Service) *HandlerGin {
 }
 
 // MapHandlers maps the handlers
-func (h *HandlerGin) MapHandlers() {
+func (h *HandlerRest) MapHandlers() {
 	h.gin.POST("/client/insert", h.Insert)
 	h.gin.POST("/client/update/:id", h.Update)
 	h.gin.GET("/client/find", h.Find)
@@ -36,14 +36,14 @@ func (h *HandlerGin) MapHandlers() {
 }
 
 // Run runs the gin service
-func (h *HandlerGin) Run() {
+func (h *HandlerRest) Run() {
 	h.MapHandlers()
 	h.gin.Run()
 	h.gin.ShutDown()
 }
 
 // Insert responds for call of creates a new client
-func (h *HandlerGin) Insert(c *gin.Context) {
+func (h *HandlerRest) Insert(c *gin.Context) {
 	var input dto.InsertInputDto
 	var output dto.InsertOutputDto
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -59,7 +59,7 @@ func (h *HandlerGin) Insert(c *gin.Context) {
 }
 
 // Find responds for call of list clients
-func (h *HandlerGin) Find(c *gin.Context) {
+func (h *HandlerRest) Find(c *gin.Context) {
 	var input dto.FindInputDto
 	var output dto.FindOutputDto
 	if err := c.ShouldBindQuery(&input); err != nil {
@@ -79,7 +79,7 @@ func (h *HandlerGin) Find(c *gin.Context) {
 }
 
 // Update responds for call of updates a client
-func (h *HandlerGin) Update(c *gin.Context) {
+func (h *HandlerRest) Update(c *gin.Context) {
 	var input dto.UpdateInputDto
 	var output dto.UpdateOutputDto
 	id := c.Param("id")
@@ -96,7 +96,7 @@ func (h *HandlerGin) Update(c *gin.Context) {
 }
 
 // Get responds for call of get a client
-func (h *HandlerGin) Get(c *gin.Context) {
+func (h *HandlerRest) Get(c *gin.Context) {
 	var input dto.InsertInputDto
 	var output dto.InsertOutputDto
 	param := c.Param("param")
