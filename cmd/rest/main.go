@@ -10,10 +10,10 @@ import (
 	"github.com/lavinas/keel/internal/client/core/service"
 )
 
-// main is the entrypoint of the application
+// main is the entrypoint of the rest application
 func main() {
 	c := config.NewConfig()
-	l := log.NewlogFile(".", "client", true)
+	l := log.NewlogFile(".", "client-rest", true)
 	r := repo.NewRepoMysql(c)
 	defer r.Close()
 	d := domain.NewDomain(r)

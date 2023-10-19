@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package github.com.lavinas.keel;
+
+option go_package = "protofiles/pb";
+
+message ClientInsert {
+    string name = 1;
+    string nickname = 2;
+    string document = 3;
+    string phone = 4;
+    string email = 5;
+}
+
+message ClientInsertResult {
+    string status = 1;
+    string id = 2;
+    string name = 3;
+    string nickname = 4;
+    string document = 5;
+    string phone = 6;
+    string email = 7;
+}
+
+service ClientService {
+    rpc Insert(ClientInsert) returns (ClientInsertResult) {};
+}
