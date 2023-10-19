@@ -20,7 +20,6 @@ func StartServer(config port.Config, log port.Log, service port.Service) {
 	}
 	// create grpc server
 	grpcServer := grpc.NewServer()
-	reflection.Register(grpcServer)
 	address := fmt.Sprintf("0.0.0.0:%s", port)
 	listener, err := net.Listen("tcp", address)
 	if err != nil {
@@ -31,6 +30,7 @@ func StartServer(config port.Config, log port.Log, service port.Service) {
 	// register grpc service
 	pb.RegisterClientServiceServer(grpcServer, NewClientGRPCService(service))
 	// start grpc server
+	reflection.Register(grpcServer)
 	err = grpcServer.Serve(listener)
 	if err != nil {
 		log.Error(fmt.Sprintf("failed to serve: %v", err))
