@@ -133,7 +133,7 @@ func TestShiftFile(t *testing.T) {
 		l.date = "2010-10-10"
 		l.shiftFile()
 		name := l.GetName()
-		today := time.Now().Format("2006-01-02") 
+		today := time.Now().Format("2006-01-02")
 		if !strings.Contains(name, today) {
 			t.Errorf("Log file should be shifted")
 		}

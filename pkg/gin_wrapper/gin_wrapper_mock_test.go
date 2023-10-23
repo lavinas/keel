@@ -7,7 +7,7 @@ import (
 
 // Log Mock
 type LogMock struct {
-	msgs []string
+	msgs  []string
 	mtype []string
 }
 

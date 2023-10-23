@@ -71,7 +71,7 @@ func TestServiceUpdate(t *testing.T) {
 		input := &UpdateInputDtoMock{}
 		input.Status = "ok"
 		output := &UpdateOutputDtoMock{}
-		service := NewService(domain,  log, repo)
+		service := NewService(domain, log, repo)
 		err := service.Update("957134b5-8de1-4121-80e0-275bb16e1b11", input, output)
 		if err != nil {
 			t.Errorf("Error should not be nil")

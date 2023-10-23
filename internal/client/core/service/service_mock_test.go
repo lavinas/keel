@@ -39,7 +39,6 @@ func (l *LogMock) Errorf(input any, err error) {
 func (l *LogMock) Close() {
 }
 
-
 // Repo Mock
 type RepoMock struct {
 	client                        port.Client

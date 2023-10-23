@@ -1,5 +1,5 @@
 package domain
- 
+
 import (
 	"github.com/lavinas/keel/internal/invoice/core/port"
 )
@@ -9,7 +9,7 @@ type Domain struct {
 	repo port.Repo
 }
 
-// New creates a new invoice	
+// New creates a new invoice
 func New(repo port.Repo) *Domain {
 	return &Domain{
 		repo: repo,

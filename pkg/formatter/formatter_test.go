@@ -40,7 +40,7 @@ func TestFormatName(t *testing.T) {
 		if r != "" {
 			t.Errorf("Invalid result: %v", r)
 		}
-	})		
+	})
 }
 
 func TestFormatNickname(t *testing.T) {

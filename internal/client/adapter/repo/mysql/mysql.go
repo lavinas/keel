@@ -13,16 +13,16 @@ import (
 
 const (
 	// GroupMysql is the group name for mysql
-	mysql_user = "MYSQL_USER"
-	mysql_pass = "MYSQL_PASSWORD"
-	mysql_host = "MYSQL_HOST"
-	mysql_port = "MYSQL_PORT"
+	mysql_user   = "MYSQL_USER"
+	mysql_pass   = "MYSQL_PASSWORD"
+	mysql_host   = "MYSQL_HOST"
+	mysql_port   = "MYSQL_PORT"
 	mysql_dbname = "MYSQL_DATABASE"
 )
 
 // Repo is a service to interact with the database
 type RepoMysql struct {
-	db     *sql.DB
+	db *sql.DB
 }
 
 // NewRepo creates a new Repo service

@@ -2,8 +2,8 @@ package gin_wrapper
 
 import (
 	"net/http"
-	"testing"
 	"strings"
+	"testing"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -79,7 +79,6 @@ func TestDELETE(t *testing.T) {
 	})
 }
 
-
 func TestMapError(t *testing.T) {
 	g := NewGinEngineWrapper(&LogMock{})
 	if g.MapError("bad request: invalid x") != http.StatusBadRequest {
@@ -105,4 +104,3 @@ func TestH(t *testing.T) {
 		t.Errorf("Error: %s", "error")
 	}
 }
-

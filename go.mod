@@ -7,7 +7,6 @@ require (
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/google/uuid v1.3.1
 	golang.org/x/text v0.13.0
-	google.golang.org/genproto v0.0.0-20231016165738-49dd2c1f3d0b
 )
 
 require (
