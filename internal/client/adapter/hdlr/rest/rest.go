@@ -39,7 +39,6 @@ func (h *HandlerRest) MapHandlers() {
 func (h *HandlerRest) Run() {
 	h.MapHandlers()
 	h.gin.Run()
-	h.gin.ShutDown()
 }
 
 // Insert responds for call of creates a new client

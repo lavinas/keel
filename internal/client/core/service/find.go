@@ -3,14 +3,18 @@ package service
 import (
 	"errors"
 	"fmt"
+	"os"
 	"strconv"
 
 	"github.com/lavinas/keel/internal/client/core/port"
 )
 
+const (
+	per_page = "KEEL_PER_PAGE"
+)
+
 // Find is the service used to list all clients
 type Find struct {
-	config  port.Config
 	log     port.Log
 	clients port.ClientSet
 	input   port.FindInputDto
@@ -18,9 +22,8 @@ type Find struct {
 }
 
 // NewFind creates a new Find
-func NewFind(config port.Config, log port.Log, clients port.ClientSet, input port.FindInputDto, output port.FindOutputDto) *Find {
+func NewFind(log port.Log, clients port.ClientSet, input port.FindInputDto, output port.FindOutputDto) *Find {
 	return &Find{
-		config:  config,
 		log:     log,
 		clients: clients,
 		input:   input,
@@ -59,9 +62,8 @@ func (s *Find) getAll() (uint64, uint64, string, string, string, string, string)
 	}
 	p, _ := strconv.ParseUint(page, 10, 64)
 	if perPage == "" {
-		var err error
-		perPage, err = s.config.GetField("rest", "per_page")
-		if err != nil {
+		perPage = os.Getenv(per_page)
+		if perPage == "" {
 			perPage = "10"
 		}
 	}

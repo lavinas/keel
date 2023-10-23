@@ -16,11 +16,6 @@ type Log interface {
 	Close()
 }
 
-type Config interface {
-	GetGroup(group string) (map[string]interface{}, error)
-	GetField(group string, field string) (string, error)
-}
-
 type GinEngineWrapper interface {
 	Run() *http.Server
 	ShutDown()

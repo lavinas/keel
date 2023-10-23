@@ -28,4 +28,4 @@ go.work
 
 # data
 *.data
-mysql
+.mysql

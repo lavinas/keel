@@ -34,7 +34,7 @@ func NewGinEngineWrapper(log port.Log) *GinEngineWrapper {
 }
 
 // Run runs the gin service
-func (g *GinEngineWrapper) Run() *http.Server {
+func (g *GinEngineWrapper) Run() {
 	g.log.Info("starting gin service at 127.0.0.1:8081")
 	srv := &http.Server{Addr: ":8081", Handler: g.engine}
 	quit := make(chan os.Signal, 1)
@@ -47,18 +47,13 @@ func (g *GinEngineWrapper) Run() *http.Server {
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 	g.server = srv
-	return srv
-}
-
-// ShutDown shutdowns the gin service
-func (g *GinEngineWrapper) ShutDown() {
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 	defer cancel()
 	if err := g.server.Shutdown(ctx); err != nil {
 		g.log.Error("server Shutdown Error: " + err.Error())
 	}
 	<-ctx.Done()
-	g.log.Info("closed gin service at 127.0.0.1:8081")
+	g.log.Info("closing gin service at 127.0.0.1:8081")
 }
 
 // MapError maps error message to http status code

@@ -1,8 +1,9 @@
-package repo
+package mysql
 
 import (
 	"context"
 	"database/sql"
+	"os"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -12,27 +13,30 @@ import (
 
 const (
 	// GroupMysql is the group name for mysql
-	groupMysql = "mysql"
+	mysql_user = "MYSQL_USER"
+	mysql_pass = "MYSQL_PASSWORD"
+	mysql_host = "MYSQL_HOST"
+	mysql_port = "MYSQL_PORT"
+	mysql_dbname = "MYSQL_DATABASE"
 )
 
 // Repo is a service to interact with the database
 type RepoMysql struct {
 	db     *sql.DB
-	config port.Config
 }
 
 // NewRepo creates a new Repo service
-func NewRepoMysql(c port.Config) *RepoMysql {
-	user := getField(c, "user")
-	pass := getField(c, "pass")
-	host := getField(c, "host")
-	port := getField(c, "port")
-	dbname := getField(c, "dbname")
+func NewRepoMysql() *RepoMysql {
+	user := os.Getenv(mysql_user)
+	pass := os.Getenv(mysql_pass)
+	host := os.Getenv(mysql_host)
+	port := os.Getenv(mysql_port)
+	dbname := os.Getenv(mysql_dbname)
 	db, err := sql.Open("mysql", user+":"+pass+"@tcp("+host+":"+port+")/"+dbname)
 	if err != nil {
 		panic(err)
 	}
-	return &RepoMysql{db: db, config: c}
+	return &RepoMysql{db: db}
 }
 
 // Insert creates a new client
@@ -276,13 +280,4 @@ func (r *RepoMysql) clientLoadSetPagination(page, perPage uint64) (string, []int
 	args = append(args, perPage)
 	args = append(args, (page-1)*perPage)
 	return query, args
-}
-
-// getField gets a field from a group in config file
-func getField(c port.Config, field string) string {
-	r, err := c.GetField(groupMysql, field)
-	if err != nil {
-		panic(err)
-	}
-	return r
 }

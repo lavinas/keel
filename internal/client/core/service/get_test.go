@@ -6,8 +6,6 @@ import (
 
 func TestGetExecute(t *testing.T) {
 	t.Run("should get by id", func(t *testing.T) {
-		config := &ConfigMock{}
-		config.Status = "ok"
 		log := &LogMock{}
 		client := &ClientMock{}
 		client.Status = "findbyid"
@@ -20,8 +18,6 @@ func TestGetExecute(t *testing.T) {
 		}
 	})
 	t.Run("should get by nickname", func(t *testing.T) {
-		config := &ConfigMock{}
-		config.Status = "ok"
 		log := &LogMock{}
 		client := &ClientMock{}
 		client.Status = "findbynick"
@@ -34,8 +30,6 @@ func TestGetExecute(t *testing.T) {
 		}
 	})
 	t.Run("should get by email", func(t *testing.T) {
-		config := &ConfigMock{}
-		config.Status = "ok"
 		log := &LogMock{}
 		client := &ClientMock{}
 		client.Status = "findbyemail"
@@ -48,8 +42,6 @@ func TestGetExecute(t *testing.T) {
 		}
 	})
 	t.Run("should get by document", func(t *testing.T) {
-		config := &ConfigMock{}
-		config.Status = "ok"
 		log := &LogMock{}
 		client := &ClientMock{}
 		client.Status = "findbydoc"
@@ -62,8 +54,6 @@ func TestGetExecute(t *testing.T) {
 		}
 	})
 	t.Run("should get by phone", func(t *testing.T) {
-		config := &ConfigMock{}
-		config.Status = "ok"
 		log := &LogMock{}
 		client := &ClientMock{}
 		client.Status = "findbyphone"
@@ -77,8 +67,6 @@ func TestGetExecute(t *testing.T) {
 	})
 	// not found
 	t.Run("should return error when not found no numeric", func(t *testing.T) {
-		config := &ConfigMock{}
-		config.Status = "ok"
 		log := &LogMock{}
 		client := &ClientMock{}
 		client.Status = "ok"
@@ -94,8 +82,6 @@ func TestGetExecute(t *testing.T) {
 		}
 	})
 	t.Run("should return error when not found numeric", func(t *testing.T) {
-		config := &ConfigMock{}
-		config.Status = "ok"
 		log := &LogMock{}
 		client := &ClientMock{}
 		client.Status = "ok"
@@ -112,8 +98,6 @@ func TestGetExecute(t *testing.T) {
 	})
 	// bad request
 	t.Run("should return error when blank param", func(t *testing.T) {
-		config := &ConfigMock{}
-		config.Status = "ok"
 		log := &LogMock{}
 		client := &ClientMock{}
 		client.Status = "ok"
@@ -130,8 +114,6 @@ func TestGetExecute(t *testing.T) {
 	})
 	// get findbyid error
 	t.Run("should return error when findbyid error", func(t *testing.T) {
-		config := &ConfigMock{}
-		config.Status = "ok"
 		log := &LogMock{}
 		client := &ClientMock{}
 		client.Status = "findbyiderror"
@@ -148,8 +130,6 @@ func TestGetExecute(t *testing.T) {
 	})
 	// get findbynick error
 	t.Run("should return error when findbynick error", func(t *testing.T) {
-		config := &ConfigMock{}
-		config.Status = "ok"
 		log := &LogMock{}
 		client := &ClientMock{}
 		client.Status = "findbynickerror"
@@ -166,8 +146,6 @@ func TestGetExecute(t *testing.T) {
 	})
 	// get findbyemail error
 	t.Run("should return error when findbyemail error", func(t *testing.T) {
-		config := &ConfigMock{}
-		config.Status = "ok"
 		log := &LogMock{}
 		client := &ClientMock{}
 		client.Status = "findbyemailerror"
@@ -184,8 +162,6 @@ func TestGetExecute(t *testing.T) {
 	})
 	// get findbydoc error
 	t.Run("should return error when findbydoc error", func(t *testing.T) {
-		config := &ConfigMock{}
-		config.Status = "ok"
 		log := &LogMock{}
 		client := &ClientMock{}
 		client.Status = "findbydocerror"
@@ -202,8 +178,6 @@ func TestGetExecute(t *testing.T) {
 	})
 	// get findbyphone error
 	t.Run("should return error when findbyphone error", func(t *testing.T) {
-		config := &ConfigMock{}
-		config.Status = "ok"
 		log := &LogMock{}
 		client := &ClientMock{}
 		client.Status = "findbyphoneerror"

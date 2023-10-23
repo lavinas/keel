@@ -1,4 +1,4 @@
-package repo
+package mysql
 
 const (
 	clientSaveQuery              = `INSERT INTO client (id, name, nickname, document, phone, email) VALUES (?, ?, ?, ?, ?, ?)`

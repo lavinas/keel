@@ -7,16 +7,14 @@ import (
 // Service are services to orchestrate client domain
 type Service struct {
 	domain port.Domain
-	config port.Config
 	log    port.Log
 	repo   port.Repo
 }
 
 // NewInsert creates a new Insert service
-func NewService(domain port.Domain, config port.Config, log port.Log, repo port.Repo) *Service {
+func NewService(domain port.Domain, log port.Log, repo port.Repo) *Service {
 	return &Service{
 		domain: domain,
-		config: config,
 		log:    log,
 		repo:   repo,
 	}
@@ -30,7 +28,7 @@ func (s *Service) Insert(input port.InsertInputDto, output port.InsertOutputDto)
 
 // Find is orquestration of Updating a client
 func (s *Service) Find(input port.FindInputDto, output port.FindOutputDto) error {
-	service_client := NewFind(s.config, s.log, s.domain.GetClientSet(), input, output)
+	service_client := NewFind(s.log, s.domain.GetClientSet(), input, output)
 	return service_client.Execute()
 }
 
