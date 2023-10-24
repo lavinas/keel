@@ -50,13 +50,13 @@ const (
 // Validate validates the InsertInputDto
 func (i CreateInputDto) Validate() error {
 	validationMap := map[string]func() error{
-		"reference":        i.ValidateReference,
+		"reference":         i.ValidateReference,
 		"business_nickname": i.ValidateBusinessNickname,
 		"customer_nickname": i.ValidateCustomerNickname,
-		"amount":           i.ValidateAmount,
-		"date":             i.ValidateDate,
-		"due":              i.ValidateDue,
-		"items":			i.ValidateItems,
+		"amount":            i.ValidateAmount,
+		"date":              i.ValidateDate,
+		"due":               i.ValidateDue,
+		"items":             i.ValidateItems,
 	}
 	var message string = ""
 	for _, v := range validationMap {

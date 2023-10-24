@@ -40,7 +40,6 @@ type CreateInputItemDto struct {
 	Price       string `json:"price"`
 }
 
-
 // Validate validates the InsertInputDto
 func (i CreateInputItemDto) Validate() error {
 	validationMap := map[string]func() error{

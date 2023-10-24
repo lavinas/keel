@@ -2,7 +2,6 @@ package dto
 
 // CreateOutputDto is the DTO for the create the crate a new invoice
 type CreateOutputDto struct {
-	Reference   string `json:"reference"`
+	Status    string `json:"status"`
+	Reference string `json:"reference"`
 }
-
-
