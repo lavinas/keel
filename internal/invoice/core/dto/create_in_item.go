@@ -3,6 +3,7 @@ package dto
 import (
 	"errors"
 	"strconv"
+	"strings"
 )
 
 const (
@@ -49,10 +50,10 @@ func (i CreateInputItemDto) Validate() error {
 		"price":       i.ValidatePrice,
 	}
 	var message string = ""
-	for key, value := range validationMap {
+	for _, value := range validationMap {
 		err := value()
 		if err != nil {
-			message += key + " " + err.Error() + " | "
+			message += err.Error() + " | "
 		}
 	}
 	if message != "" {
@@ -64,6 +65,7 @@ func (i CreateInputItemDto) Validate() error {
 
 // ValidateReference validates the reference
 func (i CreateInputItemDto) ValidateReference() error {
+	i.Reference = strings.Trim(i.Reference, " ")
 	if i.Reference == "" {
 		return errors.New(ErrItemReferenceEmpty)
 	}
@@ -72,6 +74,7 @@ func (i CreateInputItemDto) ValidateReference() error {
 
 // ValidateDescription validates the description
 func (i CreateInputItemDto) ValidateDescription() error {
+	i.Description = strings.Trim(i.Description, " ")
 	if i.Description == "" {
 		return errors.New(ErrItemDescriptionEmpty)
 	}
@@ -80,6 +83,7 @@ func (i CreateInputItemDto) ValidateDescription() error {
 
 // ValidateQuantity validates the quantity
 func (i CreateInputItemDto) ValidateQuantity() error {
+	i.Quantity = strings.Trim(i.Quantity, " ")
 	if i.Quantity == "" {
 		return errors.New(ErrItemQuantityEmpty)
 	}
@@ -98,10 +102,11 @@ func (i CreateInputItemDto) ValidateQuantity() error {
 
 // ValidatePrice validates the price
 func (i CreateInputItemDto) ValidatePrice() error {
+	i.Price = strings.Trim(i.Price, " ")
 	if i.Price == "" {
 		return errors.New(ErrItemPriceEmpty)
 	}
-	price, err := strconv.Atoi(i.Price)
+	price, err := strconv.ParseFloat(i.Price, 64)
 	if err != nil {
 		return errors.New(ErrItemPriceNotNumeric)
 	}

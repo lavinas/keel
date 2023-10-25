@@ -5,4 +5,5 @@ type InsertInputDto interface {
 }
 
 type InsertOutputDto interface {
+	Load(status string, reference string)
 }

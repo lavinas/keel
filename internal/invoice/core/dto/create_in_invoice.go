@@ -4,6 +4,8 @@ import (
 	"errors"
 	"strconv"
 	"time"
+	"strings"
+	"fmt"
 )
 
 // InsertInputDto is the DTO for the crate a new invoice
@@ -73,6 +75,7 @@ func (i CreateInputDto) Validate() error {
 
 // Validate reference validates the reference
 func (i CreateInputDto) ValidateReference() error {
+	i.Reference = strings.Trim(i.Reference, " ")
 	if i.Reference == "" {
 		return errors.New(ErrReferenceEmpty)
 	}
@@ -81,22 +84,25 @@ func (i CreateInputDto) ValidateReference() error {
 
 // ValidateBusinessNickname validates the business nickname
 func (i CreateInputDto) ValidateBusinessNickname() error {
+	i.BusinessNickname = strings.Trim(i.BusinessNickname, " ")
 	if i.BusinessNickname == "" {
-		return errors.New(ErrReferenceEmpty)
+		return errors.New(ErrBusinessNicknameEmpty)
 	}
 	return nil
 }
 
 // ValidateCustomerNickname validates the customer nickname
 func (i CreateInputDto) ValidateCustomerNickname() error {
+	i.CustomerNickname = strings.Trim(i.CustomerNickname, " ")
 	if i.CustomerNickname == "" {
-		return errors.New(ErrReferenceEmpty)
+		return errors.New(ErrCustomerNicknameEmpty)
 	}
 	return nil
 }
 
 // ValidateAmount validates the amount
 func (i CreateInputDto) ValidateAmount() error {
+	i.Amount = strings.Trim(i.Amount, " ")
 	if i.Amount == "" {
 		return errors.New(ErrAmountEmpty)
 	}
@@ -112,6 +118,7 @@ func (i CreateInputDto) ValidateAmount() error {
 
 // ValidateDate validates the date
 func (i CreateInputDto) ValidateDate() error {
+	i.Date = strings.Trim(i.Date, " ")
 	if i.Date == "" {
 		return errors.New(ErrDateEmpty)
 	}
@@ -126,6 +133,7 @@ func (i CreateInputDto) ValidateDate() error {
 
 // ValidateDue validates the due
 func (i CreateInputDto) ValidateDue() error {
+	i.Due = strings.Trim(i.Due, " ")
 	if i.Due == "" {
 		return errors.New(ErrDueDateEmpty)
 	}
@@ -142,10 +150,12 @@ func (i CreateInputDto) ValidateDue() error {
 func (i CreateInputDto) ValidateItems() error {
 	message := ""
 	if len(i.Items) != 0 {
+		position := 1
 		for _, item := range i.Items {
 			if item.Validate() != nil {
-				message += item.Reference + ": " + item.Validate().Error() + " | "
+				message += fmt.Sprintf("item %d: %s | ", position, item.Validate().Error())
 			}
+			position++
 		}
 	}
 	if message != "" {
@@ -154,3 +164,4 @@ func (i CreateInputDto) ValidateItems() error {
 	}
 	return nil
 }
+
