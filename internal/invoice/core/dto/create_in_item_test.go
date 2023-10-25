@@ -5,8 +5,8 @@ import (
 	"testing"
 )
 
-func TestItemValidate(t *testing.T){
-	t.Run("should return nil when all fields are valid", func(t *testing.T){
+func TestItemValidate(t *testing.T) {
+	t.Run("should return nil when all fields are valid", func(t *testing.T) {
 		dto := CreateInputItemDto{
 			Reference:   " ref ",
 			Description: "desc ",
@@ -19,7 +19,7 @@ func TestItemValidate(t *testing.T){
 		}
 	})
 
-	t.Run("should return error when reference is empty", func(t *testing.T){
+	t.Run("should return error when reference is empty", func(t *testing.T) {
 		dto := CreateInputItemDto{
 			Reference:   "",
 			Description: "desc",
@@ -35,7 +35,7 @@ func TestItemValidate(t *testing.T){
 		}
 	})
 
-	t.Run("should return error when description is empty", func(t *testing.T){
+	t.Run("should return error when description is empty", func(t *testing.T) {
 		dto := CreateInputItemDto{
 			Reference:   "ref",
 			Description: "",
@@ -51,7 +51,7 @@ func TestItemValidate(t *testing.T){
 		}
 	})
 
-	t.Run("should return error when quantity is empty", func(t *testing.T){
+	t.Run("should return error when quantity is empty", func(t *testing.T) {
 		dto := CreateInputItemDto{
 			Reference:   "ref",
 			Description: "desc",
@@ -67,7 +67,7 @@ func TestItemValidate(t *testing.T){
 		}
 	})
 
-	t.Run("should return error when quantity is not numeric", func(t *testing.T){
+	t.Run("should return error when quantity is not numeric", func(t *testing.T) {
 		dto := CreateInputItemDto{
 			Reference:   "ref",
 			Description: "desc",
@@ -83,7 +83,7 @@ func TestItemValidate(t *testing.T){
 		}
 	})
 
-	t.Run("should return error when quantity is zero", func(t *testing.T){
+	t.Run("should return error when quantity is zero", func(t *testing.T) {
 		dto := CreateInputItemDto{
 			Reference:   "ref",
 			Description: "desc",
@@ -98,7 +98,7 @@ func TestItemValidate(t *testing.T){
 			t.Errorf("Expected error %s, got %s", ErrItemQuantidyZeroNegative, err.Error())
 		}
 	})
-	t.Run("should return error when quantity is negative", func(t *testing.T){
+	t.Run("should return error when quantity is negative", func(t *testing.T) {
 		dto := CreateInputItemDto{
 			Reference:   "ref",
 			Description: "desc",
@@ -113,7 +113,7 @@ func TestItemValidate(t *testing.T){
 			t.Errorf("Expected error %s, got %s", ErrItemQuantidyZeroNegative, err.Error())
 		}
 	})
-	t.Run("should return error when quantity is too big", func(t *testing.T){
+	t.Run("should return error when quantity is too big", func(t *testing.T) {
 		dto := CreateInputItemDto{
 			Reference:   "ref",
 			Description: "desc",
@@ -129,7 +129,7 @@ func TestItemValidate(t *testing.T){
 		}
 	})
 
-	t.Run("should return error when price is empty", func(t *testing.T){
+	t.Run("should return error when price is empty", func(t *testing.T) {
 		dto := CreateInputItemDto{
 			Reference:   "ref",
 			Description: "desc",
@@ -144,8 +144,8 @@ func TestItemValidate(t *testing.T){
 			t.Errorf("Expected error %s, got %s", ErrItemPriceEmpty, err.Error())
 		}
 	})
-	
-	t.Run("should return error when price is not numeric", func(t *testing.T){
+
+	t.Run("should return error when price is not numeric", func(t *testing.T) {
 		dto := CreateInputItemDto{
 			Reference:   "ref",
 			Description: "desc",
@@ -161,7 +161,7 @@ func TestItemValidate(t *testing.T){
 		}
 	})
 
-	t.Run("should return error when price is zero", func(t *testing.T){
+	t.Run("should return error when price is zero", func(t *testing.T) {
 		dto := CreateInputItemDto{
 			Reference:   "ref",
 			Description: "desc",
@@ -177,7 +177,7 @@ func TestItemValidate(t *testing.T){
 		}
 
 	})
-	t.Run("should return error when price is negative", func(t *testing.T){
+	t.Run("should return error when price is negative", func(t *testing.T) {
 		dto := CreateInputItemDto{
 			Reference:   "ref",
 			Description: "desc",
@@ -192,7 +192,7 @@ func TestItemValidate(t *testing.T){
 			t.Errorf("Expected error %s, got %s", ErrItemPriceZeroNegative, err.Error())
 		}
 	})
-	t.Run("should return error when price is too big", func(t *testing.T){
+	t.Run("should return error when price is too big", func(t *testing.T) {
 		dto := CreateInputItemDto{
 			Reference:   "ref",
 			Description: "desc",
@@ -207,7 +207,7 @@ func TestItemValidate(t *testing.T){
 			t.Errorf("Expected error %s, got %s", ErrItemPriceMax, err.Error())
 		}
 	})
-	t.Run("should return a combination of errors", func(t *testing.T){
+	t.Run("should return a combination of errors", func(t *testing.T) {
 		dto := CreateInputItemDto{
 			Reference:   "",
 			Description: "",
@@ -229,6 +229,82 @@ func TestItemValidate(t *testing.T){
 		}
 		if strings.Contains(err.Error(), ErrItemPriceEmpty) == false {
 			t.Errorf("Expected error %s, got %s", ErrItemPriceEmpty, err.Error())
+		}
+	})
+}
+
+func TestGetItemReference(t *testing.T) {
+	t.Run("should return the reference", func(t *testing.T) {
+		dto := CreateInputItemDto{
+			Reference: "ref",
+		}
+		if dto.GetReference() != "ref" {
+			t.Errorf("Expected ref, got %s", dto.GetReference())
+		}
+	})
+}
+
+func TestGetItemDescription(t *testing.T) {
+	t.Run("should return the description", func(t *testing.T) {
+		dto := CreateInputItemDto{
+			Description: "desc",
+		}
+		if dto.GetDescription() != "desc" {
+			t.Errorf("Expected desc, got %s", dto.GetDescription())
+		}
+	})
+}
+
+func TestGetItemQuantity(t *testing.T) {
+	t.Run("should return the quantity", func(t *testing.T) {
+		dto := CreateInputItemDto{
+			Quantity: "1",
+		}
+		quantity, err := dto.GetQuantity()
+		if err != nil {
+			t.Errorf("Expected nil, got %s", err.Error())
+		}
+		if quantity != 1 {
+			t.Errorf("Expected 1, got %d", quantity)
+		}
+	})
+	t.Run("should return error when quantity is not numeric", func(t *testing.T) {
+		dto := CreateInputItemDto{
+			Quantity: "a",
+		}
+		_, err := dto.GetQuantity()
+		if err == nil {
+			t.Errorf("Expected error, got nil")
+		}
+		if err != nil && err.Error() != ErrItemQuantityNotNumeric {
+			t.Errorf("Expected error %s, got %s", ErrItemQuantityNotNumeric, err.Error())
+		}
+	})
+}
+
+func TestGetItemPrice(t *testing.T) {
+	t.Run("should return the price", func(t *testing.T) {
+		dto := CreateInputItemDto{
+			Price: "1",
+		}
+		price, err := dto.GetPrice()
+		if err != nil {
+			t.Errorf("Expected nil, got %s", err.Error())
+		}
+		if price != 1 {
+			t.Errorf("Expected 1, got %f", price)
+		}
+	})
+	t.Run("should return error when price is not numeric", func(t *testing.T) {
+		dto := CreateInputItemDto{
+			Price: "a",
+		}
+		_, err := dto.GetPrice()
+		if err == nil {
+			t.Errorf("Expected error, got nil")
+		}
+		if err != nil && err.Error() != ErrItemPriceNotNumeric {
+			t.Errorf("Expected error %s, got %s", ErrItemPriceNotNumeric, err.Error())
 		}
 	})
 }

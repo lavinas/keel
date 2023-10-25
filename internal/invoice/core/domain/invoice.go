@@ -19,22 +19,17 @@ var (
 
 // Invoice is the domain model for a invoice
 type Invoice struct {
-	repo         port.Repo
-	id           string
-	reference    string
-	client_id    string
-	client_name  string
-	client_email string
-	client_phone uint64
-	value        float64
-	paid_value   float64
-	date         time.Time
-	due          time.Time
-	notes        string
-	status_id    uint
-	status_name  string
-	created_at   time.Time
-	updated_at   time.Time
+	repo      port.Repo
+	id        string
+	reference string
+	business  port.InvoiceClient
+	customer  port.InvoiceClient
+	amount    float64
+	date      time.Time
+	due       time.Time
+	status_id uint
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 // NewInvoice creates a new invoice
@@ -44,54 +39,91 @@ func NewInvoice(repo port.Repo) *Invoice {
 	}
 }
 
-// Insert loads a invoice
-func (i *Invoice) Create(reference, client_id, client_name, client_email string, client_phone uint64,
-	value float64, date, due time.Time, notes string) error {
-	id, err := uuid.NewRandom()
+// Load loads a invoice from input
+func (i *Invoice) Load(input port.CreateInputDto, business port.InvoiceClient, customer port.InvoiceClient) error {
+	i.id = uuid.New().String()
+	i.reference = input.GetReference()
+	var err error
+	i.amount, err = input.GetAmount()
 	if err != nil {
 		return err
 	}
-	i.id = id.String()
-	i.reference, i.client_id, i.client_name, i.client_email, i.client_phone, i.value, i.date, i.due, i.notes =
-		reference, client_id, client_name, client_email, client_phone, value, date, due, notes
-	i.paid_value = 0
-	i.status_name = "New"
-	i.status_id = status_map[i.status_name]
-	i.created_at = time.Now()
-	i.updated_at = time.Now()
+	i.date, err = input.GetDate()
+	if err != nil {
+		return err
+	}
+	i.due, err = input.GetDue()
+	if err != nil {
+		return err
+	}
+	i.business = business
+	i.customer = customer
+	i.status_id = status_map["New"]
+	i.CreatedAt = time.Now()
+	i.UpdatedAt = time.Now()
 	return nil
 }
 
-// Load loads a invoice values
-func (i *Invoice) Get() (string, string, string, string, string, uint64, float64, float64, time.Time, time.Time, string) {
-	return i.id, i.reference, i.client_id, i.client_name, i.client_email, i.client_phone, i.value, i.paid_value, i.date, i.due, i.notes
+// SetAmount sets the amount of invoice
+func (i *Invoice) SetAmount(amount float64) {
+	i.amount = amount
 }
 
-// GetStatus returns the invoice status id and name
-func (i *Invoice) GetStatus() (uint, string) {
-	return i.status_id, i.status_name
+// Save stores the invoice on the repository
+func (i *Invoice) Save() error {
+	return i.repo.SaveInvoice(i)
 }
 
-// SetSent sets the invoice as sent
-func (i *Invoice) SetSent(sent time.Time) error {
-	i.status_name = "sent"
-	i.status_id = status_map[i.status_name]
-	i.updated_at = time.Now()
-	return nil
+// GetId returns the id of invoice
+func (i *Invoice) GetId() string {
+	return i.id
 }
 
-// SetPaid sets the invoice as paid
-func (i *Invoice) SetPaid() error {
-	i.status_name = "paid"
-	i.status_id = status_map[i.status_name]
-	i.updated_at = time.Now()
-	return nil
+// GetReference returns the reference of invoice
+func (i *Invoice) GetReference() string {
+	return i.reference
 }
 
-// SetCancelled sets the invoice as cancelled
-func (i *Invoice) SetCancelled() error {
-	i.status_name = "cancelled"
-	i.status_id = status_map[i.status_name]
-	i.updated_at = time.Now()
-	return nil
+// GetBusiness returns the business of invoice
+func (i *Invoice) GetBusinessId() string {
+	return i.business.GetId()
+}
+
+// GetCustomer returns the customer of invoice
+func (i *Invoice) GetCustomerId() string {
+	return i.customer.GetId()
+}
+
+// GetAmount returns the amount of invoice
+func (i *Invoice) GetAmount() float64 {
+	return i.amount
+}
+
+// GetDate returns the date of invoice
+func (i *Invoice) GetDate() time.Time {
+	return i.date
+}
+
+// GetDue returns the due of invoice
+func (i *Invoice) GetDue() time.Time {
+	return i.due
+}
+
+func (i *Invoice) GetNoteId() string {
+	return ""
+}
+
+// GetStatusId returns the status id of invoice
+func (i *Invoice) GetStatusId() uint {
+	return i.status_id
+}
+
+// GetCreatedAt returns the created at of invoice
+func (i *Invoice) GetCreatedAt() time.Time {
+	return i.CreatedAt
+}
+
+// GetUpdatedAt returns the updated at of invoice
+func (i *Invoice) GetUpdatedAt() time.Time {
+	return i.UpdatedAt
 }

@@ -6,7 +6,6 @@ type CreateOutputDto struct {
 	Reference string `json:"reference"`
 }
 
-
 func (dto *CreateOutputDto) Load(status string, reference string) {
 	dto.Status = status
 	dto.Reference = reference

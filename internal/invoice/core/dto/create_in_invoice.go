@@ -2,10 +2,10 @@ package dto
 
 import (
 	"errors"
-	"strconv"
-	"time"
-	"strings"
 	"fmt"
+	"strconv"
+	"strings"
+	"time"
 )
 
 // InsertInputDto is the DTO for the crate a new invoice
@@ -71,6 +71,58 @@ func (i CreateInputDto) Validate() error {
 		return errors.New(message)
 	}
 	return nil
+}
+
+// GetReference returns the reference
+func (i CreateInputDto) GetReference() string {
+	return i.Reference
+}
+
+// GetBusinessNickname returns the business nickname
+func (i CreateInputDto) GetBusinessNickname() string {
+	return i.BusinessNickname
+}
+
+// GetCustomerNickname returns the customer nickname
+func (i CreateInputDto) GetCustomerNickname() string {
+	return i.CustomerNickname
+}
+
+// GetAmount returns the amount
+func (i CreateInputDto) GetAmount() (float64, error) {
+	f, err := strconv.ParseFloat(i.Amount, 64)
+	if err != nil {
+		return 0, errors.New(ErrAmountInvalid)
+	}
+	return f, nil
+}
+
+// GetDate returns the date
+func (i CreateInputDto) GetDate() (time.Time, error) {
+	date, err := time.Parse("2006-01-02", i.Date)
+	if err != nil {
+		return time.Now(), errors.New(ErrDateInvalid)
+	}
+	return date, nil
+}
+
+// GetDue returns the due
+func (i CreateInputDto) GetDue() (time.Time, error) {
+	due, err := time.Parse("2006-01-02", i.Due)
+	if err != nil {
+		return time.Now(), errors.New(ErrDueDateInvalid)
+	}
+	return due, nil
+}
+
+// GetNoteReference returns the note reference
+func (i CreateInputDto) GetNoteReference() string {
+	return i.NoteReference
+}
+
+// GetItems returns the items
+func (i CreateInputDto) GetItems() []CreateInputItemDto {
+	return i.Items
 }
 
 // Validate reference validates the reference
@@ -164,4 +216,3 @@ func (i CreateInputDto) ValidateItems() error {
 	}
 	return nil
 }
-

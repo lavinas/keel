@@ -56,13 +56,10 @@ CREATE TABLE keel_invoice.invoice(
 CREATE TABLE keel_invoice.invoice_item(
     id VARCHAR(50) NOT NULL PRIMARY KEY,
     invoice_id VARCHAR(50) NOT NULL,
-    product_reference VARCHAR(50) NOT NULL,
-    product_id VARCHAR(50) NULL,
+    service_reference VARCHAR(50) NOT NULL,
     description VARCHAR(200) NULL,
-    value DECIMAL(20, 2) NOT NULL,
+    amount DECIMAL(20, 2) NOT NULL,
     quantity DECIMAL(10) NOT NULL,
-    created_at TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP NOT NULL,
     INDEX idx_invoice_id (invoice_id ASC),
     INDEX idx_service_id (service_id ASC),
     FOREIGN KEY (invoice_id) REFERENCES invoice(id)

@@ -63,6 +63,34 @@ func (i CreateInputItemDto) Validate() error {
 	return nil
 }
 
+// GetReference returns the reference
+func (i CreateInputItemDto) GetReference() string {
+	return i.Reference
+}
+
+// GetDescription returns the description
+func (i CreateInputItemDto) GetDescription() string {
+	return i.Description
+}
+
+// GetQuantity returns the quantity
+func (i CreateInputItemDto) GetQuantity() (uint64, error) {
+	quantity, err := strconv.ParseUint(i.Quantity, 10, 64)
+	if err != nil {
+		return 0, errors.New(ErrItemQuantityNotNumeric)
+	}
+	return quantity, nil
+}
+
+// GetPrice returns the price
+func (i CreateInputItemDto) GetPrice() (float64, error) {
+	price, err := strconv.ParseFloat(i.Price, 64)
+	if err != nil {
+		return 0, errors.New(ErrItemPriceNotNumeric)
+	}
+	return price, nil
+}
+
 // ValidateReference validates the reference
 func (i CreateInputItemDto) ValidateReference() error {
 	i.Reference = strings.Trim(i.Reference, " ")

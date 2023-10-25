@@ -12,7 +12,6 @@ import (
 )
 
 const (
-	// GroupMysql is the group name for mysql
 	mysql_user   = "MYSQL_USER"
 	mysql_pass   = "MYSQL_PASSWORD"
 	mysql_host   = "MYSQL_HOST"

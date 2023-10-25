@@ -1,9 +1,29 @@
 package port
 
-type InsertInputDto interface {
+import (
+	"time"
+)
+
+type CreateInputDto interface {
 	Validate() error
+	GetReference() string
+	GetBusinessNickname() string
+	GetCustomerNickname() string
+	GetAmount() (float64, error)
+	GetDate() (time.Time, error)
+	GetDue() (time.Time, error)
+	GetNoteReference() string
+	GetItems() []CreateInputItemDto
 }
 
-type InsertOutputDto interface {
-	Load(status string, reference string)
+type CreateInputItemDto interface {
+	Validate() error
+	GetReference() string
+	GetDescription() string
+	GetQuantity() (uint64, error)
+	GetPrice() (float64, error)
+}
+
+type CreateOutputDto interface {
+	Load(input CreateInputDto) error
 }
