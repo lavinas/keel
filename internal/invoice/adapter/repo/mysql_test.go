@@ -7,6 +7,7 @@ import (
 func TestSaveInvoiceClient(t *testing.T) {
 	t.Run("should save invoice client", func(t *testing.T) {
 		repo := NewRepoMysql()
+		defer repo.Close()
 		repo.Truncate()
 		client := InvoiceClientMock{}
 		err := repo.SaveInvoiceClient(&client)

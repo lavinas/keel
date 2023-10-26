@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"os"
 	"time"
+	"strings"
 
 	_ "github.com/go-sql-driver/mysql"
 
@@ -16,7 +17,7 @@ const (
 	mysql_pass   = "MYSQL_PASSWORD"
 	mysql_host   = "MYSQL_HOST"
 	mysql_port   = "MYSQL_PORT"
-	mysql_dbname = "MYSQL_DATABASE"
+	mysql_dbname = "MYSQL_CLIENT_DATABASE"
 )
 
 // Repo is a service to interact with the database
@@ -31,9 +32,15 @@ func NewRepoMysql() *RepoMysql {
 	host := os.Getenv(mysql_host)
 	port := os.Getenv(mysql_port)
 	dbname := os.Getenv(mysql_dbname)
-	db, err := sql.Open("mysql", user+":"+pass+"@tcp("+host+":"+port+")/"+dbname)
+	db, err := sql.Open("mysql", user+":"+pass+"@tcp("+host+":"+port+")/")
 	if err != nil {
 		panic(err)
+	}
+	if dbname == "" {
+		panic("MYSQL_CLIENT_BASE environment variable is empty")
+	}
+	for i, q := range dbQueries {
+		dbQueries[i] = strings.Replace(q, "{DB}", dbname, -1)
 	}
 	return &RepoMysql{db: db}
 }
@@ -46,7 +53,8 @@ func (r *RepoMysql) Save(client port.Client) error {
 	}
 	defer tx.Rollback()
 	id, name, nick, doc, phone, email := client.Get()
-	_, err = tx.Exec(clientSaveQuery, id, name, nick, doc, phone, email)
+	q := dbQueries["clientSaveQuery"]
+	_, err = tx.Exec(q, id, name, nick, doc, phone, email)
 	if err != nil {
 		return err
 	}
@@ -62,7 +70,8 @@ func (r *RepoMysql) Update(client port.Client) error {
 	}
 	defer tx.Rollback()
 	id, name, nick, doc, phone, email := client.Get()
-	_, err = tx.Exec(clientUpdateQuery, name, nick, doc, phone, email, id)
+	q := dbQueries["clientUpdateQuery"]
+	_, err = tx.Exec(q, name, nick, doc, phone, email, id)
 	if err != nil {
 		return err
 	}
@@ -73,7 +82,8 @@ func (r *RepoMysql) Update(client port.Client) error {
 // ClientDocumentDuplicity checks if a document is already registered
 func (r *RepoMysql) DocumentDuplicity(document uint64, id string) (bool, error) {
 	var count int
-	row := r.db.QueryRow(clientDocumentDuplicityQuery, document, id)
+	q := dbQueries["clientDocumentDuplicityQuery"]
+	row := r.db.QueryRow(q, document, id)
 	if err := row.Scan(&count); err != nil {
 		return false, err
 	}
@@ -83,7 +93,8 @@ func (r *RepoMysql) DocumentDuplicity(document uint64, id string) (bool, error) 
 // ClientEmailDuplicity checks if an email is already registered
 func (r *RepoMysql) EmailDuplicity(email, id string) (bool, error) {
 	var count int
-	row := r.db.QueryRow(clientEmailDuplicityQuery, email, id)
+	q := dbQueries["clientEmailDuplicityQuery"]
+	row := r.db.QueryRow(q, email, id)
 	if err := row.Scan(&count); err != nil {
 		return false, err
 	}
@@ -93,7 +104,8 @@ func (r *RepoMysql) EmailDuplicity(email, id string) (bool, error) {
 // ClientNickDuplicity checks if a nick is already registered
 func (r *RepoMysql) NickDuplicity(nick, id string) (bool, error) {
 	var count int
-	row := r.db.QueryRow(clientNickDuplicityQuery, nick, id)
+	q := dbQueries["clientNickDuplicityQuery"]
+	row := r.db.QueryRow(q, nick, id)
 	if err := row.Scan(&count); err != nil {
 		return false, err
 	}
@@ -123,7 +135,8 @@ func (r *RepoMysql) LoadSet(page, perPage uint64, name, nick, doc, phone, email 
 
 // GetById gets a client by id
 func (r *RepoMysql) GetById(id string, client port.Client) (bool, error) {
-	row := r.db.QueryRow(clientGetById, id)
+	q := dbQueries["clientGetById"]
+	row := r.db.QueryRow(q, id)
 	var rid, name, nick, email string
 	var doc, phone uint64
 	if err := row.Scan(&rid, &name, &nick, &doc, &phone, &email); err != nil {
@@ -138,7 +151,8 @@ func (r *RepoMysql) GetById(id string, client port.Client) (bool, error) {
 
 // GetByNick gets a client by nick
 func (r *RepoMysql) GetByNick(nick string, client port.Client) (bool, error) {
-	row := r.db.QueryRow(clientGetByNick, nick)
+	q := dbQueries["clientGetByNick"]
+	row := r.db.QueryRow(q, nick)
 	var id, rnick, name, email string
 	var doc, phone uint64
 	if err := row.Scan(&id, &name, &rnick, &doc, &phone, &email); err != nil {
@@ -153,7 +167,8 @@ func (r *RepoMysql) GetByNick(nick string, client port.Client) (bool, error) {
 
 // GetByEmail gets a client by email
 func (r *RepoMysql) GetByEmail(email string, client port.Client) (bool, error) {
-	row := r.db.QueryRow(clientGetByEmail, email)
+	q := dbQueries["clientGetByEmail"]
+	row := r.db.QueryRow(q, email)
 	var id, name, nick, remail string
 	var doc, phone uint64
 	if err := row.Scan(&id, &name, &nick, &doc, &phone, &remail); err != nil {
@@ -168,7 +183,8 @@ func (r *RepoMysql) GetByEmail(email string, client port.Client) (bool, error) {
 
 // GetByDoc gets a client by doc
 func (r *RepoMysql) GetByDoc(doc uint64, client port.Client) (bool, error) {
-	row := r.db.QueryRow(clientGetByDoc, doc)
+	q := dbQueries["clientGetByDoc"]
+	row := r.db.QueryRow(q, doc)
 	var id, name, nick, email string
 	var rdoc, phone uint64
 	if err := row.Scan(&id, &name, &nick, &rdoc, &phone, &email); err != nil {
@@ -183,7 +199,8 @@ func (r *RepoMysql) GetByDoc(doc uint64, client port.Client) (bool, error) {
 
 // GetByPhone gets a client by phone
 func (r *RepoMysql) GetByPhone(phone uint64, client port.Client) (bool, error) {
-	row := r.db.QueryRow(clientGetByPhone, phone)
+	q := dbQueries["clientGetByPhone"]
+	row := r.db.QueryRow(q, phone)
 	var id, name, nick, email string
 	var doc, rphone uint64
 	if err := row.Scan(&id, &name, &nick, &doc, &rphone, &email); err != nil {
@@ -202,7 +219,8 @@ func (r *RepoMysql) Truncate() error {
 	if err != nil {
 		return err
 	}
-	_, err = tx.Exec(clientTruncateQuery)
+	q := dbQueries["clientTruncateQuery"]
+	_, err = tx.Exec(q)
 	if err != nil {
 		return err
 	}
@@ -220,7 +238,7 @@ func (r *RepoMysql) Close() error {
 
 // clientLoadSetQuery prepate the query for Load Set
 func (r *RepoMysql) clientLoadSetQuery(page, perPage uint64, name, nick, doc, phone, email string) (string, []interface{}) {
-	query := clientSetBase
+	query := dbQueries["clientSetBase"]
 	q, args := r.clientLoadSetFilters(name, nick, doc, phone, email)
 	query += q
 	q, a := r.clientLoadSetPagination(page, perPage)
@@ -248,23 +266,23 @@ func (r *RepoMysql) clientLoadSetFilters(name, nick, doc, phone, email string) (
 	query := ""
 	args := make([]interface{}, 0)
 	if name != "" {
-		query += clientSetFilterName
+		query += dbQueries["clientSetFilterName"]
 		args = append(args, "%"+name+"%")
 	}
 	if nick != "" {
-		query += clientSetFilterNick
+		query += dbQueries["clientSetFilterNick"]
 		args = append(args, "%"+nick+"%")
 	}
 	if doc != "" {
-		query += clientSetFilterDoc
+		query += dbQueries["clientSetFilterDoc"]
 		args = append(args, "%"+doc+"%")
 	}
 	if phone != "" {
-		query += clientSetFilterPhone
+		query += dbQueries["clientSetFilterPhone"]
 		args = append(args, "%"+phone+"%")
 	}
 	if email != "" {
-		query += clientSetFilterEmail
+		query += dbQueries["clientSetFilterEmail"]
 		args = append(args, "%"+email+"%")
 	}
 	return query, args
@@ -275,7 +293,7 @@ func (r *RepoMysql) clientLoadSetPagination(page, perPage uint64) (string, []int
 	query := ""
 	args := make([]interface{}, 0)
 	// Pagination
-	query += clientSetPagination
+	query += dbQueries["clientSetPagination"]
 	args = append(args, perPage)
 	args = append(args, (page-1)*perPage)
 	return query, args

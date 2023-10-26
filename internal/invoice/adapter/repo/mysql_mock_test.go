@@ -2,6 +2,7 @@ package repo
 
 type InvoiceClientMock struct {
 }
+
 func (i *InvoiceClientMock) Load(nickname, clientId, name, email string, phone, document uint64) {
 }
 func (i *InvoiceClientMock) Save() error {

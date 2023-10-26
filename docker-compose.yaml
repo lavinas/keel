@@ -10,7 +10,8 @@ services:
       MYSQL_PASSWORD: root
       MYSQL_HOST: db_client
       MYSQL_PORT: 3306
-      MYSQL_DATABASE: keel_client
+      MYSQL_CLIENT_DATABASE: keel_client
+      MYSQL_INVOICE_DATABASE: keel_invoice
       KEEL_PER_PAGE: 10
       KEEL_LOG_PATH: .
     ports:

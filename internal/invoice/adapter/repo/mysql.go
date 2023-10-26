@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
+	"strings"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/lavinas/keel/internal/invoice/core/port"
@@ -14,7 +15,7 @@ const (
 	mysql_pass   = "MYSQL_PASSWORD"
 	mysql_host   = "MYSQL_HOST"
 	mysql_port   = "MYSQL_PORT"
-	mysql_dbname = "MYSQL_DATABASE"
+	mysql_dbname = "MYSQL_INVOICE_DATABASE"
 )
 
 // Repo is a service to interact with the database Mysql
@@ -24,11 +25,17 @@ type RepoMysql struct {
 
 // NewRepo creates a new Repo service
 func NewRepoMysql() *RepoMysql {
-	conn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", os.Getenv(mysql_user), os.Getenv(mysql_pass), os.Getenv(mysql_pass),
-		os.Getenv(mysql_port), os.Getenv(mysql_dbname))
+	conn := fmt.Sprintf("%s:%s@tcp(%s:%s)/", os.Getenv(mysql_user), os.Getenv(mysql_pass), os.Getenv(mysql_host), os.Getenv(mysql_port))
 	db, err := sql.Open("mysql", conn)
 	if err != nil {
 		panic(err)
+	}
+	dbname := os.Getenv(mysql_dbname)
+	if dbname == "" {
+		panic("MYSQL invoice database name is empty")
+	}
+	for i, q := range querieMap {
+		querieMap[i] = strings.Replace(q, "{DB}", dbname, -1)
 	}
 	return &RepoMysql{db: db}
 }
@@ -40,8 +47,9 @@ func (r *RepoMysql) SaveInvoiceClient(client port.InvoiceClient) error {
 		return err
 	}
 	defer tx.Rollback()
+	q := querieMap["SaveInvoiceClient"]
 	c := client
-	_, err = tx.Exec(SaveInvoiceClient, c.GetId(), c.GetNickname(), c.GetClientId(),
+	_, err = tx.Exec(q, c.GetId(), c.GetNickname(), c.GetClientId(),
 		c.GetName(), c.GetDocument(), c.GetPhone(), c.GetEmail())
 	if err != nil {
 		return err
@@ -57,8 +65,9 @@ func (r *RepoMysql) SaveInvoice(invoice port.Invoice) error {
 		return err
 	}
 	defer tx.Rollback()
+	q := querieMap["SaveInvoice"]
 	i := invoice
-	_, err = tx.Exec(SaveInvoice, i.GetId(), i.GetReference(), i.GetBusinessId(), i.GetCustomerId(),
+	_, err = tx.Exec(q, i.GetId(), i.GetReference(), i.GetBusinessId(), i.GetCustomerId(),
 		i.GetAmount(), i.GetDate(), i.GetDue(), i.GetNoteId(), i.GetStatusId(),
 		i.GetCreatedAt(), i.GetUpdatedAt())
 	if err != nil {
@@ -75,14 +84,20 @@ func (r *RepoMysql) SaveInvoiceItem(item port.InvoiceItem) error {
 		return err
 	}
 	defer tx.Rollback()
+	q := querieMap["SaveInvoiceItem"]
 	i := item
-	_, err = tx.Exec(SaveInvoiceItem, i.GetId(), i.GetInvoiceId(), i.GetServiceReference(),
+	_, err = tx.Exec(q, i.GetId(), i.GetInvoiceId(), i.GetServiceReference(),
 		i.GetDescription(), i.GetAmount(), i.GetQuantity())
 	if err != nil {
 		return err
 	}
 	tx.Commit()
 	return nil
+}
+
+// Close closes the database connection
+func (r *RepoMysql) Close() error {
+	return r.db.Close()
 }
 
 // Truncate cleans the database
@@ -92,15 +107,15 @@ func (r *RepoMysql) Truncate() error {
 		return err
 	}
 	defer tx.Rollback()
-	_, err = tx.Exec(TruncateInvoiceItem)
+	_, err = tx.Exec(querieMap["TruncateInvoiceItem"])
 	if err != nil {
 		return err
 	}
-	_, err = tx.Exec(TruncateInvoice)
+	_, err = tx.Exec(querieMap["TruncateInvoice"])
 	if err != nil {
 		return err
 	}
-	_, err = tx.Exec(TruncateInvoiceClient)
+	_, err = tx.Exec(querieMap["TruncateInvoiceClient"])
 	if err != nil {
 		return err
 	}
