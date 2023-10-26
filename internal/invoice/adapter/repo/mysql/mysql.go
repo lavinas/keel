@@ -1,4 +1,4 @@
-package repo
+package mysql
 
 import (
 	"database/sql"
@@ -102,22 +102,29 @@ func (r *RepoMysql) Close() error {
 
 // Truncate cleans the database
 func (r *RepoMysql) Truncate() error {
+	if err := r.truncate("TruncateInvoiceItem"); err != nil {
+		return err
+	}
+	if err := r.truncate("TruncateInvoice"); err != nil {
+		return err
+	}
+	if err := r.truncate("TruncateInvoiceClient"); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *RepoMysql) truncate(querieName string) error {
 	tx, err := r.db.Begin()
 	if err != nil {
 		return err
 	}
 	defer tx.Rollback()
-	_, err = tx.Exec(querieMap["TruncateInvoiceItem"])
+	_, err = tx.Exec(querieMap[querieName])
 	if err != nil {
 		return err
 	}
-	_, err = tx.Exec(querieMap["TruncateInvoice"])
-	if err != nil {
-		return err
-	}
-	_, err = tx.Exec(querieMap["TruncateInvoiceClient"])
-	if err != nil {
-		return err
-	}
+	tx.Commit()
 	return nil
 }
+
