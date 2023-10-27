@@ -9,6 +9,7 @@ import (
 // Invoice Client Mock
 type InvoiceClientMock struct {
 }
+
 func (i *InvoiceClientMock) Load(nickname, clientId, name, email string, phone, document uint64) {
 }
 func (i *InvoiceClientMock) Save() error {
@@ -39,50 +40,51 @@ func (i *InvoiceClientMock) GetEmail() string {
 // Invoice mock
 type InvoiceMock struct {
 }
-func (* InvoiceMock) Load(input port.CreateInputDto, business port.InvoiceClient, customer port.InvoiceClient) error {
+
+func (*InvoiceMock) Load(input port.CreateInputDto, business port.InvoiceClient, customer port.InvoiceClient) error {
 	return nil
 }
-func (* InvoiceMock) SetAmount(amount float64) {
+func (*InvoiceMock) SetAmount(amount float64) {
 }
-func (* InvoiceMock) Save() error {
+func (*InvoiceMock) Save() error {
 	return nil
 }
-func (* InvoiceMock) GetId() string {
+func (*InvoiceMock) GetId() string {
 	return "id"
 }
-func (* InvoiceMock) GetReference() string {
+func (*InvoiceMock) GetReference() string {
 	return "ref"
 }
-func (* InvoiceMock) GetBusinessId() string {
+func (*InvoiceMock) GetBusinessId() string {
 	return "1"
 }
-func (* InvoiceMock) GetCustomerId() string {
+func (*InvoiceMock) GetCustomerId() string {
 	return "1"
 }
-func (* InvoiceMock) GetAmount() float64 {
+func (*InvoiceMock) GetAmount() float64 {
 	return 1.66
 }
-func (* InvoiceMock) GetDate() time.Time {
+func (*InvoiceMock) GetDate() time.Time {
 	t, _ := time.Parse("2006-01-02", "2023-10-10")
 	return t
 }
-func (* InvoiceMock) GetDue() time.Time {
+func (*InvoiceMock) GetDue() time.Time {
 	t, _ := time.Parse("2006-01-02", "2023-10-20")
 	return t
 }
-func (* InvoiceMock) GetNoteId() *string {
+func (*InvoiceMock) GetNoteId() *string {
 	return nil
 }
 
-func (* InvoiceMock) GetStatusId() uint {
+func (*InvoiceMock) GetStatusId() uint {
 	return 0
 }
-func (* InvoiceMock) GetCreatedAt() time.Time {
+func (*InvoiceMock) GetCreatedAt() time.Time {
 	t, _ := time.Parse("02 Jan 06 15:04 -0700", "10 Oct 23 10:10 -0300")
 	return t
 
 }
-func (* InvoiceMock) GetUpdatedAt() time.Time {
+func (*InvoiceMock) GetUpdatedAt() time.Time {
 	t, _ := time.Parse("02 Jan 06 15:04 -0700", "10 Oct 23 10:10 -0300")
 	return t
 }
@@ -90,6 +92,7 @@ func (* InvoiceMock) GetUpdatedAt() time.Time {
 // Invoice Item Mock
 type InvoiceItemMock struct {
 }
+
 func (i *InvoiceItemMock) Load(dto port.CreateInputItemDto, invoice port.Invoice) error {
 	return nil
 }

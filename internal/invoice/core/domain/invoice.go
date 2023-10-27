@@ -28,6 +28,7 @@ type Invoice struct {
 	date      time.Time
 	due       time.Time
 	status_id uint
+	items     []port.InvoiceItem
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
@@ -41,26 +42,65 @@ func NewInvoice(repo port.Repo) *Invoice {
 
 // Load loads a invoice from input
 func (i *Invoice) Load(input port.CreateInputDto, business port.InvoiceClient, customer port.InvoiceClient) error {
+	if err := i.loadAmount(input); err != nil {
+		return err
+	}
+	if err := i.loadDate(input); err != nil {
+		return err
+	}
+	if err := i.loadDue(input); err != nil {
+		return err
+	}
+	if err := i.loadItems(input.GetItems()); err != nil {
+		return err
+	}
 	i.id = uuid.New().String()
 	i.reference = input.GetReference()
-	var err error
-	i.amount, err = input.GetAmount()
-	if err != nil {
-		return err
-	}
-	i.date, err = input.GetDate()
-	if err != nil {
-		return err
-	}
-	i.due, err = input.GetDue()
-	if err != nil {
-		return err
-	}
 	i.business = business
 	i.customer = customer
 	i.status_id = status_map["New"]
 	i.CreatedAt = time.Now()
 	i.UpdatedAt = time.Now()
+	return nil
+}
+
+func (i *Invoice) loadAmount(input port.CreateInputDto) error {
+	var err error
+	i.amount, err = input.GetAmount()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (i *Invoice) loadDate(input port.CreateInputDto) error {
+	var err error
+	i.date, err = input.GetDate()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (i *Invoice) loadDue(input port.CreateInputDto) error {
+	var err error
+	i.due, err = input.GetDue()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// loadItems loads the items from input
+func (i *Invoice) loadItems(inputItems []port.CreateInputItemDto) error {
+	for _, inputItem := range inputItems {
+		item := NewInvoiceItem(i.repo)
+		err := item.Load(inputItem, i)
+		if err != nil {
+			return err
+		}
+		i.items = append(i.items, item)
+	}
 	return nil
 }
 

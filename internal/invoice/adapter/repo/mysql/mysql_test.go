@@ -66,7 +66,7 @@ func TestBegin(t *testing.T) {
 	})
 	t.Run("should return error when wrong connection", func(t *testing.T) {
 		repo, _ := NewRepoMysql()
-	    err := repo.db.Close()
+		err := repo.db.Close()
 		if err != nil {
 			t.Errorf("Expected nil, got %s", err.Error())
 		}
@@ -104,7 +104,7 @@ func TestCommit(t *testing.T) {
 	t.Run("should return error when connection is nil", func(t *testing.T) {
 		repo, _ := NewRepoMysql()
 		repo.Begin()
-	    repo.db = nil
+		repo.db = nil
 		err := repo.Commit()
 		if err == nil {
 			t.Errorf("Expected error, got nil")
@@ -116,7 +116,7 @@ func TestCommit(t *testing.T) {
 	t.Run("should return error when connection error", func(t *testing.T) {
 		repo, _ := NewRepoMysql()
 		repo.Begin()
-	    repo.tx.Commit()
+		repo.tx.Commit()
 		err := repo.Commit()
 		if err == nil {
 			t.Errorf("Expected error, got nil")
@@ -147,7 +147,7 @@ func TestRollback(t *testing.T) {
 	})
 	t.Run("should return error when connection error", func(t *testing.T) {
 		repo, _ := NewRepoMysql()
-	    err := repo.db.Close()
+		err := repo.db.Close()
 		if err != nil {
 			t.Errorf("Expected nil, got %s", err.Error())
 		}
@@ -162,7 +162,7 @@ func TestRollback(t *testing.T) {
 	t.Run("should return error when connection is nil", func(t *testing.T) {
 		repo, _ := NewRepoMysql()
 		repo.Begin()
-	    repo.db = nil
+		repo.db = nil
 		err := repo.Rollback()
 		if err == nil {
 			t.Errorf("Expected error, got nil")
@@ -174,7 +174,7 @@ func TestRollback(t *testing.T) {
 	t.Run("should return error when connection error", func(t *testing.T) {
 		repo, _ := NewRepoMysql()
 		repo.Begin()
-	    repo.tx.Commit()
+		repo.tx.Commit()
 		err := repo.Rollback()
 		if err == nil {
 			t.Errorf("Expected error, got nil")
@@ -192,7 +192,7 @@ func TestClose(t *testing.T) {
 	})
 	t.Run("should return error when connection is nil", func(t *testing.T) {
 		repo, _ := NewRepoMysql()
-	    repo.db = nil
+		repo.db = nil
 		err := repo.Close()
 		if err == nil {
 			t.Errorf("Expected error, got nil")
@@ -239,7 +239,7 @@ func TestSaveInvoiceClient(t *testing.T) {
 	t.Run("should return error when connection is nil", func(t *testing.T) {
 		repo, _ := NewRepoMysql()
 		repo.Begin()
-	    repo.db = nil
+		repo.db = nil
 		err := repo.SaveInvoiceClient(&InvoiceClientMock{})
 		if err == nil {
 			t.Errorf("Expected error, got nil")
@@ -251,7 +251,7 @@ func TestSaveInvoiceClient(t *testing.T) {
 	t.Run("should return error when connection error", func(t *testing.T) {
 		repo, _ := NewRepoMysql()
 		repo.Begin()
-	    repo.tx.Commit()
+		repo.tx.Commit()
 		err := repo.SaveInvoiceClient(&InvoiceClientMock{})
 		if err == nil {
 			t.Errorf("Expected error, got nil")
@@ -290,7 +290,7 @@ func TestSaveInvoice(t *testing.T) {
 	t.Run("should return error when connection is nil", func(t *testing.T) {
 		repo, _ := NewRepoMysql()
 		repo.Begin()
-	    repo.db = nil
+		repo.db = nil
 		err := repo.SaveInvoice(&InvoiceMock{})
 		if err == nil {
 			t.Errorf("Expected error, got nil")
@@ -302,7 +302,7 @@ func TestSaveInvoice(t *testing.T) {
 	t.Run("should return error when connection error", func(t *testing.T) {
 		repo, _ := NewRepoMysql()
 		repo.Begin()
-	    repo.tx.Commit()
+		repo.tx.Commit()
 		err := repo.SaveInvoice(&InvoiceMock{})
 		if err == nil {
 			t.Errorf("Expected error, got nil")
@@ -310,7 +310,7 @@ func TestSaveInvoice(t *testing.T) {
 	})
 }
 
-func TestSaveInvoiceItem(t *testing.T){
+func TestSaveInvoiceItem(t *testing.T) {
 	t.Run("should save invoice item", func(t *testing.T) {
 		repo, _ := NewRepoMysql()
 		defer repo.Close()
@@ -344,7 +344,7 @@ func TestSaveInvoiceItem(t *testing.T){
 	t.Run("should return error when connection is nil", func(t *testing.T) {
 		repo, _ := NewRepoMysql()
 		repo.Begin()
-	    repo.db = nil
+		repo.db = nil
 		err := repo.SaveInvoiceItem(&InvoiceItemMock{})
 		if err == nil {
 			t.Errorf("Expected error, got nil")
@@ -356,7 +356,7 @@ func TestSaveInvoiceItem(t *testing.T){
 	t.Run("should return error when connection error", func(t *testing.T) {
 		repo, _ := NewRepoMysql()
 		repo.Begin()
-	    repo.tx.Commit()
+		repo.tx.Commit()
 		err := repo.SaveInvoiceItem(&InvoiceItemMock{})
 		if err == nil {
 			t.Errorf("Expected error, got nil")
@@ -365,7 +365,7 @@ func TestSaveInvoiceItem(t *testing.T){
 
 }
 
-func TestTruncateInvoiceClient(t *testing.T){
+func TestTruncateInvoiceClient(t *testing.T) {
 	t.Run("should truncate without error", func(t *testing.T) {
 		repo, _ := NewRepoMysql()
 		defer repo.Close()
@@ -389,7 +389,7 @@ func TestTruncateInvoiceClient(t *testing.T){
 	t.Run("should return error when connection is nil", func(t *testing.T) {
 		repo, _ := NewRepoMysql()
 		repo.Begin()
-	    repo.db = nil
+		repo.db = nil
 		err := repo.TruncateInvoiceClient()
 		if err == nil {
 			t.Errorf("Expected error, got nil")
@@ -401,7 +401,7 @@ func TestTruncateInvoiceClient(t *testing.T){
 	t.Run("should return error when connection error", func(t *testing.T) {
 		repo, _ := NewRepoMysql()
 		repo.Begin()
-	    repo.tx.Commit()
+		repo.tx.Commit()
 		err := repo.TruncateInvoiceClient()
 		if err == nil {
 			t.Errorf("Expected error, got nil")

@@ -2,14 +2,13 @@ package mysql
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"os"
 	"strings"
-	"errors"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/lavinas/keel/internal/invoice/core/port"
-
 )
 
 const (
@@ -65,7 +64,7 @@ func (r *RepoMysql) Commit() error {
 	if r.tx == nil {
 		return errors.New("transaction not started")
 	}
-	defer func() {r.tx = nil}()
+	defer func() { r.tx = nil }()
 	if r.db == nil {
 		return errors.New("sql: database is closed")
 	}
@@ -81,7 +80,7 @@ func (r *RepoMysql) Rollback() error {
 	if r.tx == nil {
 		return errors.New("transaction not started")
 	}
-	defer func() {r.tx = nil}()
+	defer func() { r.tx = nil }()
 	if r.db == nil {
 		return errors.New("sql: database is closed")
 	}
@@ -186,4 +185,3 @@ func (r *RepoMysql) truncate(querieName string) error {
 	}
 	return nil
 }
-

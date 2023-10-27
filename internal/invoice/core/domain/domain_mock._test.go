@@ -11,6 +11,7 @@ import (
 type RepoMock struct {
 	Status string
 }
+
 func (r *RepoMock) Begin() error {
 	return nil
 }
@@ -36,7 +37,7 @@ func (r *RepoMock) SaveInvoiceItem(item port.InvoiceItem) error {
 	if r.Status == "saveInvoiceItemError" {
 		return errors.New("save error")
 	}
-	return nil	
+	return nil
 }
 func (r *RepoMock) Close() error {
 	return nil
@@ -46,6 +47,7 @@ func (r *RepoMock) Close() error {
 type CreateInputItemDtoMock struct {
 	Status string
 }
+
 func (d *CreateInputItemDtoMock) Validate() error {
 	return nil
 }
@@ -72,6 +74,7 @@ func (d *CreateInputItemDtoMock) GetPrice() (float64, error) {
 type CreateInputDtoMock struct {
 	Status string
 }
+
 func (d *CreateInputDtoMock) Validate() error {
 	return nil
 }
@@ -107,7 +110,15 @@ func (d *CreateInputDtoMock) GetNoteReference() string {
 	return "noteReference"
 }
 func (d *CreateInputDtoMock) GetItems() []port.CreateInputItemDto {
-	return []port.CreateInputItemDto{&CreateInputItemDtoMock{}}
+	if d.Status == "itemsError" {
+		return []port.CreateInputItemDto{
+			&CreateInputItemDtoMock{Status: "quantityError"},
+			&CreateInputItemDtoMock{Status: "priceError"},
+		}
+	}
+	items := []port.CreateInputItemDto{
+		&CreateInputItemDtoMock{},
+		&CreateInputItemDtoMock{},
+	}
+	return items
 }
-
-

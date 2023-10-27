@@ -4,8 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"os"
-	"time"
 	"strings"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 
