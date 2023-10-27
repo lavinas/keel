@@ -16,7 +16,7 @@ func TestInvoiceLoad(t *testing.T) {
 		customer.Load("customer", "clientId", "name", "email", 123456789, 123456789)
 		dto := CreateInputDtoMock{}
 		invoice := NewInvoice(repo)
-		if err := invoice.Load(&dto, business, customer); err != nil {
+		if err := invoice.Load(&dto); err != nil {
 			t.Errorf("expected nil, got %v", err.Error())
 		}
 		if _, err := uuid.Parse(invoice.id); err != nil {
@@ -24,12 +24,6 @@ func TestInvoiceLoad(t *testing.T) {
 		}
 		if invoice.reference != "ref" {
 			t.Errorf("expected ref, got %s", invoice.reference)
-		}
-		if invoice.business != business {
-			t.Errorf("expected %v, got %v", business, invoice.business)
-		}
-		if invoice.customer != customer {
-			t.Errorf("expected %v, got %v", customer, invoice.customer)
 		}
 		if invoice.amount != 1.33 {
 			t.Errorf("expected 1.33, got %f", invoice.amount)
@@ -68,7 +62,7 @@ func TestInvoiceLoad(t *testing.T) {
 		dto := CreateInputDtoMock{}
 		dto.Status = "amountError"
 		invoice := NewInvoice(repo)
-		err := invoice.Load(&dto, business, customer)
+		err := invoice.Load(&dto)
 		if err == nil {
 			t.Errorf("expected error, got nil")
 		}
@@ -85,7 +79,7 @@ func TestInvoiceLoad(t *testing.T) {
 		dto := CreateInputDtoMock{}
 		dto.Status = "dateError"
 		invoice := NewInvoice(repo)
-		err := invoice.Load(&dto, business, customer)
+		err := invoice.Load(&dto)
 		if err == nil {
 			t.Errorf("expected error, got nil")
 		}
@@ -102,7 +96,7 @@ func TestInvoiceLoad(t *testing.T) {
 		dto := CreateInputDtoMock{}
 		dto.Status = "dueError"
 		invoice := NewInvoice(repo)
-		err := invoice.Load(&dto, business, customer)
+		err := invoice.Load(&dto)
 		if err == nil {
 			t.Errorf("expected error, got nil")
 		}
@@ -119,7 +113,7 @@ func TestInvoiceLoad(t *testing.T) {
 		dto := CreateInputDtoMock{}
 		dto.Status = "itemsError"
 		invoice := NewInvoice(repo)
-		err := invoice.Load(&dto, business, customer)
+		err := invoice.Load(&dto)
 		if err == nil {
 			t.Errorf("expected error, got nil")
 		}

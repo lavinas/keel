@@ -41,7 +41,7 @@ func NewInvoice(repo port.Repo) *Invoice {
 }
 
 // Load loads a invoice from input
-func (i *Invoice) Load(input port.CreateInputDto, business port.InvoiceClient, customer port.InvoiceClient) error {
+func (i *Invoice) Load(input port.CreateInputDto) error {
 	if err := i.loadAmount(input); err != nil {
 		return err
 	}
@@ -56,51 +56,9 @@ func (i *Invoice) Load(input port.CreateInputDto, business port.InvoiceClient, c
 	}
 	i.id = uuid.New().String()
 	i.reference = input.GetReference()
-	i.business = business
-	i.customer = customer
 	i.status_id = status_map["New"]
 	i.CreatedAt = time.Now()
 	i.UpdatedAt = time.Now()
-	return nil
-}
-
-func (i *Invoice) loadAmount(input port.CreateInputDto) error {
-	var err error
-	i.amount, err = input.GetAmount()
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (i *Invoice) loadDate(input port.CreateInputDto) error {
-	var err error
-	i.date, err = input.GetDate()
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (i *Invoice) loadDue(input port.CreateInputDto) error {
-	var err error
-	i.due, err = input.GetDue()
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-// loadItems loads the items from input
-func (i *Invoice) loadItems(inputItems []port.CreateInputItemDto) error {
-	for _, inputItem := range inputItems {
-		item := NewInvoiceItem(i.repo)
-		err := item.Load(inputItem, i)
-		if err != nil {
-			return err
-		}
-		i.items = append(i.items, item)
-	}
 	return nil
 }
 
@@ -166,4 +124,47 @@ func (i *Invoice) GetCreatedAt() time.Time {
 // GetUpdatedAt returns the updated at of invoice
 func (i *Invoice) GetUpdatedAt() time.Time {
 	return i.UpdatedAt
+}
+
+// loadAmount loads the amount from input
+func (i *Invoice) loadAmount(input port.CreateInputDto) error {
+	var err error
+	i.amount, err = input.GetAmount()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// loadDate loads the date from input
+func (i *Invoice) loadDate(input port.CreateInputDto) error {
+	var err error
+	i.date, err = input.GetDate()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// loadDue loads the due from input
+func (i *Invoice) loadDue(input port.CreateInputDto) error {
+	var err error
+	i.due, err = input.GetDue()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// loadItems loads the items from input
+func (i *Invoice) loadItems(inputItems []port.CreateInputItemDto) error {
+	for _, inputItem := range inputItems {
+		item := NewInvoiceItem(i.repo)
+		err := item.Load(inputItem, i)
+		if err != nil {
+			return err
+		}
+		i.items = append(i.items, item)
+	}
+	return nil
 }

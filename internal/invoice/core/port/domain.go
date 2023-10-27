@@ -21,7 +21,7 @@ type InvoiceClient interface {
 }
 
 type Invoice interface {
-	Load(input CreateInputDto, business InvoiceClient, customer InvoiceClient) error
+	Load(input CreateInputDto) error
 	SetAmount(amount float64)
 	Save() error
 	GetId() string
