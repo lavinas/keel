@@ -31,7 +31,7 @@ type Invoice interface {
 	GetAmount() float64
 	GetDate() time.Time
 	GetDue() time.Time
-	GetNoteId() string
+	GetNoteId() *string
 	GetStatusId() uint
 	GetCreatedAt() time.Time
 	GetUpdatedAt() time.Time

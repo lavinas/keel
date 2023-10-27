@@ -109,8 +109,8 @@ func (i *Invoice) GetDue() time.Time {
 	return i.due
 }
 
-func (i *Invoice) GetNoteId() string {
-	return ""
+func (i *Invoice) GetNoteId() *string {
+	return nil
 }
 
 // GetStatusId returns the status id of invoice
