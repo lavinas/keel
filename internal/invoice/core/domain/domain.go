@@ -10,7 +10,7 @@ type Domain struct {
 }
 
 // New creates a new invoice
-func New(repo port.Repo) *Domain {
+func NewDomain(repo port.Repo) *Domain {
 	return &Domain{
 		repo: repo,
 	}

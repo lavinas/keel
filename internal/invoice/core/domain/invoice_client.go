@@ -35,6 +35,11 @@ func (i *InvoiceClient) Load(nickname, clientId, name, email string, phone, docu
 	i.document = document
 }
 
+// Save stores the invoice client on the repository
+func (i *InvoiceClient) Save() error {
+	return i.repo.SaveInvoiceClient(i)
+}
+
 // GetId returns the id of invoice client
 func (i *InvoiceClient) GetId() string {
 	return i.id
@@ -68,9 +73,4 @@ func (i *InvoiceClient) GetPhone() uint64 {
 // GetEmail returns the email of invoice client
 func (i *InvoiceClient) GetEmail() string {
 	return i.email
-}
-
-// Save stores the invoice client on the repository
-func (i *InvoiceClient) Save() error {
-	return nil
 }
