@@ -17,7 +17,7 @@ type InvoiceItem struct {
 }
 
 // NewInvoiceItem creates a new invoice item
-func NewInvoiceItem(repo port.Repo, invoiceId string) *InvoiceItem {
+func NewInvoiceItem(repo port.Repo) *InvoiceItem {
 	return &InvoiceItem{
 		repo: repo,
 	}
