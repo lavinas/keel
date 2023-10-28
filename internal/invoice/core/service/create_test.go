@@ -15,5 +15,11 @@ func TestCreateExecute(t *testing.T) {
 		if err != nil {
 			t.Errorf("expected no errors, got %v", err)
 		}
+		if o.status != "created" {
+			t.Errorf("expected status to be created, got %v", o.status)
+		}
+		if o.reference != "" {
+			t.Errorf("expected reference to be empty, got %v", o.reference)
+		}
 	})
 }

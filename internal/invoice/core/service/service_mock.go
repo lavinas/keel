@@ -88,22 +88,22 @@ func (i *CreateInputDtoMock) Validate() error {
 	return nil
 }
 func (i *CreateInputDtoMock) GetReference() string {
-	return ""
+	return "ref"
 }
 func (i *CreateInputDtoMock) GetBusinessNickname() string {
-	return ""
+	return "business"
 }
 func (i *CreateInputDtoMock) GetCustomerNickname() string {
-	return ""
+	return "customer"
 }
 func (i *CreateInputDtoMock) GetAmount() (float64, error) {
-	return 0, nil
+	return 10.33, nil
 }
 func (i *CreateInputDtoMock) GetDate() (time.Time, error) {
-	return time.Time{}, nil
+	return time.Date(2023, 10, 10, 0, 0, 0, 0, time.UTC), nil
 }
 func (i *CreateInputDtoMock) GetDue() (time.Time, error) {
-	return time.Time{}, nil
+	return time.Date(2023, 10, 20, 0, 0, 0, 0, time.UTC), nil
 }
 func (i *CreateInputDtoMock) GetNoteReference() string {
 	return ""
@@ -114,7 +114,11 @@ func (i *CreateInputDtoMock) GetItems() []port.CreateInputItemDto {
 
 // CreateOutputItemDtoMock is a mock of CreateOutputItemDto
 type CreateOutputDtoMock struct {
+	status string
+	reference string
 }
 
 func (i *CreateOutputDtoMock) Load(status string, reference string) {
+	i.status = status
+	i.reference = reference
 }
