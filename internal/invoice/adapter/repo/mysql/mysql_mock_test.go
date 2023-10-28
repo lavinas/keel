@@ -40,6 +40,7 @@ func (i *InvoiceClientMock) GetEmail() string {
 // Invoice mock
 type InvoiceMock struct {
 }
+
 func (*InvoiceMock) Load(input port.CreateInputDto) error {
 	return nil
 }

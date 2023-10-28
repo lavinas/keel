@@ -1,8 +1,8 @@
 package service
 
 import (
-	"os"
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/lavinas/keel/internal/invoice/core/port"
@@ -10,9 +10,10 @@ import (
 
 // CreateMock is a mock of Log
 type LogMock struct {
-	Type string
+	Type    string
 	Message string
 }
+
 func (l *LogMock) GetFile() *os.File {
 	return nil
 }
@@ -36,6 +37,7 @@ func (l *LogMock) Close() {
 // InoviceMock is a mock of Invoice Domain
 type InvoiceMock struct {
 }
+
 func (i *InvoiceMock) Load(input port.CreateInputDto) error {
 	return nil
 }
@@ -81,6 +83,7 @@ func (i *InvoiceMock) GetUpdatedAt() time.Time {
 // CreateInputDtoMock is a mock of CreateInputDto
 type CreateInputDtoMock struct {
 }
+
 func (i *CreateInputDtoMock) Validate() error {
 	return nil
 }
@@ -112,5 +115,6 @@ func (i *CreateInputDtoMock) GetItems() []port.CreateInputItemDto {
 // CreateOutputItemDtoMock is a mock of CreateOutputItemDto
 type CreateOutputDtoMock struct {
 }
+
 func (i *CreateOutputDtoMock) Load(status string, reference string) {
 }

@@ -122,7 +122,7 @@ func TestFormatPhone(t *testing.T) {
 		}
 		if r != "5513999999999" {
 			t.Errorf("Invalid result: %v", r)
-		}	
+		}
 	})
 	t.Run("should return phone is blank", func(t *testing.T) {
 		if _, err := FormatPhone(""); err.Error() != "phone is blank" {

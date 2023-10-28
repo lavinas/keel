@@ -47,8 +47,8 @@ func (i *Invoice) Load(input port.CreateInputDto) error {
 	i.reference = input.GetReference()
 	i.business = NewInvoiceClient(i.repo)
 	i.customer = NewInvoiceClient(i.repo)
-	if err := ktools.MergeError(i.loadAmount(input), i.loadDate(input), i.loadDue(input), 
-			i.loadItems(input.GetItems())); err != nil {
+	if err := ktools.MergeError(i.loadAmount(input), i.loadDate(input), i.loadDue(input),
+		i.loadItems(input.GetItems())); err != nil {
 		return err
 	}
 	i.status_id = status_map["New"]

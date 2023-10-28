@@ -1,9 +1,9 @@
 package domain
 
 import (
+	"reflect"
 	"testing"
 	"time"
-	"reflect"
 
 	"github.com/google/uuid"
 )
