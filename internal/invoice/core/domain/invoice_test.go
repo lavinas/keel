@@ -16,42 +16,52 @@ func TestInvoiceLoad(t *testing.T) {
 		customer.Load("customer", "clientId", "name", "email", 123456789, 123456789)
 		dto := CreateInputDtoMock{}
 		invoice := NewInvoice(repo)
-		if err := invoice.Load(&dto); err != nil {
+		err := invoice.Load(&dto)
+		if err != nil {
 			t.Errorf("expected nil, got %v", err.Error())
 		}
-		if _, err := uuid.Parse(invoice.id); err != nil {
-			t.Errorf("expected valid uuid, got error %s", invoice.id)
+		if err == nil {
+			if _, err := uuid.Parse(invoice.id); err != nil {
+				t.Errorf("expected valid uuid, got error %s", invoice.id)
+			}
+			if invoice.reference != "ref" {
+				t.Errorf("expected ref, got %s", invoice.reference)
+			}
+			if invoice.amount != 1.33 {
+				t.Errorf("expected 1.33, got %f", invoice.amount)
+			}
+			if invoice.date != time.Date(2023, 10, 10, 0, 0, 0, 0, time.UTC) {
+				t.Errorf("expected 2023-10-10, got %v", invoice.date)
+			}
+			if invoice.due != time.Date(2023, 10, 20, 0, 0, 0, 0, time.UTC) {
+				t.Errorf("expected 2023-10-20, got %v", invoice.due)
+			}
+			if invoice.status_id != 0 {
+				t.Errorf("expected status id, got empty")
+			}
+			if invoice.items == nil {
+				t.Errorf("expected items, got nil")
+			}
+			if len(invoice.items) != 2 {
+				t.Errorf("expected items, got nil")
+			}
+			if invoice.items[0].GetDescription() != "desc" {
+				t.Errorf("expected desc, got %s", invoice.items[0].GetDescription())
+			}
+			if invoice.CreatedAt.IsZero() {
+				t.Errorf("expected created at, got empty")
+			}
+			if invoice.UpdatedAt.IsZero() {
+				t.Errorf("expected updated at, got empty")
+			}
+			if invoice.business != nil {
+				t.Errorf("expected nil, got %v", invoice.business)
+			}
+			if invoice.customer != nil {
+				t.Errorf("expected nil, got %v", invoice.customer)
+			}
 		}
-		if invoice.reference != "ref" {
-			t.Errorf("expected ref, got %s", invoice.reference)
-		}
-		if invoice.amount != 1.33 {
-			t.Errorf("expected 1.33, got %f", invoice.amount)
-		}
-		if invoice.date != time.Date(2023, 10, 10, 0, 0, 0, 0, time.UTC) {
-			t.Errorf("expected 2023-10-10, got %v", invoice.date)
-		}
-		if invoice.due != time.Date(2023, 10, 20, 0, 0, 0, 0, time.UTC) {
-			t.Errorf("expected 2023-10-20, got %v", invoice.due)
-		}
-		if invoice.status_id != 0 {
-			t.Errorf("expected status id, got empty")
-		}
-		if invoice.items == nil {
-			t.Errorf("expected items, got nil")
-		}
-		if len(invoice.items) != 2 {
-			t.Errorf("expected items, got nil")
-		}
-		if invoice.items[0].GetDescription() != "desc" {
-			t.Errorf("expected desc, got %s", invoice.items[0].GetDescription())
-		}
-		if invoice.CreatedAt.IsZero() {
-			t.Errorf("expected created at, got empty")
-		}
-		if invoice.UpdatedAt.IsZero() {
-			t.Errorf("expected updated at, got empty")
-		}
+
 	})
 	t.Run("should return amount error", func(t *testing.T) {
 		repo := new(RepoMock)

@@ -5,6 +5,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/lavinas/keel/internal/invoice/core/port"
+	"github.com/lavinas/keel/pkg/kerror"
 )
 
 var (
@@ -42,16 +43,11 @@ func NewInvoice(repo port.Repo) *Invoice {
 
 // Load loads a invoice from input
 func (i *Invoice) Load(input port.CreateInputDto) error {
-	if err := i.loadAmount(input); err != nil {
-		return err
-	}
-	if err := i.loadDate(input); err != nil {
-		return err
-	}
-	if err := i.loadDue(input); err != nil {
-		return err
-	}
-	if err := i.loadItems(input.GetItems()); err != nil {
+	err1 := i.loadAmount(input)
+	err2 := i.loadDate(input)
+	err3 := i.loadDue(input)
+	err4 := i.loadItems(input.GetItems())
+	if err := kerror.MergeError(err1, err2, err3, err4); err != nil {
 		return err
 	}
 	i.id = uuid.New().String()

@@ -4,6 +4,8 @@ import (
 	"errors"
 	"strconv"
 	"strings"
+
+	"github.com/lavinas/keel/pkg/kerror"
 )
 
 const (
@@ -49,16 +51,12 @@ func (i CreateInputItemDto) Validate() error {
 		"quantity":    i.ValidateQuantity,
 		"price":       i.ValidatePrice,
 	}
-	var message string = ""
+	var errs []error
 	for _, value := range validationMap {
-		err := value()
-		if err != nil {
-			message += err.Error() + " | "
-		}
+		errs = append(errs, value())
 	}
-	if message != "" {
-		message = message[:len(message)-3]
-		return errors.New(message)
+	if err := kerror.MergeError(errs...); err != nil {
+		return err
 	}
 	return nil
 }
