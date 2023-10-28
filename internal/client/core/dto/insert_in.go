@@ -5,7 +5,7 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/lavinas/keel/pkg/formatter"
+	"github.com/lavinas/keel/pkg/ktools"
 )
 
 // InsertInputDto is the input DTO used to create a client
@@ -27,19 +27,19 @@ func (c *InsertInputDto) IsBlank() bool {
 // Validate validates the input DTO
 func (c *InsertInputDto) Validate() error {
 	msg := ""
-	if _, err := formatter.FormatName(c.Name); err != nil {
+	if _, err := ktools.FormatName(c.Name); err != nil {
 		msg += err.Error() + " | "
 	}
-	if _, err := formatter.FormatNickname(c.Nickname); err != nil {
+	if _, err := ktools.FormatNickname(c.Nickname); err != nil {
 		msg += err.Error() + " | "
 	}
-	if _, err := formatter.FormatDocument(c.Document); err != nil {
+	if _, err := ktools.FormatDocument(c.Document); err != nil {
 		msg += err.Error() + " | "
 	}
-	if _, err := formatter.FormatPhone(c.Phone); err != nil {
+	if _, err := ktools.FormatPhone(c.Phone); err != nil {
 		msg += err.Error() + " | "
 	}
-	if _, err := formatter.FormatEmail(c.Email); err != nil {
+	if _, err := ktools.FormatEmail(c.Email); err != nil {
 		msg += err.Error() + " | "
 	}
 	if msg == "" {
@@ -53,19 +53,19 @@ func (c *InsertInputDto) Validate() error {
 func (c *InsertInputDto) Format() error {
 	var err error
 	var name, nick, doc, phone, email string
-	if name, err = formatter.FormatName(c.Name); err != nil {
+	if name, err = ktools.FormatName(c.Name); err != nil {
 		return err
 	}
-	if nick, err = formatter.FormatNickname(c.Nickname); err != nil {
+	if nick, err = ktools.FormatNickname(c.Nickname); err != nil {
 		return err
 	}
-	if doc, err = formatter.FormatDocument(c.Document); err != nil {
+	if doc, err = ktools.FormatDocument(c.Document); err != nil {
 		return err
 	}
-	if phone, err = formatter.FormatPhone(c.Phone); err != nil {
+	if phone, err = ktools.FormatPhone(c.Phone); err != nil {
 		return err
 	}
-	if email, err = formatter.FormatEmail(c.Email); err != nil {
+	if email, err = ktools.FormatEmail(c.Email); err != nil {
 		return err
 	}
 	c.Name = name

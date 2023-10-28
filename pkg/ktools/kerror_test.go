@@ -1,4 +1,4 @@
-package kerror
+package ktools
 
 import (
 	"errors"

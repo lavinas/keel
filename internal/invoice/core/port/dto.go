@@ -25,5 +25,5 @@ type CreateInputItemDto interface {
 }
 
 type CreateOutputDto interface {
-	Load(input CreateInputDto) error
+	Load(status string, reference string)
 }

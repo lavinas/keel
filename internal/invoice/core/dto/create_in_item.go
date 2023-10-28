@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/lavinas/keel/pkg/kerror"
+	"github.com/lavinas/keel/pkg/ktools"
 )
 
 const (
@@ -55,7 +55,7 @@ func (i CreateInputItemDto) Validate() error {
 	for _, value := range validationMap {
 		errs = append(errs, value())
 	}
-	if err := kerror.MergeError(errs...); err != nil {
+	if err := ktools.MergeError(errs...); err != nil {
 		return err
 	}
 	return nil

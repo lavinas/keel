@@ -5,7 +5,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/lavinas/keel/internal/invoice/core/port"
-	"github.com/lavinas/keel/pkg/kerror"
+	"github.com/lavinas/keel/pkg/ktools"
 )
 
 var (
@@ -43,15 +43,14 @@ func NewInvoice(repo port.Repo) *Invoice {
 
 // Load loads a invoice from input
 func (i *Invoice) Load(input port.CreateInputDto) error {
-	err1 := i.loadAmount(input)
-	err2 := i.loadDate(input)
-	err3 := i.loadDue(input)
-	err4 := i.loadItems(input.GetItems())
-	if err := kerror.MergeError(err1, err2, err3, err4); err != nil {
-		return err
-	}
 	i.id = uuid.New().String()
 	i.reference = input.GetReference()
+	i.business = NewInvoiceClient(i.repo)
+	i.customer = NewInvoiceClient(i.repo)
+	if err := ktools.MergeError(i.loadAmount(input), i.loadDate(input), i.loadDue(input), 
+			i.loadItems(input.GetItems())); err != nil {
+		return err
+	}
 	i.status_id = status_map["New"]
 	i.CreatedAt = time.Now()
 	i.UpdatedAt = time.Now()

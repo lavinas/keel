@@ -5,7 +5,7 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/lavinas/keel/pkg/formatter"
+	"github.com/lavinas/keel/pkg/ktools"
 )
 
 // UpdateInputDto is the input DTO used to create a client
@@ -31,22 +31,22 @@ func (c *UpdateInputDto) Validate() error {
 	}
 	msg := ""
 	if strings.Trim(c.Name, " ") != "" {
-		if _, err := formatter.FormatName(c.Name); err != nil {
+		if _, err := ktools.FormatName(c.Name); err != nil {
 			msg += err.Error() + " | "
 		}
 	}
 	if strings.Trim(c.Document, " ") != "" {
-		if _, err := formatter.FormatDocument(c.Document); err != nil {
+		if _, err := ktools.FormatDocument(c.Document); err != nil {
 			msg += err.Error() + " | "
 		}
 	}
 	if strings.Trim(c.Phone, " ") != "" {
-		if _, err := formatter.FormatPhone(c.Phone); err != nil {
+		if _, err := ktools.FormatPhone(c.Phone); err != nil {
 			msg += err.Error() + " | "
 		}
 	}
 	if strings.Trim(c.Email, " ") != "" {
-		if _, err := formatter.FormatEmail(c.Email); err != nil {
+		if _, err := ktools.FormatEmail(c.Email); err != nil {
 			msg += err.Error() + " | "
 		}
 	}
@@ -65,28 +65,28 @@ func (c *UpdateInputDto) Format() error {
 	var err error
 	var name, doc, phone, email string
 	if strings.Trim(c.Name, " ") != "" {
-		if name, err = formatter.FormatName(c.Name); err != nil {
+		if name, err = ktools.FormatName(c.Name); err != nil {
 			return err
 		}
 		c.Name = name
 	}
 	if strings.Trim(c.Nickname, " ") != "" {
-		c.Nickname, _ = formatter.FormatNickname(c.Nickname)
+		c.Nickname, _ = ktools.FormatNickname(c.Nickname)
 	}
 	if strings.Trim(c.Document, " ") != "" {
-		if doc, err = formatter.FormatDocument(c.Document); err != nil {
+		if doc, err = ktools.FormatDocument(c.Document); err != nil {
 			return err
 		}
 		c.Document = doc
 	}
 	if strings.Trim(c.Phone, " ") != "" {
-		if phone, err = formatter.FormatPhone(c.Phone); err != nil {
+		if phone, err = ktools.FormatPhone(c.Phone); err != nil {
 			return err
 		}
 		c.Phone = phone
 	}
 	if strings.Trim(c.Email, " ") != "" {
-		if email, err = formatter.FormatEmail(c.Email); err != nil {
+		if email, err = ktools.FormatEmail(c.Email); err != nil {
 			return err
 		}
 		c.Email = email

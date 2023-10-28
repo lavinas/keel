@@ -1,4 +1,4 @@
-package formatter
+package ktools
 
 import (
 	"testing"
@@ -115,16 +115,25 @@ func TestFormatDocument(t *testing.T) {
 }
 
 func TestFormatPhone(t *testing.T) {
-	r, err := FormatPhone("(013) 9-9999-9999")
-	if err != nil {
-		t.Errorf("Invalid result: %v", err)
-	}
-	if r != "5513999999999" {
-		t.Errorf("Invalid result: %v", r)
-	}
-	if _, err := FormatPhone(""); err.Error() != "phone is blank" {
-		t.Errorf("Invalid result: %v", err)
-	}
+	t.Run("should format unformatted phone", func(t *testing.T) {
+		r, err := FormatPhone("(013) 9-9999-9999")
+		if err != nil {
+			t.Errorf("Invalid result: %v", err)
+		}
+		if r != "5513999999999" {
+			t.Errorf("Invalid result: %v", r)
+		}	
+	})
+	t.Run("should return phone is blank", func(t *testing.T) {
+		if _, err := FormatPhone(""); err.Error() != "phone is blank" {
+			t.Errorf("Invalid result: %v", err)
+		}
+	})
+	t.Run("should return invalid cell phone", func(t *testing.T) {
+		if _, err := FormatPhone("123456789"); err.Error() != "invalid cell phone" {
+			t.Errorf("Invalid result: %v", err)
+		}
+	})
 }
 
 func TestFormatEmail(t *testing.T) {

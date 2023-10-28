@@ -15,6 +15,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	defer l.Close()
 	r := mysql.NewRepoMysql()
 	defer r.Close()
 	d := domain.NewDomain(r)

@@ -1,4 +1,4 @@
-package formatter
+package ktools
 
 import (
 	"errors"
@@ -19,7 +19,7 @@ var (
 	countries = []string{"BR"}
 )
 
-// clearName clears a name
+// FormatName formats a name string
 func FormatName(name string) (string, error) {
 	n := strings.Trim(name, " ")
 	if n == "" {
@@ -35,7 +35,7 @@ func FormatName(name string) (string, error) {
 	return n, nil
 }
 
-// clearNickname clears a nickname
+// FormatNickname formats a nickname string
 func FormatNickname(nickname string) (string, error) {
 	nick := strings.Trim(nickname, " ")
 	if nick == "" {
@@ -48,7 +48,7 @@ func FormatNickname(nickname string) (string, error) {
 	return nick, nil
 }
 
-// clearNumber clears a number
+// FormatDocument formats a document string
 func FormatDocument(document string) (string, error) {
 	if strings.Trim(document, "") == "" {
 		return "", errors.New("document is blank")
@@ -70,7 +70,7 @@ func FormatDocument(document string) (string, error) {
 	return "", errors.New("invalid document")
 }
 
-// clearEmail clears an email address
+// FormatEmail formats an email string
 func FormatEmail(email string) (string, error) {
 	if strings.Trim(email, "") == "" {
 		return "", errors.New("email is blank")
@@ -82,7 +82,7 @@ func FormatEmail(email string) (string, error) {
 	return e.Address, nil
 }
 
-// clearPhone clears a phone number
+// FormatPhone formats a phone string
 func FormatPhone(number string) (string, error) {
 	if strings.Trim(number, "") == "" {
 		return "", errors.New("phone is blank")

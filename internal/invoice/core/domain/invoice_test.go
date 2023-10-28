@@ -3,6 +3,7 @@ package domain
 import (
 	"testing"
 	"time"
+	"reflect"
 
 	"github.com/google/uuid"
 )
@@ -54,11 +55,17 @@ func TestInvoiceLoad(t *testing.T) {
 			if invoice.UpdatedAt.IsZero() {
 				t.Errorf("expected updated at, got empty")
 			}
-			if invoice.business != nil {
-				t.Errorf("expected nil, got %v", invoice.business)
+			if invoice.business == nil {
+				t.Errorf("expected business, got nil")
 			}
-			if invoice.customer != nil {
-				t.Errorf("expected nil, got %v", invoice.customer)
+			if reflect.TypeOf(invoice.business) != reflect.TypeOf(business) {
+				t.Errorf("expected InvoiceClient, got %v", reflect.TypeOf(invoice.business))
+			}
+			if invoice.customer == nil {
+				t.Errorf("expected customer, got nil")
+			}
+			if reflect.TypeOf(invoice.customer) != reflect.TypeOf(customer) {
+				t.Errorf("expected InvoiceClient, got %v", reflect.TypeOf(invoice.customer))
 			}
 		}
 

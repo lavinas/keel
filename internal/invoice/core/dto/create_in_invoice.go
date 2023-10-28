@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/lavinas/keel/pkg/kerror"
+	"github.com/lavinas/keel/pkg/ktools"
 )
 
 // InsertInputDto is the DTO for the crate a new invoice
@@ -66,7 +66,7 @@ func (i CreateInputDto) Validate() error {
 	for _, v := range validationMap {
 		errs = append(errs, v())
 	}
-	if err := kerror.MergeError(errs...); err != nil {
+	if err := ktools.MergeError(errs...); err != nil {
 		return err
 	}
 	return nil

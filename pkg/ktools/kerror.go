@@ -1,9 +1,10 @@
-package kerror
+package ktools
 
 import (
 	"errors"
 )
 
+// MergeError merges multiple errors into one
 func MergeError(errs ...error) error {
 	message := ""
 	for _, err := range errs {
