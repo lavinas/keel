@@ -23,7 +23,3 @@ func (s *Service) Create(input port.CreateInputDto, output port.CreateOutputDto)
 	service_invoice := NewCreate(s.log, s.domain.GetInvoice(), input, output)
 	return service_invoice.Execute()
 }
-
-
-
-

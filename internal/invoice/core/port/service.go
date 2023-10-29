@@ -7,4 +7,3 @@ type Service interface {
 type Create interface {
 	Execute() error
 }
-

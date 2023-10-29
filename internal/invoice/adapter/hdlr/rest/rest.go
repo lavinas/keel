@@ -52,4 +52,3 @@ func (h *HandlerRest) Create(c *gin.Context) {
 	}
 	c.JSON(http.StatusCreated, output)
 }
-

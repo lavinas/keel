@@ -40,7 +40,6 @@ const (
 	ErrDueDateOlderThanDate = "due date is older than date"
 )
 
-
 // InsertInputDto is the DTO for the crate a new invoice
 type CreateInputDto struct {
 	Reference        string               `json:"reference"`

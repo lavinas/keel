@@ -4,7 +4,6 @@ import (
 	"time"
 )
 
-
 type CreateInputItemDto interface {
 	Validate() error
 	GetReference() string
@@ -22,7 +21,7 @@ type CreateInputDto interface {
 	GetDate() (time.Time, error)
 	GetDue() (time.Time, error)
 	GetNoteReference() string
-	GetItems()[]CreateInputItemDto
+	GetItems() []CreateInputItemDto
 }
 
 type CreateOutputDto interface {
