@@ -64,7 +64,25 @@ func (i *Invoice) SetAmount(amount float64) {
 
 // Save stores the invoice on the repository
 func (i *Invoice) Save() error {
-	return i.repo.SaveInvoice(i)
+	if err := i.repo.Begin(); err != nil {
+		return err
+	}
+	defer i.repo.Rollback()
+	if err := i.business.Save(); err != nil {
+		return err
+	}
+	if err := i.customer.Save(); err != nil {
+		return err
+	}
+	for _, item := range i.items {
+		if err := item.Save(); err != nil {
+			return err
+		}
+	}
+	if err := i.repo.Commit(); err != nil {
+		return err
+	}
+	return nil
 }
 
 // GetId returns the id of invoice
