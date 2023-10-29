@@ -46,9 +46,10 @@ func (h *HandlerRest) Create(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, h.gin.H("error", "invalid json body"))
 		return
 	}
-	if err := h.service.Create(&input, &output); err != nil {
+	if err := h.service.Create(input, &output); err != nil {
 		c.JSON(h.gin.MapError(err.Error()), h.gin.H("error", err.Error()))
 		return
 	}
 	c.JSON(http.StatusCreated, output)
 }
+

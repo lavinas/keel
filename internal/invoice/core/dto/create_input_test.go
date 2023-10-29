@@ -655,8 +655,27 @@ func TestGetItems(t *testing.T) {
 			NoteReference:    "note",
 			Items:            []CreateInputItemDto{item},
 		}
-		if ret := dto.GetItems(); ret[0] != item {
+		ret := dto.GetItems()
+		if len(ret) != 1 {
+			t.Errorf("Expected 1 item, got %d", len(ret))
+		}
+		if len(ret) != 0 && ret[0] != item {
 			t.Errorf("Expected item, got %s", ret[0])
+		}
+	})
+	t.Run("should return nil when items is nil", func(t *testing.T) {
+		dto := CreateInputDto{
+			Reference:        "ref",
+			BusinessNickname: "business",
+			CustomerNickname: "",
+			Amount:           "1.35",
+			Date:             "2020-01-01",
+			Due:              "2020-01-02",
+			NoteReference:    "note",
+		}
+		ret := dto.GetItems()
+		if ret != nil {
+			t.Errorf("Expected nil, got %s", ret)
 		}
 	})
 }

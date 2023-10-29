@@ -7,20 +7,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/lavinas/keel/internal/invoice/core/port"
 	"github.com/lavinas/keel/pkg/ktools"
 )
-
-// InsertInputDto is the DTO for the crate a new invoice
-type CreateInputDto struct {
-	Reference        string               `json:"reference"`
-	BusinessNickname string               `json:"business_nickname"`
-	CustomerNickname string               `json:"customer_nickname"`
-	Amount           string               `json:"amount"`
-	Date             string               `json:"date"`
-	Due              string               `json:"due"`
-	NoteReference    string               `json:"note_name"`
-	Items            []CreateInputItemDto `json:"items"`
-}
 
 const (
 	// ErrReferenceEmpty is the error message for an empty reference
@@ -50,6 +39,19 @@ const (
 	// ErrDueDateOlderThanDate is the error message for a due date older than the date
 	ErrDueDateOlderThanDate = "due date is older than date"
 )
+
+
+// InsertInputDto is the DTO for the crate a new invoice
+type CreateInputDto struct {
+	Reference        string               `json:"reference"`
+	BusinessNickname string               `json:"business_nickname"`
+	CustomerNickname string               `json:"customer_nickname"`
+	Amount           string               `json:"amount"`
+	Date             string               `json:"date"`
+	Due              string               `json:"due"`
+	NoteReference    string               `json:"note_name"`
+	Items            []CreateInputItemDto `json:"items"`
+}
 
 // Validate validates the InsertInputDto
 func (i CreateInputDto) Validate() error {
@@ -120,8 +122,15 @@ func (i CreateInputDto) GetNoteReference() string {
 }
 
 // GetItems returns the items
-func (i CreateInputDto) GetItems() []CreateInputItemDto {
-	return i.Items
+func (i CreateInputDto) GetItems() []port.CreateInputItemDto {
+	var items []port.CreateInputItemDto
+	if len(i.Items) == 0 {
+		return nil
+	}
+	for _, item := range i.Items {
+		items = append(items, item)
+	}
+	return items
 }
 
 // Validate reference validates the reference
