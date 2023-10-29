@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"time"
@@ -36,14 +37,21 @@ func (l *LogMock) Close() {
 
 // InoviceMock is a mock of Invoice Domain
 type InvoiceMock struct {
+	Status string
 }
 
 func (i *InvoiceMock) Load(input port.CreateInputDto) error {
+	if i.Status == "load error" {
+		return errors.New("load error")
+	}
 	return nil
 }
 func (i *InvoiceMock) SetAmount(amount float64) {
 }
 func (i *InvoiceMock) Save() error {
+	if i.Status == "save error" {
+		return errors.New("save error")
+	}
 	return nil
 }
 func (i *InvoiceMock) GetId() string {
@@ -82,9 +90,13 @@ func (i *InvoiceMock) GetUpdatedAt() time.Time {
 
 // CreateInputDtoMock is a mock of CreateInputDto
 type CreateInputDtoMock struct {
+	Status string
 }
 
 func (i *CreateInputDtoMock) Validate() error {
+	if i.Status == "validate error" {
+		return errors.New("validate error")
+	}
 	return nil
 }
 func (i *CreateInputDtoMock) GetReference() string {
@@ -114,7 +126,7 @@ func (i *CreateInputDtoMock) GetItems() []port.CreateInputItemDto {
 
 // CreateOutputItemDtoMock is a mock of CreateOutputItemDto
 type CreateOutputDtoMock struct {
-	status string
+	status    string
 	reference string
 }
 

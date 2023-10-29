@@ -37,6 +37,7 @@ func (s *Create) Execute() error {
 			return err
 		}
 	}
+	s.log.Infof(s.input, "created")
 	return nil
 }
 
