@@ -11,7 +11,7 @@ import (
 
 // main is the entrypoint of the rest application
 func main() {
-	l, err := log.NewlogFile("client-rest", true)
+	l, err := log.NewlogFile("invoice-rest", true)
 	if err != nil {
 		panic(err)
 	}

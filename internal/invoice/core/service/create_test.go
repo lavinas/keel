@@ -80,5 +80,41 @@ func TestCreateExecute(t *testing.T) {
 			t.Errorf("expected reference to be empty, got %v", o.reference)
 		}
 	})
+	t.Run("should return error when has duplicity error", func(t *testing.T) {
+		l := LogMock{}
+		d := InvoiceMock{Status: "duplicity error"}
+		i := CreateInputDtoMock{}
+		o := CreateOutputDtoMock{}
+		c := NewCreate(&l, &d, &i, &o)
+		err := c.Execute()
+		if err == nil {
+			t.Errorf("expected errors, got %v", err)
+		}
+		if !strings.Contains(o.status, "internal error") {
+			t.Errorf("expected bad request, got %v", o.status)
+		}
+		if o.reference != "" {
+			t.Errorf("expected reference to be empty, got %v", o.reference)
+		}
+	})
+	t.Run("should return error when has duplicity", func(t *testing.T) {
+		l := LogMock{}
+		d := InvoiceMock{Status: "duplicity"}
+		i := CreateInputDtoMock{}
+		o := CreateOutputDtoMock{}
+		c := NewCreate(&l, &d, &i, &o)
+		err := c.Execute()
+		if err == nil {
+			t.Errorf("expected errors, got %v", err)
+		}
+		if !strings.Contains(o.status, "bad request") {
+			t.Errorf("expected bad request, got %v", o.status)
+		}
+		if o.reference != "" {
+			t.Errorf("expected reference to be empty, got %v", o.reference)
+		}
+	})
 
 }
+
+

@@ -151,10 +151,24 @@ func TestInvoiceSetAmount(t *testing.T) {
 	})
 }
 
+func TestIsDuplicated(t *testing.T) {
+	t.Run("Test is duplicated", func(t *testing.T) {
+		repo := new(RepoMock)
+		invoice := NewInvoice(repo)
+		invoice.reference = "ref"
+		if b, _ := invoice.IsDuplicated(); b != false {
+			t.Errorf("expected false, got true")
+		}
+	})
+}
+
 func TestInvoiceSave(t *testing.T) {
 	t.Run("should save invoice", func(t *testing.T) {
 		repo := new(RepoMock)
 		invoice := NewInvoice(repo)
+		if err := invoice.Load(&CreateInputDtoMock{}); err != nil {
+			t.Errorf("expected nil, got %v", err.Error())
+		}
 		if err := invoice.Save(); err != nil {
 			t.Errorf("expected nil, got %v", err.Error())
 		}
@@ -163,6 +177,64 @@ func TestInvoiceSave(t *testing.T) {
 		repo := new(RepoMock)
 		repo.Status = "saveInvoiceError"
 		invoice := NewInvoice(repo)
+		if err := invoice.Load(&CreateInputDtoMock{}); err != nil {
+			t.Errorf("expected nil, got %v", err.Error())
+		}
+		if err := invoice.Save(); err == nil {
+			t.Errorf("expected error, got nil")
+		}
+	})
+	t.Run("should return error on save businness client", func(t *testing.T) {
+		repo := new(RepoMock)
+		repo.Status = "saveBusinessError"
+		invoice := NewInvoice(repo)
+		if err := invoice.Load(&CreateInputDtoMock{}); err != nil {
+			t.Errorf("expected nil, got %v", err.Error())
+		}
+		if err := invoice.Save(); err == nil {
+			t.Errorf("expected error, got nil")
+		}
+	})
+	t.Run("should return error on save customer client", func(t *testing.T) {
+		repo := new(RepoMock)
+		repo.Status = "saveCustomerError"
+		invoice := NewInvoice(repo)
+		if err := invoice.Load(&CreateInputDtoMock{}); err != nil {
+			t.Errorf("expected nil, got %v", err.Error())
+		}
+		if err := invoice.Save(); err == nil {
+			t.Errorf("expected error, got nil")
+		}
+	})
+	t.Run("should return error on save invoice item", func(t *testing.T) {
+		repo := new(RepoMock)
+		repo.Status = "saveInvoiceItemError"
+		invoice := NewInvoice(repo)
+		if err := invoice.Load(&CreateInputDtoMock{}); err != nil {
+			t.Errorf("expected nil, got %v", err.Error())
+		}
+		if err := invoice.Save(); err == nil {
+			t.Errorf("expected error, got nil")
+		}
+	})
+	t.Run("should return error on begin transaction", func(t *testing.T) {
+		repo := new(RepoMock)
+		repo.Status = "beginError"
+		invoice := NewInvoice(repo)
+		if err := invoice.Load(&CreateInputDtoMock{}); err != nil {
+			t.Errorf("expected nil, got %v", err.Error())
+		}
+		if err := invoice.Save(); err == nil {
+			t.Errorf("expected error, got nil")
+		}
+	})
+	t.Run("should return error on commit transaction", func(t *testing.T) {
+		repo := new(RepoMock)
+		repo.Status = "commitError"
+		invoice := NewInvoice(repo)
+		if err := invoice.Load(&CreateInputDtoMock{}); err != nil {
+			t.Errorf("expected nil, got %v", err.Error())
+		}
 		if err := invoice.Save(); err == nil {
 			t.Errorf("expected error, got nil")
 		}

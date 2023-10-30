@@ -29,6 +29,7 @@ func (s *Create) Execute() error {
 	execMap := map[string]func() error{
 		"validate": s.valiedateInput,
 		"load":     s.loadDomain,
+		"duplicity": s.checkDuplicity,
 		"save":     s.saveDomain,
 		"output":   s.createOutput,
 	}
@@ -56,7 +57,22 @@ func (s *Create) valiedateInput() error {
 func (s *Create) loadDomain() error {
 	// load invoice
 	if err := s.invoice.Load(s.input); err != nil {
-		err = errors.New("internal error: " + err.Error())
+		rerr := errors.New("internal error")
+		s.log.Infof(s.input, "load: "+err.Error())
+		s.output.Load(rerr.Error(), "")
+		return rerr
+	}
+	return nil
+}
+
+func (s *Create) checkDuplicity() error {
+	if duplicated, err := s.invoice.IsDuplicated(); err != nil {
+		rerr := errors.New("internal error: ")
+		s.log.Infof(s.input, "load: "+err.Error())
+		s.output.Load(rerr.Error(), "")
+		return rerr
+	} else if duplicated {
+		err = errors.New("bad request: duplicated invoice")
 		s.log.Infof(s.input, "load: "+err.Error())
 		s.output.Load(err.Error(), "")
 		return err
@@ -67,10 +83,10 @@ func (s *Create) loadDomain() error {
 // saveDomain is a method that saves the domain for the service
 func (s *Create) saveDomain() error {
 	if err := s.invoice.Save(); err != nil {
-		err = errors.New("internal error: " + err.Error())
+		rerr := errors.New("internal error: " + err.Error())
 		s.log.Infof(s.input, "save: "+err.Error())
-		s.output.Load(err.Error(), "")
-		return err
+		s.output.Load(rerr.Error(), "")
+		return rerr
 	}
 	return nil
 }

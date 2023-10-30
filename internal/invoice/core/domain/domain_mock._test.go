@@ -11,19 +11,33 @@ import (
 type RepoMock struct {
 	Status string
 }
-
 func (r *RepoMock) Begin() error {
+	if r.Status == "beginError" {
+		return errors.New("begin error")
+	}
 	return nil
 }
 func (r *RepoMock) Commit() error {
+	if r.Status == "commitError" {
+		return errors.New("commit error")
+	}
 	return nil
 }
 func (r *RepoMock) Rollback() error {
 	return nil
 }
+func (r *RepoMock) IsDuplicatedInvoice(reference string) (bool, error) {
+	return false, nil
+}
 func (r *RepoMock) SaveInvoiceClient(client port.InvoiceClient) error {
 	if r.Status == "saveInvoiceClientError" {
 		return errors.New("save error")
+	}
+	if r.Status == "saveBusinessError" && client.GetNickname() == "businessNickname" {
+		return errors.New("save business error")
+	}
+	if r.Status == "saveCustomerError" && client.GetNickname() == "customerNickname" {
+		return errors.New("save customer error")
 	}
 	return nil
 }

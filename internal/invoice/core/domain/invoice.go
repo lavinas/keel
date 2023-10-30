@@ -45,8 +45,7 @@ func NewInvoice(repo port.Repo) *Invoice {
 func (i *Invoice) Load(input port.CreateInputDto) error {
 	i.id = uuid.New().String()
 	i.reference = input.GetReference()
-	i.business = NewInvoiceClient(i.repo)
-	i.customer = NewInvoiceClient(i.repo)
+	i.loadClients(input)
 	if err := ktools.MergeError(i.loadAmount(input), i.loadDate(input), i.loadDue(input),
 		i.loadItems(input.GetItems())); err != nil {
 		return err
@@ -55,6 +54,11 @@ func (i *Invoice) Load(input port.CreateInputDto) error {
 	i.CreatedAt = time.Now()
 	i.UpdatedAt = time.Now()
 	return nil
+}
+
+// IsDuplicated returns true if the invoice is duplicated
+func (i *Invoice) IsDuplicated() (bool, error) {
+	return i.repo.IsDuplicatedInvoice(i.reference)
 }
 
 // SetAmount sets the amount of invoice
@@ -68,16 +72,14 @@ func (i *Invoice) Save() error {
 		return err
 	}
 	defer i.repo.Rollback()
-	if err := i.business.Save(); err != nil {
+	if err := i.saveClients(); err != nil {
 		return err
 	}
-	if err := i.customer.Save(); err != nil {
+	if err := i.repo.SaveInvoice(i); err != nil {
 		return err
 	}
-	for _, item := range i.items {
-		if err := item.Save(); err != nil {
-			return err
-		}
+	if err := i.saveItems(); err != nil {
+		return err
 	}
 	if err := i.repo.Commit(); err != nil {
 		return err
@@ -139,6 +141,13 @@ func (i *Invoice) GetUpdatedAt() time.Time {
 	return i.UpdatedAt
 }
 
+func (i *Invoice) loadClients(input port.CreateInputDto) {
+	i.business = NewInvoiceClient(i.repo)
+	i.business.Load(input.GetBusinessNickname(), "", "", "", 0, 0)
+	i.customer = NewInvoiceClient(i.repo)
+	i.customer.Load(input.GetCustomerNickname(), "", "", "", 0, 0)
+}
+
 // loadAmount loads the amount from input
 func (i *Invoice) loadAmount(input port.CreateInputDto) error {
 	var err error
@@ -178,6 +187,27 @@ func (i *Invoice) loadItems(inputItems []port.CreateInputItemDto) error {
 			return err
 		}
 		i.items = append(i.items, item)
+	}
+	return nil
+}
+
+// saveClients saves the clients (business and customer) on the repository
+func (i *Invoice) saveClients() error {
+	if err := i.business.Save(); err != nil {
+		return err
+	}
+	if err := i.customer.Save(); err != nil {
+		return err
+	}
+	return nil
+}
+
+// saveItems saves the items on the repository
+func (i *Invoice) saveItems() error {
+	for _, item := range i.items {
+		if err := item.Save(); err != nil {
+			return err
+		}
 	}
 	return nil
 }

@@ -23,6 +23,7 @@ type InvoiceClient interface {
 type Invoice interface {
 	Load(input CreateInputDto) error
 	SetAmount(amount float64)
+	IsDuplicated() (bool, error)
 	Save() error
 	GetId() string
 	GetReference() string

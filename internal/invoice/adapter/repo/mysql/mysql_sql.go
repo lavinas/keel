@@ -9,5 +9,6 @@ var (
 		"TruncateInvoiceClient": "DELETE FROM {DB}.invoice_client;",
 		"TruncateInvoice":       "DELETE FROM {DB}.invoice;",
 		"TruncateInvoiceItem":   "DELETE FROM {DB}.invoice_item;",
+		"IsDuplicatedInvoice":   "SELECT COUNT(*) count FROM {DB}.invoice WHERE reference = ?;",
 	}
 )

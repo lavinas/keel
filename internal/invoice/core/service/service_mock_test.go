@@ -14,7 +14,6 @@ type LogMock struct {
 	Type    string
 	Message string
 }
-
 func (l *LogMock) GetFile() *os.File {
 	return nil
 }
@@ -35,11 +34,17 @@ func (l *LogMock) Errorf(input any, err error) {
 func (l *LogMock) Close() {
 }
 
+// DomainMock is a mock of Domain
+type DomainMock struct {
+}
+func (d *DomainMock) GetInvoice() port.Invoice {
+	return &InvoiceMock{}
+}
+
 // InoviceMock is a mock of Invoice Domain
 type InvoiceMock struct {
 	Status string
 }
-
 func (i *InvoiceMock) Load(input port.CreateInputDto) error {
 	if i.Status == "load error" {
 		return errors.New("load error")
@@ -86,6 +91,15 @@ func (i *InvoiceMock) GetCreatedAt() time.Time {
 }
 func (i *InvoiceMock) GetUpdatedAt() time.Time {
 	return time.Time{}
+}
+func (i *InvoiceMock) IsDuplicated() (bool, error) {
+	if i.Status == "duplicity" {
+		return true, nil
+	}
+	if i.Status == "duplicity error" {
+		return false, errors.New("duplicated error")
+	}
+	return false, nil
 }
 
 // CreateInputDtoMock is a mock of CreateInputDto

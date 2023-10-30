@@ -259,6 +259,76 @@ func TestSaveInvoiceClient(t *testing.T) {
 	})
 }
 
+func TestIsDuplicatedInvoice(t *testing.T) {
+	t.Run("should return false when there is no duplicated invoice", func(t *testing.T) {
+		repo, _ := NewRepoMysql()
+		defer repo.Close()
+		repo.Begin()
+		repo.TruncateInvoice()
+		repo.TruncateInvoiceClient()
+		repo.SaveInvoiceClient(&InvoiceClientMock{})
+		repo.Commit()
+		duplicated, err := repo.IsDuplicatedInvoice("reference")
+		if err != nil {
+			t.Errorf("Expected nil, got %s", err.Error())
+		}
+		if duplicated {
+			t.Errorf("Expected false, got true")
+		}
+		repo.Begin()
+		repo.TruncateInvoice()
+		repo.TruncateInvoiceClient()
+		repo.Commit()
+	})
+	t.Run("should return true when there is duplicated invoice", func(t *testing.T) {
+		repo, _ := NewRepoMysql()
+		defer repo.Close()
+		repo.Begin()
+		repo.TruncateInvoice()
+		repo.TruncateInvoiceClient()
+		repo.Begin()
+		repo.SaveInvoiceClient(&InvoiceClientMock{})
+		invoice := InvoiceMock{}
+		repo.SaveInvoice(&invoice)
+		repo.Commit()
+		duplicated, err := repo.IsDuplicatedInvoice(invoice.GetReference())
+		if err != nil {
+			t.Errorf("Expected nil, got %s", err.Error())
+		}
+		if !duplicated {
+			t.Errorf("Expected true, got false")
+		}
+		repo.Begin()
+		repo.TruncateInvoice()
+		repo.TruncateInvoiceClient()
+		repo.Commit()
+	})
+	t.Run("should return error when there is no db", func(t *testing.T) {
+		repo, _ := NewRepoMysql()
+		defer repo.Close()
+		repo.db = nil
+		_, err := repo.IsDuplicatedInvoice("reference")
+		if err == nil {
+			t.Errorf("Expected error, got nil")
+		}
+		if err != nil && err.Error() != "sql: database is closed" {
+			t.Errorf("Expected sql: database is closed, got %s", err.Error())
+		}
+	})
+	t.Run("should return error when dabase is closed", func(t *testing.T) {
+		repo, _ := NewRepoMysql()
+		repo.db.Close()
+		_, err := repo.IsDuplicatedInvoice("reference")
+		if err == nil {
+			t.Errorf("Expected error, got nil")
+		}
+		if err != nil && err.Error() != "sql: database is closed" {
+			t.Errorf("Expected sql: database is closed, got %s", err.Error())
+		}
+	})
+
+}
+
 func TestSaveInvoice(t *testing.T) {
 	t.Run("should save invoice", func(t *testing.T) {
 		repo, _ := NewRepoMysql()

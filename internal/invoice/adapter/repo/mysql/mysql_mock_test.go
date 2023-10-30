@@ -88,6 +88,9 @@ func (*InvoiceMock) GetUpdatedAt() time.Time {
 	t, _ := time.Parse("02 Jan 06 15:04 -0700", "10 Oct 23 10:10 -0300")
 	return t
 }
+func (*InvoiceMock) IsDuplicated() (bool, error) {
+	return false, nil
+}
 
 // Invoice Item Mock
 type InvoiceItemMock struct {

@@ -91,6 +91,20 @@ func (r *RepoMysql) Rollback() error {
 	return nil
 }
 
+// IsDuplicatedInvoice checks if the invoice is duplicated
+func (r *RepoMysql) IsDuplicatedInvoice (reference string) (bool, error) {
+	if r.db == nil {
+		return false, errors.New("sql: database is closed")
+	}
+	q := querieMap["IsDuplicatedInvoice"]
+	var count int
+	err := r.db.QueryRow(q, reference).Scan(&count)
+	if err != nil {
+		return false, err
+	}
+	return count > 0, nil
+}
+
 // SaveInvoiceClient stores the invoice client on the repository
 func (r *RepoMysql) SaveInvoiceClient(client port.InvoiceClient) error {
 	if r.tx == nil {
