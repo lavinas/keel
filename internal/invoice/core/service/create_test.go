@@ -107,8 +107,8 @@ func TestCreateExecute(t *testing.T) {
 		if err == nil {
 			t.Errorf("expected errors, got %v", err)
 		}
-		if !strings.Contains(o.status, "bad request") {
-			t.Errorf("expected bad request, got %v", o.status)
+		if !strings.Contains(o.status, "conflict") {
+			t.Errorf("expected conflict, got %v", o.status)
 		}
 		if o.reference != "" {
 			t.Errorf("expected reference to be empty, got %v", o.reference)
@@ -116,5 +116,3 @@ func TestCreateExecute(t *testing.T) {
 	})
 
 }
-
-

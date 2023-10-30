@@ -11,6 +11,7 @@ import (
 type RepoMock struct {
 	Status string
 }
+
 func (r *RepoMock) Begin() error {
 	if r.Status == "beginError" {
 		return errors.New("begin error")

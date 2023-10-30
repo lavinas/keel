@@ -92,7 +92,7 @@ func (r *RepoMysql) Rollback() error {
 }
 
 // IsDuplicatedInvoice checks if the invoice is duplicated
-func (r *RepoMysql) IsDuplicatedInvoice (reference string) (bool, error) {
+func (r *RepoMysql) IsDuplicatedInvoice(reference string) (bool, error) {
 	if r.db == nil {
 		return false, errors.New("sql: database is closed")
 	}

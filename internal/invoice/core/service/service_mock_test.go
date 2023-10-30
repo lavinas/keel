@@ -14,6 +14,7 @@ type LogMock struct {
 	Type    string
 	Message string
 }
+
 func (l *LogMock) GetFile() *os.File {
 	return nil
 }
@@ -37,6 +38,7 @@ func (l *LogMock) Close() {
 // DomainMock is a mock of Domain
 type DomainMock struct {
 }
+
 func (d *DomainMock) GetInvoice() port.Invoice {
 	return &InvoiceMock{}
 }
@@ -45,6 +47,7 @@ func (d *DomainMock) GetInvoice() port.Invoice {
 type InvoiceMock struct {
 	Status string
 }
+
 func (i *InvoiceMock) Load(input port.CreateInputDto) error {
 	if i.Status == "load error" {
 		return errors.New("load error")

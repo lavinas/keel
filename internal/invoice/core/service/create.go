@@ -27,11 +27,11 @@ func NewCreate(log port.Log, invoice port.Invoice, input port.CreateInputDto, ou
 // Execute is a method that executes the service
 func (s *Create) Execute() error {
 	execMap := map[string]func() error{
-		"validate": s.valiedateInput,
-		"load":     s.loadDomain,
+		"validate":  s.valiedateInput,
+		"load":      s.loadDomain,
 		"duplicity": s.checkDuplicity,
-		"save":     s.saveDomain,
-		"output":   s.createOutput,
+		"save":      s.saveDomain,
+		"output":    s.createOutput,
 	}
 	for _, v := range execMap {
 		if err := v(); err != nil {
@@ -44,6 +44,7 @@ func (s *Create) Execute() error {
 
 // valiedateInput is a method that validates the input for the service
 func (s *Create) valiedateInput() error {
+	s.log.Info("validate")
 	if err := s.input.Validate(); err != nil {
 		err = errors.New("bad request: " + err.Error())
 		s.log.Infof(s.input, "validate: "+err.Error())
@@ -55,6 +56,7 @@ func (s *Create) valiedateInput() error {
 
 // loadDomain is a method that loads the domain for the service
 func (s *Create) loadDomain() error {
+	s.log.Info("load")
 	// load invoice
 	if err := s.invoice.Load(s.input); err != nil {
 		rerr := errors.New("internal error")
@@ -66,13 +68,14 @@ func (s *Create) loadDomain() error {
 }
 
 func (s *Create) checkDuplicity() error {
+	s.log.Info("duplicity")
 	if duplicated, err := s.invoice.IsDuplicated(); err != nil {
 		rerr := errors.New("internal error: ")
 		s.log.Infof(s.input, "load: "+err.Error())
 		s.output.Load(rerr.Error(), "")
 		return rerr
 	} else if duplicated {
-		err = errors.New("bad request: duplicated invoice")
+		err = errors.New("conflict: duplicated invoice reference")
 		s.log.Infof(s.input, "load: "+err.Error())
 		s.output.Load(err.Error(), "")
 		return err
@@ -82,6 +85,7 @@ func (s *Create) checkDuplicity() error {
 
 // saveDomain is a method that saves the domain for the service
 func (s *Create) saveDomain() error {
+	s.log.Info("save")
 	if err := s.invoice.Save(); err != nil {
 		rerr := errors.New("internal error: " + err.Error())
 		s.log.Infof(s.input, "save: "+err.Error())
@@ -93,6 +97,7 @@ func (s *Create) saveDomain() error {
 
 // createOutput is a method that creates the output for the service
 func (s *Create) createOutput() error {
+	s.log.Info("output")
 	s.output.Load("created", s.invoice.GetReference())
 	return nil
 }
