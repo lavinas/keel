@@ -1,0 +1,1 @@
+protoc --go_out=internal/client/adapter/hdlr/grpc/pb --go_opt=paths=source_relative --go-grpc_out=internal/client/adapter/hdlr/grpc/pb --go-grpc_opt=paths=source_relative --proto_path=internal/client/adapter/hdlr/grpc/protofiles internal/client/adapter/hdlr/grpc/protofiles/*.proto
