@@ -8,8 +8,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/lavinas/keel/util/pkg/cpf_cnpj"
-	"github.com/lavinas/keel/util/pkg/phone"
+	"github.com/lavinas/keel/invoice/pkg/cpf_cnpj"
+	"github.com/lavinas/keel/invoice/pkg/phone"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )

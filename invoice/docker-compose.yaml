@@ -1,22 +1,6 @@
 version: "3.1"
 
-services:
-  app_client:
-    build: .
-    volumes:
-      - .:/go/src/
-    environment:
-      MYSQL_USER: root
-      MYSQL_PASSWORD: root
-      MYSQL_HOST: mysql
-      MYSQL_PORT: 3306
-      MYSQL_CLIENT_DATABASE: keel_client
-      MYSQL_INVOICE_DATABASE: keel_invoice
-      KEEL_PER_PAGE: 10
-      KEEL_LOG_PATH: .
-    ports:
-      - "8081:8081"
-    
+services:    
   app_invoice:
     build: .
     volumes:
@@ -24,23 +8,22 @@ services:
     environment:
       MYSQL_USER: root
       MYSQL_PASSWORD: root
-      MYSQL_HOST: mysql
+      MYSQL_HOST: mysql_invoice
       MYSQL_PORT: 3306
-      MYSQL_CLIENT_DATABASE: keel_client
-      MYSQL_INVOICE_DATABASE: keel_invoice
+      MYSQL_DATABASE: keel_invoice
       KEEL_PER_PAGE: 10
       KEEL_LOG_PATH: .
     ports:
       - "8082:8081"
 
-  mysql:
+  mysql_invoice:
     image: mysql:8
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: keel_client
+      MYSQL_DATABASE: keel_invoice
     volumes:
       - ./.mysql:/var/lib/mysql
     ports:
-      - "3310:3306"
+      - "3311:3306"

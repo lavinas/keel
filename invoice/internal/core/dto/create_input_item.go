@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/lavinas/keel/util/pkg/ktools"
+	"github.com/lavinas/keel/invoice/pkg/ktools"
 )
 
 const (

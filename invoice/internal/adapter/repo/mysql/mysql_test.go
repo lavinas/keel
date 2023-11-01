@@ -21,7 +21,7 @@ func TestNewRepoMysql(t *testing.T) {
 		}
 		os.Setenv(mysql_user, user)
 	})
-	t.Run("should return error when MYSQL_INVOICE_DATABASE is empty", func(t *testing.T) {
+	t.Run("should return error when MYSQL_DATABASE is empty", func(t *testing.T) {
 		dbname := os.Getenv(mysql_dbname)
 		os.Setenv(mysql_dbname, "")
 		_, err := NewRepoMysql()

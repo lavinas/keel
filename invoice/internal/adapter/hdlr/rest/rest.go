@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/lavinas/keel/invoice/internal/core/dto"
 	"github.com/lavinas/keel/invoice/internal/core/port"
-	"github.com/lavinas/keel/client/pkg/gin_wrapper"
+	"github.com/lavinas/keel/invoice/pkg/gin_wrapper"
 )
 
 type HandlerRest struct {

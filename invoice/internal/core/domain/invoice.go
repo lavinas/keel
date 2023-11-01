@@ -5,7 +5,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/lavinas/keel/invoice/internal/core/port"
-	"github.com/lavinas/keel/util/pkg/ktools"
+	"github.com/lavinas/keel/invoice/pkg/ktools"
 )
 
 var (

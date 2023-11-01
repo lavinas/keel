@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/lavinas/keel/invoice/internal/adapter/hdlr/rest"
 	"github.com/lavinas/keel/invoice/internal/adapter/repo/mysql"
-	"github.com/lavinas/keel/util/pkg/log"
+	"github.com/lavinas/keel/invoice/pkg/log"
 
 	"github.com/lavinas/keel/invoice/internal/core/domain"
 	"github.com/lavinas/keel/invoice/internal/core/service"

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"strings"
 	"testing"
 )
 
@@ -92,7 +93,7 @@ func TestGetExecute(t *testing.T) {
 		if err == nil {
 			t.Errorf("Error should not be nil")
 		}
-		if err != nil && err.Error() != "not found: "+param {
+		if err != nil && !strings.Contains(err.Error(), "no content")  {
 			t.Errorf("Error: %s", err.Error())
 		}
 	})

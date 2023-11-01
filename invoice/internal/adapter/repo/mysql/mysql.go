@@ -16,7 +16,7 @@ const (
 	mysql_pass   = "MYSQL_PASSWORD"
 	mysql_host   = "MYSQL_HOST"
 	mysql_port   = "MYSQL_PORT"
-	mysql_dbname = "MYSQL_INVOICE_DATABASE"
+	mysql_dbname = "MYSQL_DATABASE"
 )
 
 // Repo is a service to interact with the database Mysql
@@ -34,7 +34,7 @@ func NewRepoMysql() (*RepoMysql, error) {
 	}
 	dbname := os.Getenv(mysql_dbname)
 	if dbname == "" {
-		return nil, errors.New("MYSQL_INVOICE_DATABASE is empty")
+		return nil, errors.New("MYSQL_DATABASE is empty")
 	}
 	for i, q := range querieMap {
 		querieMap[i] = strings.Replace(q, "{DB}", dbname, -1)

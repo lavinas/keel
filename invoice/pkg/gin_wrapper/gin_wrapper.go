@@ -11,18 +11,18 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/lavinas/keel/util/pkg/log"
+	"github.com/lavinas/keel/invoice/internal/core/port"
 )
 
 // GinEngineWrapper is a wrapper handler for gin framework with graceful configuration and shutdown
 type GinEngineWrapper struct {
-	log    *log.Log
+	log    port.Log
 	engine *gin.Engine
 	server *http.Server
 }
 
 // NewGinWrapper creates a new GinEngine
-func NewGinEngineWrapper(log *log.Log) *GinEngineWrapper {
+func NewGinEngineWrapper(log port.Log) *GinEngineWrapper {
 	gin.SetMode(gin.ReleaseMode)
 	gin.DefaultWriter = io.MultiWriter(log.GetFile())
 	r := gin.Default()
