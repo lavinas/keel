@@ -63,6 +63,7 @@ func (g *GinEngineWrapper) MapError(message string) int {
 		"bad request":  http.StatusBadRequest,
 		"conflict":     http.StatusConflict,
 		"unauthorized": http.StatusUnauthorized,
+		"no content":   http.StatusNoContent,
 	}
 	m := strings.Split(message, ":")[0]
 	if v, ok := mmap[m]; ok {

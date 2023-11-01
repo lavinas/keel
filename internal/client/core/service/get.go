@@ -2,9 +2,7 @@ package service
 
 import (
 	"errors"
-	"regexp"
 	"strconv"
-	"strings"
 
 	"github.com/lavinas/keel/internal/client/core/port"
 )
@@ -48,8 +46,8 @@ func (s *Get) load() error {
 		"nickname": s.client.LoadByNick,
 		"email":    s.client.LoadByEmail,
 	}
-	for _, value := range maps {
-		found, err := value(s.param)
+	for _, funct := range maps {
+		found, err := funct(s.param)
 		if err != nil {
 			return err
 		}
@@ -61,7 +59,8 @@ func (s *Get) load() error {
 		"document": s.client.LoadByDoc,
 		"phone":    s.client.LoadByPhone,
 	}
-	iparam, err := toNumber(s.param)
+
+	iparam, err := strconv.ParseUint(s.param, 10, 64)
 	if err != nil {
 		s.log.Info("not found: " + s.param)
 		return errors.New("not found: " + s.param)
@@ -75,20 +74,12 @@ func (s *Get) load() error {
 			return nil
 		}
 	}
-	s.log.Info("not found: " + s.param)
-	return errors.New("not found: " + s.param)
+	s.log.Info("no content: " + s.param + " not found")
+	return errors.New("no content: " + s.param + " not found")
 }
 
 // prepareOutput prepares the output data
 func (s *Get) prepareOutput() {
 	id, name, nick, doc, phone, email := s.client.GetFormatted()
 	s.output.Fill(id, name, nick, doc, phone, email)
-}
-
-// toNumber converts a string to uint64
-func toNumber(number string) (uint64, error) {
-	n := strings.Trim(number, " ")
-	re := regexp.MustCompile(`[^0-9]`)
-	n = re.ReplaceAllString(n, "")
-	return strconv.ParseUint(n, 10, 64)
 }

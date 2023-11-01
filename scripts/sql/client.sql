@@ -11,4 +11,5 @@ CREATE TABLE keel_client.client (
   INDEX idx_phone (phone ASC)
 );
 
-  
+insert into keel_client.client (id, name, nickname, document, phone, email) values ('0', 'business ltda', 'business', 5072212000106, 5511999999999, 'business@test.com');
+insert into keel_client.client (id, name, nickname, document, phone, email) values ('1', 'Consumer Doe', 'consumer_doe', 82109271086, 5511999999998, 'consumer@test.com');
