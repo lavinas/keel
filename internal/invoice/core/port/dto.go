@@ -27,3 +27,6 @@ type CreateInputDto interface {
 type CreateOutputDto interface {
 	Load(status string, reference string)
 }
+
+type GetClientByNicknameInputDto interface {
+}
