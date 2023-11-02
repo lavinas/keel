@@ -6,13 +6,13 @@ services:
     volumes:
       - .:/go/src/
     environment:
-      MYSQL_USER: root
-      MYSQL_PASSWORD: root
-      MYSQL_HOST: mysql_invoice
-      MYSQL_PORT: 3306
-      MYSQL_DATABASE: keel_invoice
-      KEEL_PER_PAGE: 10
-      KEEL_LOG_PATH: .
+      MYSQL_INVOICE_USER: root
+      MYSQL_INVOICE_PASSWORD: root
+      MYSQL_INVOICE_HOST: mysql_invoice
+      MYSQL_INVOICE_PORT: 3306
+      MYSQL_INVOICE_DATABASE: keel_invoice
+      KEEL_INVOICE_PER_PAGE: 10
+      KEEL_INVOICE_LOG_PATH: .
     ports:
       - "8082:8081"
 

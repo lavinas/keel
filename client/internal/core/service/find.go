@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	per_page = "KEEL_PER_PAGE"
+	per_page = "KEEL_CLIENT_PER_PAGE"
 )
 
 // Find is the service used to list all clients

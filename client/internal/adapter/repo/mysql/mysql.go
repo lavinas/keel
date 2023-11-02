@@ -13,10 +13,10 @@ import (
 )
 
 const (
-	mysql_user   = "MYSQL_USER"
-	mysql_pass   = "MYSQL_PASSWORD"
-	mysql_host   = "MYSQL_HOST"
-	mysql_port   = "MYSQL_PORT"
+	mysql_user   = "MYSQL_CLIENT_USER"
+	mysql_pass   = "MYSQL_CLIENT_PASSWORD"
+	mysql_host   = "MYSQL_CLIENT_HOST"
+	mysql_port   = "MYSQL_CLIENT_PORT"
 	mysql_dbname = "MYSQL_CLIENT_DATABASE"
 )
 

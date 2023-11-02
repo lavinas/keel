@@ -12,7 +12,7 @@ func TestNewRepoMysql(t *testing.T) {
 			t.Errorf("Expected nil, got %s", err.Error())
 		}
 	})
-	t.Run("should return error when MYSQL_USER is empty", func(t *testing.T) {
+	t.Run("should return error when MYSQL_INVOICE_USER is empty", func(t *testing.T) {
 		user := os.Getenv(mysql_user)
 		os.Setenv(mysql_user, "")
 		_, err := NewRepoMysql()

@@ -12,11 +12,11 @@ import (
 )
 
 const (
-	mysql_user   = "MYSQL_USER"
-	mysql_pass   = "MYSQL_PASSWORD"
-	mysql_host   = "MYSQL_HOST"
-	mysql_port   = "MYSQL_PORT"
-	mysql_dbname = "MYSQL_DATABASE"
+	mysql_user   = "MYSQL_INVOICE_USER"
+	mysql_pass   = "MYSQL_INVOICE_PASSWORD"
+	mysql_host   = "MYSQL_INVOICE_HOST"
+	mysql_port   = "MYSQL_INVOICE_PORT"
+	mysql_dbname = "MYSQL_INVOICE_DATABASE"
 )
 
 // Repo is a service to interact with the database Mysql
