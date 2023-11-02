@@ -13,9 +13,11 @@ services:
       MYSQL_INVOICE_DATABASE: keel_invoice
       KEEL_INVOICE_PER_PAGE: 10
       KEEL_INVOICE_LOG_PATH: .
-      KEEL_INVOICE_CLIENT_URL: http://localhost:8082
+      KEEL_INVOICE_CLIENT_URL: http://app_client:8081/client/get
     ports:
       - "8082:8081"
+    networks:
+      - docker_keel
 
   mysql_invoice:
     image: mysql:8
@@ -28,3 +30,9 @@ services:
       - ./.mysql:/var/lib/mysql
     ports:
       - "3311:3306"
+    networks:
+      - docker_keel
+
+networks:
+  docker_keel:
+    driver: bridge

@@ -14,7 +14,6 @@ import (
 var (
 	// api url
 	consumer_base = os.Getenv("KEEL_INVOICE_CLIENT_URL")
-	consumer_getclient = "/get"
 )
 
 // Rest comsumer implements ApiConsumer interface
@@ -28,14 +27,17 @@ func NewRestConsumer() *RestConsumer {
 
 // GetClientByNickname returns a GetClientByNicknameInputDto
 func (rc *RestConsumer) GetClientByNickname(nickname string, client port.GetClientByNicknameInputDto) (bool, error) {
-	r, err := url.JoinPath(consumer_base, consumer_getclient, nickname)
+	if consumer_base == "" {
+		return false, fmt.Errorf("error: KEEL_INVOICE_CLIENT_URL is not set")
+	}
+	r, err := url.JoinPath(consumer_base, nickname)
 	if err != nil {
 		return false, err
 	}
 	response, err := http.Get(r)
 	if err != nil {
 		return false, err
-	}
+	} 
 	defer response.Body.Close()
 	data, err := io.ReadAll(response.Body)
 	if err != nil {

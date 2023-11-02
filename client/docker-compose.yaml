@@ -16,6 +16,8 @@ services:
       KEEL_CLIENT_LOG_PATH: .
     ports:
       - "8081:8081"
+    networks:
+      - docker_keel
     
   mysql_client:
     image: mysql:8
@@ -28,3 +30,9 @@ services:
       - ./.mysql:/var/lib/mysql
     ports:
       - "3310:3306"
+    networks:
+      - docker_keel
+
+networks:
+  docker_keel:
+    driver: bridge

@@ -15,7 +15,7 @@ func TestNewRestConsumer(t *testing.T) {
 	})
 }
 
-func TestRestConsumer_GetClientByNickname(t *testing.T) {
+func TestRestconsumer_baseByNickname(t *testing.T) {
 	t.Run("should return a client", func(t *testing.T) {
 		rc := NewRestConsumer()
 		dto := dto.NewGetClientByNicknameInputDto()
@@ -30,6 +30,7 @@ func TestRestConsumer_GetClientByNickname(t *testing.T) {
 			t.Errorf("Expected 1, got %s", dto.GetId())
 		}
 	})
+	
 	t.Run("should not return a client", func(t *testing.T) {
 		rc := NewRestConsumer()
 		dto := dto.NewGetClientByNicknameInputDto()
@@ -45,10 +46,10 @@ func TestRestConsumer_GetClientByNickname(t *testing.T) {
 		}
 	})
 	t.Run("should return a url malformed error", func(t *testing.T) {
-		rconsumer_getclient := consumer_getclient
-		consumer_getclient = "123"
+		rconsumer_base := consumer_base
+		consumer_base = "123"
 		defer func() {
-			consumer_getclient = rconsumer_getclient
+			consumer_base = rconsumer_base
 		}()
 		rc := NewRestConsumer()
 		dto := dto.NewGetClientByNicknameInputDto()
@@ -61,10 +62,10 @@ func TestRestConsumer_GetClientByNickname(t *testing.T) {
 		}
 	})
 	t.Run("should return a http get error", func(t *testing.T) {
-		rconsumer_getclient := consumer_getclient
-		consumer_getclient = "http://localhost:8083/client/get_error"
+		rconsumer_base := consumer_base
+		consumer_base = "http://localhost:8083/client/get_error"
 		defer func() {
-			consumer_getclient = rconsumer_getclient
+			consumer_base = rconsumer_base
 		}()
 		rc := NewRestConsumer()
 		dto := dto.NewGetClientByNicknameInputDto()
