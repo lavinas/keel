@@ -1,6 +1,7 @@
 package mysql
 
 import (
+	"errors"
 	"time"
 
 	"github.com/lavinas/keel/invoice/internal/core/port"
@@ -8,9 +9,16 @@ import (
 
 // Invoice Client Mock
 type InvoiceClientMock struct {
+	status string
 }
 
 func (i *InvoiceClientMock) Load(nickname, clientId, name, email string, phone, document uint64) {
+}
+func (i *InvoiceClientMock) LoadGetClientNicknameDto(input port.GetClientByNicknameInputDto) error {
+	if i.status == "get client error" {
+		return errors.New("get client error")
+	}
+	return nil
 }
 func (i *InvoiceClientMock) Save() error {
 	return nil
@@ -61,8 +69,14 @@ func (*InvoiceMock) GetReference() string {
 func (*InvoiceMock) GetBusinessId() string {
 	return "1"
 }
+func (*InvoiceMock) GetBusiness() port.InvoiceClient {
+	return &InvoiceClientMock{}
+}
 func (*InvoiceMock) GetCustomerId() string {
 	return "1"
+}
+func (*InvoiceMock) GetConsumer() port.InvoiceClient {
+	return &InvoiceClientMock{}
 }
 func (*InvoiceMock) GetAmount() float64 {
 	return 1.66

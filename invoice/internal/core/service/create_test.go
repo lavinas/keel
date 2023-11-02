@@ -8,10 +8,11 @@ import (
 func TestCreateExecute(t *testing.T) {
 	t.Run("should create without errors", func(t *testing.T) {
 		l := LogMock{}
+		r := RestConsumerMock{}
 		d := InvoiceMock{}
 		i := CreateInputDtoMock{}
 		o := CreateOutputDtoMock{}
-		c := NewCreate(&l, &d, &i, &o)
+		c := NewCreate(&l, &r, &d, &i, &o)
 		err := c.Execute()
 		if err != nil {
 			t.Errorf("expected no errors, got %v", err)
@@ -31,10 +32,11 @@ func TestCreateExecute(t *testing.T) {
 	})
 	t.Run("should return error when input is invalid", func(t *testing.T) {
 		l := LogMock{}
+		r := RestConsumerMock{}
 		d := InvoiceMock{}
 		i := CreateInputDtoMock{Status: "validate error"}
 		o := CreateOutputDtoMock{}
-		c := NewCreate(&l, &d, &i, &o)
+		c := NewCreate(&l, &r, &d, &i, &o)
 		err := c.Execute()
 		if err == nil {
 			t.Errorf("expected errors, got %v", err)
@@ -48,10 +50,11 @@ func TestCreateExecute(t *testing.T) {
 	})
 	t.Run("should return error when domain fails to load", func(t *testing.T) {
 		l := LogMock{}
+		r := RestConsumerMock{}
 		d := InvoiceMock{Status: "load error"}
 		i := CreateInputDtoMock{}
 		o := CreateOutputDtoMock{}
-		c := NewCreate(&l, &d, &i, &o)
+		c := NewCreate(&l, &r, &d, &i, &o)
 		err := c.Execute()
 		if err == nil {
 			t.Errorf("expected errors, got %v", err)
@@ -65,10 +68,11 @@ func TestCreateExecute(t *testing.T) {
 	})
 	t.Run("should return error when domain fails to save", func(t *testing.T) {
 		l := LogMock{}
+		r := RestConsumerMock{}
 		d := InvoiceMock{Status: "save error"}
 		i := CreateInputDtoMock{}
 		o := CreateOutputDtoMock{}
-		c := NewCreate(&l, &d, &i, &o)
+		c := NewCreate(&l, &r, &d, &i, &o)
 		err := c.Execute()
 		if err == nil {
 			t.Errorf("expected errors, got %v", err)
@@ -82,10 +86,11 @@ func TestCreateExecute(t *testing.T) {
 	})
 	t.Run("should return error when has duplicity error", func(t *testing.T) {
 		l := LogMock{}
+		r := RestConsumerMock{}
 		d := InvoiceMock{Status: "duplicity error"}
 		i := CreateInputDtoMock{}
 		o := CreateOutputDtoMock{}
-		c := NewCreate(&l, &d, &i, &o)
+		c := NewCreate(&l, &r, &d, &i, &o)
 		err := c.Execute()
 		if err == nil {
 			t.Errorf("expected errors, got %v", err)
@@ -99,10 +104,11 @@ func TestCreateExecute(t *testing.T) {
 	})
 	t.Run("should return error when has duplicity", func(t *testing.T) {
 		l := LogMock{}
+		r := RestConsumerMock{}
 		d := InvoiceMock{Status: "duplicity"}
 		i := CreateInputDtoMock{}
 		o := CreateOutputDtoMock{}
-		c := NewCreate(&l, &d, &i, &o)
+		c := NewCreate(&l, &r, &d, &i, &o)
 		err := c.Execute()
 		if err == nil {
 			t.Errorf("expected errors, got %v", err)
@@ -114,5 +120,41 @@ func TestCreateExecute(t *testing.T) {
 			t.Errorf("expected reference to be empty, got %v", o.reference)
 		}
 	})
-
+	t.Run("should return error when consumer fails to load", func(t *testing.T) {
+		l := LogMock{}
+		r := RestConsumerMock{Status: "get client error"}
+		d := InvoiceMock{}
+		i := CreateInputDtoMock{}
+		o := CreateOutputDtoMock{}
+		c := NewCreate(&l, &r, &d, &i, &o)
+		err := c.Execute()
+		if err == nil {
+			t.Errorf("expected errors, got %v", err)
+		}
+		if !strings.Contains(o.status, "internal error") {
+			t.Errorf("expected internal error, got %v", o.status)
+		}
+		if o.reference != "" {
+			t.Errorf("expected reference to be empty, got %v", o.reference)
+		}
+	})
+	t.Run("should return nil when consumer is not found", func(t *testing.T) {
+		l := LogMock{}
+		r := RestConsumerMock{}
+		r.Status = "get client not found"
+		d := InvoiceMock{}
+		i := CreateInputDtoMock{}
+		o := CreateOutputDtoMock{}
+		c := NewCreate(&l, &r, &d, &i, &o)
+		err := c.Execute()
+		if err != nil {
+			t.Errorf("expected no errors, got %v", err)
+		}
+		if o.status != "created" {
+			t.Errorf("expected status to be created, got %v", o.status)
+		}
+		if o.reference != "" {
+			t.Errorf("expected reference to be empty, got %v", o.reference)
+		}
+	})
 }

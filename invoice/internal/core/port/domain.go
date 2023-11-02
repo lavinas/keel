@@ -10,6 +10,7 @@ type Domain interface {
 
 type InvoiceClient interface {
 	Load(nickname, clientId, name, email string, phone, document uint64)
+	LoadGetClientNicknameDto(input GetClientByNicknameInputDto) error
 	Save() error
 	Update() error
 	GetId() string
@@ -29,6 +30,8 @@ type Invoice interface {
 	GetId() string
 	GetReference() string
 	GetBusinessId() string
+	GetBusiness() InvoiceClient
+	GetConsumer() InvoiceClient
 	GetCustomerId() string
 	GetAmount() float64
 	GetDate() time.Time

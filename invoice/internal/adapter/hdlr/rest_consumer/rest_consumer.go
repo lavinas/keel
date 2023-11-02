@@ -6,13 +6,15 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"os"
 
 	"github.com/lavinas/keel/invoice/internal/core/port"
 )
 
 var (
 	// api url
-	getClientUrl = "http://localhost:8081/client/get"
+	consumer_base = os.Getenv("KEEL_INVOICE_CLIENT_URL")
+	consumer_getclient = "/get"
 )
 
 // Rest comsumer implements ApiConsumer interface
@@ -26,7 +28,7 @@ func NewRestConsumer() *RestConsumer {
 
 // GetClientByNickname returns a GetClientByNicknameInputDto
 func (rc *RestConsumer) GetClientByNickname(nickname string, client port.GetClientByNicknameInputDto) (bool, error) {
-	r, err := url.JoinPath(getClientUrl, nickname)
+	r, err := url.JoinPath(consumer_base, consumer_getclient, nickname)
 	if err != nil {
 		return false, err
 	}

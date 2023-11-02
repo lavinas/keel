@@ -29,4 +29,10 @@ type CreateOutputDto interface {
 }
 
 type GetClientByNicknameInputDto interface {
+	GetId() string
+	GetName() string
+	GetNickname() string
+	GetDocument() (uint64, error)
+	GetPhone() (uint64, error)
+	GetEmail() string
 }

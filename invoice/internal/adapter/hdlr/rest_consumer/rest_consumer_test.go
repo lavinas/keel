@@ -45,10 +45,10 @@ func TestRestConsumer_GetClientByNickname(t *testing.T) {
 		}
 	})
 	t.Run("should return a url malformed error", func(t *testing.T) {
-		rGetClientUrl := getClientUrl
-		getClientUrl = "123"
+		rconsumer_getclient := consumer_getclient
+		consumer_getclient = "123"
 		defer func() {
-			getClientUrl = rGetClientUrl
+			consumer_getclient = rconsumer_getclient
 		}()
 		rc := NewRestConsumer()
 		dto := dto.NewGetClientByNicknameInputDto()
@@ -61,10 +61,10 @@ func TestRestConsumer_GetClientByNickname(t *testing.T) {
 		}
 	})
 	t.Run("should return a http get error", func(t *testing.T) {
-		rGetClientUrl := getClientUrl
-		getClientUrl = "http://localhost:8083/client/get_error"
+		rconsumer_getclient := consumer_getclient
+		consumer_getclient = "http://localhost:8083/client/get_error"
 		defer func() {
-			getClientUrl = rGetClientUrl
+			consumer_getclient = rconsumer_getclient
 		}()
 		rc := NewRestConsumer()
 		dto := dto.NewGetClientByNicknameInputDto()

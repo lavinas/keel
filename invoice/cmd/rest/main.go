@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/lavinas/keel/invoice/internal/adapter/hdlr/rest"
+	"github.com/lavinas/keel/invoice/internal/adapter/hdlr/rest_consumer"
 	"github.com/lavinas/keel/invoice/internal/adapter/repo/mysql"
 	"github.com/lavinas/keel/invoice/pkg/log"
 
@@ -21,8 +22,9 @@ func main() {
 		panic(err)
 	}
 	defer r.Close()
+	c := restconsumer.NewRestConsumer()
 	d := domain.NewDomain(r)
-	s := service.NewService(l, d)
+	s := service.NewService(l, c, d)
 	h := rest.NewHandlerRest(l, s)
 	h.Run()
 }

@@ -35,12 +35,72 @@ func (l *LogMock) Errorf(input any, err error) {
 func (l *LogMock) Close() {
 }
 
+type RestConsumerMock struct {
+	Status string
+}
+
+func (r *RestConsumerMock) GetClientByNickname(nickname string, client port.GetClientByNicknameInputDto) (bool, error) {
+	if r.Status == "get client error" {
+		return false, errors.New("get client error")
+	}
+	if r.Status == "get client not found" {
+		return false, nil
+	}
+	return true, nil
+}
+
 // DomainMock is a mock of Domain
 type DomainMock struct {
 }
 
 func (d *DomainMock) GetInvoice() port.Invoice {
 	return &InvoiceMock{}
+}
+
+type InvoiceClientMock struct {
+	status string
+}
+
+func (ic *InvoiceClientMock) Load(nickname, clientId, name, email string, phone, document uint64) {
+}
+func (ic *InvoiceClientMock) LoadGetClientNicknameDto(input port.GetClientByNicknameInputDto) error {
+	if ic.status == "load error" {
+		return errors.New("load error")
+	}
+	return nil
+}
+func (ic *InvoiceClientMock) Save() error {
+	if ic.status == "save error" {
+		return errors.New("save error")
+	}
+	return nil
+}
+func (ic *InvoiceClientMock) Update() error {
+	if ic.status == "update error" {
+		return errors.New("update error")
+	}
+	return nil
+}
+func (ic *InvoiceClientMock) GetId() string {
+	return "id"
+}
+func (ic *InvoiceClientMock) GetNickname() string {
+	return "nickname"
+}
+func (ic *InvoiceClientMock) GetClientId() string {
+	return "client_id"
+}
+func (ic *InvoiceClientMock) GetName() string {
+	return "name"
+}
+func (ic *InvoiceClientMock) GetDocument() uint64 {
+	return 1
+}
+func (ic *InvoiceClientMock) GetPhone() uint64 {
+	return 1
+}
+func (ic *InvoiceClientMock) GetEmail() string {
+	return "email"
 }
 
 // InoviceMock is a mock of Invoice Domain
@@ -71,8 +131,14 @@ func (i *InvoiceMock) GetReference() string {
 func (i *InvoiceMock) GetBusinessId() string {
 	return ""
 }
+func (i *InvoiceMock) GetBusiness() port.InvoiceClient {
+	return &InvoiceClientMock{}
+}
 func (i *InvoiceMock) GetCustomerId() string {
 	return ""
+}
+func (i *InvoiceMock) GetConsumer() port.InvoiceClient {
+	return &InvoiceClientMock{}
 }
 func (i *InvoiceMock) GetAmount() float64 {
 	return 0

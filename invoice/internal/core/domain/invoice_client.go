@@ -35,6 +35,24 @@ func (i *InvoiceClient) Load(nickname, clientId, name, email string, phone, docu
 	i.document = document
 }
 
+func (i *InvoiceClient) LoadGetClientNicknameDto(input port.GetClientByNicknameInputDto) error {
+	i.nickname = input.GetNickname()
+	i.clientId = input.GetId()
+	i.name = input.GetName()
+	i.email = input.GetEmail()
+	phone, err := input.GetPhone()
+	if err != nil {
+		return err
+	}
+	doc, err := input.GetDocument()
+	if err != nil {
+		return err
+	}
+	i.phone = phone
+	i.document = doc
+	return nil
+}
+
 // Save stores the invoice client on the repository
 func (i *InvoiceClient) Save() error {
 	return i.repo.SaveInvoiceClient(i)

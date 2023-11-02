@@ -9,3 +9,7 @@ type ApiConsumer interface {
 	GetPhone() uint64
 	GetEmail() string
 }
+
+type RestConsumer interface {
+	GetClientByNickname(nickname string, client GetClientByNicknameInputDto) (bool, error)
+}

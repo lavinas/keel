@@ -133,8 +133,8 @@ func (r *RepoMysql) UpdateInvoiceClient(client port.InvoiceClient) error {
 	}
 	q := querieMap["UpadateInvoiceClient"]
 	c := client
-	_, err := r.tx.Exec(q, c.GetNickname(), c.GetClientId(), c.GetName(), 
-							c.GetDocument(), c.GetPhone(), c.GetEmail(), c.GetId())
+	_, err := r.tx.Exec(q, c.GetNickname(), c.GetClientId(), c.GetName(),
+		c.GetDocument(), c.GetPhone(), c.GetEmail(), c.GetId())
 	if err != nil {
 		return err
 	}

@@ -102,9 +102,19 @@ func (i *Invoice) GetBusinessId() string {
 	return i.business.GetId()
 }
 
+// GetBusiness returns the business client object of invoice
+func (i *Invoice) GetBusiness() port.InvoiceClient {
+	return i.business
+}
+
 // GetCustomer returns the customer of invoice
 func (i *Invoice) GetCustomerId() string {
 	return i.customer.GetId()
+}
+
+// GetCustomer returns the customer client object of invoice
+func (i *Invoice) GetConsumer() port.InvoiceClient {
+	return i.customer
 }
 
 // GetAmount returns the amount of invoice
