@@ -13,6 +13,21 @@ func TestRun(t *testing.T) {
 	h.Run()
 }
 
+func TestPing(t *testing.T) {
+	l := LogMock{}
+	s := ServiceMock{}
+	h := NewHandlerRest(&l, &s)
+	w := httptest.NewRecorder()
+	ctx := GetTestGinContext(w)
+	h.Ping(ctx)
+	if w.Code != http.StatusOK {
+		t.Errorf("Invalid result: %v", w.Code)
+	}
+	if w.Body.String() != "{\"message\":\"pong\"}" {
+		t.Errorf("Invalid result: %v", w.Body.String())
+	}
+}
+
 func TestInsert(t *testing.T) {
 	l := LogMock{}
 	s := ServiceMock{}

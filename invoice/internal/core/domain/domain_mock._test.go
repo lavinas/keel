@@ -42,6 +42,13 @@ func (r *RepoMock) SaveInvoiceClient(client port.InvoiceClient) error {
 	}
 	return nil
 }
+func (r *RepoMock) UpdateInvoiceClient(client port.InvoiceClient) error {
+	if r.Status == "updateInvoiceClientError" {
+		return errors.New("update error")
+	}
+	return nil
+}
+
 func (r *RepoMock) SaveInvoice(invoice port.Invoice) error {
 	if r.Status == "saveInvoiceError" {
 		return errors.New("save error")

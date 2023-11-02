@@ -15,6 +15,9 @@ func (i *InvoiceClientMock) Load(nickname, clientId, name, email string, phone, 
 func (i *InvoiceClientMock) Save() error {
 	return nil
 }
+func (i *InvoiceClientMock) Update() error {
+	return nil
+}
 func (i *InvoiceClientMock) GetId() string {
 	return "1"
 }

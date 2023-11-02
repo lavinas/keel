@@ -59,3 +59,24 @@ func TestInvoiceClientSave(t *testing.T) {
 	})
 
 }
+
+func TestInvoiceClientUpdate(t *testing.T) {
+	t.Run("should update invoice client", func(t *testing.T) {
+		repo := new(RepoMock)
+		client := NewInvoiceClient(repo)
+		client.Load("nickname", "clientId", "name", "email", 123456789, 123456789)
+		if err := client.Update(); err != nil {
+			t.Errorf("error on update")
+		}
+	})
+	t.Run("should return error on update", func(t *testing.T) {
+		repo := new(RepoMock)
+		repo.Status = "updateInvoiceClientError"
+		client := NewInvoiceClient(repo)
+		client.Load("nickname", "clientId", "name", "email", 123456789, 123456789)
+		if err := client.Update(); err == nil {
+			t.Errorf("should not be nil")
+		}
+	})
+
+}

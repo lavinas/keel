@@ -29,6 +29,7 @@ func NewHandlerRest(log port.Log, service port.Service) *HandlerRest {
 
 // MapHandlers maps the handlers
 func (h *HandlerRest) MapHandlers() {
+	h.gin.GET("/ping", h.Ping)
 	h.gin.POST("/client/insert", h.Insert)
 	h.gin.POST("/client/update/:id", h.Update)
 	h.gin.GET("/client/find", h.Find)
@@ -39,6 +40,10 @@ func (h *HandlerRest) MapHandlers() {
 func (h *HandlerRest) Run() {
 	h.MapHandlers()
 	h.gin.Run()
+}
+
+func (h *HandlerRest) Ping(c *gin.Context) {
+	c.JSON(http.StatusOK, h.gin.H("message", "pong"))
 }
 
 // Insert responds for call of creates a new client

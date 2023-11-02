@@ -123,6 +123,24 @@ func (r *RepoMysql) SaveInvoiceClient(client port.InvoiceClient) error {
 	return nil
 }
 
+// UpdateInvoiceClient updates the invoice client on the repository
+func (r *RepoMysql) UpdateInvoiceClient(client port.InvoiceClient) error {
+	if r.tx == nil {
+		return errors.New("transaction not started")
+	}
+	if r.db == nil {
+		return errors.New("sql: database is closed")
+	}
+	q := querieMap["UpadateInvoiceClient"]
+	c := client
+	_, err := r.tx.Exec(q, c.GetNickname(), c.GetClientId(), c.GetName(), 
+							c.GetDocument(), c.GetPhone(), c.GetEmail(), c.GetId())
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // SaveInvoice stores the invoice on the repository
 func (r *RepoMysql) SaveInvoice(invoice port.Invoice) error {
 	if r.tx == nil {

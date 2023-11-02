@@ -31,6 +31,7 @@ func (s *Create) Execute() error {
 		"load":      s.loadDomain,
 		"duplicity": s.checkDuplicity,
 		"save":      s.saveDomain,
+		"update":    s.updateClientInvoice,
 		"output":    s.createOutput,
 	}
 	for _, v := range execMap {
@@ -99,5 +100,10 @@ func (s *Create) saveDomain() error {
 func (s *Create) createOutput() error {
 	s.log.Info("output")
 	s.output.Load("created", s.invoice.GetReference())
+	return nil
+}
+
+// updateClientInvoice is a method that updates the client invoice after consulting the external service
+func (s *Create) updateClientInvoice() error {
 	return nil
 }

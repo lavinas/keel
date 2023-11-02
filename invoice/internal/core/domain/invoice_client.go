@@ -40,6 +40,10 @@ func (i *InvoiceClient) Save() error {
 	return i.repo.SaveInvoiceClient(i)
 }
 
+func (i *InvoiceClient) Update() error {
+	return i.repo.UpdateInvoiceClient(i)
+}
+
 // GetId returns the id of invoice client
 func (i *InvoiceClient) GetId() string {
 	return i.id

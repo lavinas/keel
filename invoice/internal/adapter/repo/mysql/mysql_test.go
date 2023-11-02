@@ -259,6 +259,55 @@ func TestSaveInvoiceClient(t *testing.T) {
 	})
 }
 
+func TestUpdateInvoiceClient(t *testing.T) {
+	t.Run("should update invoice client", func(t *testing.T) {
+		repo, _ := NewRepoMysql()
+		defer repo.Close()
+		repo.Begin()
+		repo.TruncateInvoiceClient()
+		client := InvoiceClientMock{}
+		repo.SaveInvoiceClient(&client)
+		err := repo.UpdateInvoiceClient(&client)
+		if err != nil {
+			t.Errorf("Expected nil, got %s", err.Error())
+		}
+		repo.TruncateInvoiceClient()
+		repo.Commit()
+	})
+	t.Run("should return error when there is no transaction", func(t *testing.T) {
+		repo, _ := NewRepoMysql()
+		defer repo.Close()
+		err := repo.UpdateInvoiceClient(&InvoiceClientMock{})
+		if err == nil {
+			t.Errorf("Expected error, got nil")
+		}
+		if err != nil && err.Error() != "transaction not started" {
+			t.Errorf("Expected transaction not started, got %s", err.Error())
+		}
+	})
+	t.Run("should return error when connection is nil", func(t *testing.T) {
+		repo, _ := NewRepoMysql()
+		repo.Begin()
+		repo.db = nil
+		err := repo.UpdateInvoiceClient(&InvoiceClientMock{})
+		if err == nil {
+			t.Errorf("Expected error, got nil")
+		}
+		if err != nil && err.Error() != "sql: database is closed" {
+			t.Errorf("Expected sql: database is closed, got %s", err.Error())
+		}
+	})
+	t.Run("should return error when connection error", func(t *testing.T) {
+		repo, _ := NewRepoMysql()
+		repo.Begin()
+		repo.tx.Commit()
+		err := repo.UpdateInvoiceClient(&InvoiceClientMock{})
+		if err == nil {
+			t.Errorf("Expected error, got nil")
+		}
+	})
+}
+
 func TestIsDuplicatedInvoice(t *testing.T) {
 	t.Run("should return false when there is no duplicated invoice", func(t *testing.T) {
 		repo, _ := NewRepoMysql()

@@ -6,6 +6,7 @@ type Repo interface {
 	Rollback() error
 	IsDuplicatedInvoice(reference string) (bool, error)
 	SaveInvoiceClient(client InvoiceClient) error
+	UpdateInvoiceClient(client InvoiceClient) error
 	SaveInvoice(invoice Invoice) error
 	SaveInvoiceItem(item InvoiceItem) error
 	Close() error

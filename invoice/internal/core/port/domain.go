@@ -11,6 +11,7 @@ type Domain interface {
 type InvoiceClient interface {
 	Load(nickname, clientId, name, email string, phone, document uint64)
 	Save() error
+	Update() error
 	GetId() string
 	GetNickname() string
 	GetClientId() string
