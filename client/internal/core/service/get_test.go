@@ -12,8 +12,8 @@ func TestGetExecute(t *testing.T) {
 		client.Status = "findbyid"
 		output := &InsertOutputDtoMock{}
 		param := "1"
-		service := NewGet(log, client, param, output)
-		err := service.Execute()
+		service := NewGet(log, client)
+		err := service.Execute(param, output)
 		if err != nil {
 			t.Errorf("Error: %s", err.Error())
 		}
@@ -24,8 +24,8 @@ func TestGetExecute(t *testing.T) {
 		client.Status = "findbynick"
 		output := &InsertOutputDtoMock{}
 		param := "nickname"
-		service := NewGet(log, client, param, output)
-		err := service.Execute()
+		service := NewGet(log, client)
+		err := service.Execute(param, output)
 		if err != nil {
 			t.Errorf("Error: %s", err.Error())
 		}
@@ -36,8 +36,8 @@ func TestGetExecute(t *testing.T) {
 		client.Status = "findbyemail"
 		output := &InsertOutputDtoMock{}
 		param := "email"
-		service := NewGet(log, client, param, output)
-		err := service.Execute()
+		service := NewGet(log, client)
+		err := service.Execute(param, output)
 		if err != nil {
 			t.Errorf("Error: %s", err.Error())
 		}
@@ -48,8 +48,8 @@ func TestGetExecute(t *testing.T) {
 		client.Status = "findbydoc"
 		output := &InsertOutputDtoMock{}
 		param := "12345678"
-		service := NewGet(log, client, param, output)
-		err := service.Execute()
+		service := NewGet(log, client)
+		err := service.Execute(param, output)
 		if err != nil {
 			t.Errorf("Error: %s", err.Error())
 		}
@@ -60,8 +60,8 @@ func TestGetExecute(t *testing.T) {
 		client.Status = "findbyphone"
 		output := &InsertOutputDtoMock{}
 		param := "12345678"
-		service := NewGet(log, client, param, output)
-		err := service.Execute()
+		service := NewGet(log, client)
+		err := service.Execute(param, output)
 		if err != nil {
 			t.Errorf("Error: %s", err.Error())
 		}
@@ -73,8 +73,8 @@ func TestGetExecute(t *testing.T) {
 		client.Status = "ok"
 		output := &InsertOutputDtoMock{}
 		param := "aa"
-		service := NewGet(log, client, param, output)
-		err := service.Execute()
+		service := NewGet(log, client)
+		err := service.Execute(param, output)
 		if err == nil {
 			t.Errorf("Error should not be nil")
 		}
@@ -88,8 +88,8 @@ func TestGetExecute(t *testing.T) {
 		client.Status = "ok"
 		output := &InsertOutputDtoMock{}
 		param := "12345678"
-		service := NewGet(log, client, param, output)
-		err := service.Execute()
+		service := NewGet(log, client)
+		err := service.Execute(param, output)
 		if err == nil {
 			t.Errorf("Error should not be nil")
 		}
@@ -104,8 +104,8 @@ func TestGetExecute(t *testing.T) {
 		client.Status = "ok"
 		output := &InsertOutputDtoMock{}
 		param := ""
-		service := NewGet(log, client, param, output)
-		err := service.Execute()
+		service := NewGet(log, client)
+		err := service.Execute(param, output)
 		if err == nil {
 			t.Errorf("Error should not be nil")
 		}
@@ -120,8 +120,8 @@ func TestGetExecute(t *testing.T) {
 		client.Status = "findbyiderror"
 		output := &InsertOutputDtoMock{}
 		param := "1"
-		service := NewGet(log, client, param, output)
-		err := service.Execute()
+		service := NewGet(log, client)
+		err := service.Execute(param, output)
 		if err == nil {
 			t.Errorf("Error should not be nil")
 		}
@@ -136,8 +136,8 @@ func TestGetExecute(t *testing.T) {
 		client.Status = "findbynickerror"
 		output := &InsertOutputDtoMock{}
 		param := "nickname"
-		service := NewGet(log, client, param, output)
-		err := service.Execute()
+		service := NewGet(log, client)
+		err := service.Execute(param, output)
 		if err == nil {
 			t.Errorf("Error should not be nil")
 		}
@@ -152,8 +152,8 @@ func TestGetExecute(t *testing.T) {
 		client.Status = "findbyemailerror"
 		output := &InsertOutputDtoMock{}
 		param := "email"
-		service := NewGet(log, client, param, output)
-		err := service.Execute()
+		service := NewGet(log, client)
+		err := service.Execute(param, output)
 		if err == nil {
 			t.Errorf("Error should not be nil")
 		}
@@ -168,8 +168,8 @@ func TestGetExecute(t *testing.T) {
 		client.Status = "findbydocerror"
 		output := &InsertOutputDtoMock{}
 		param := "12345678"
-		service := NewGet(log, client, param, output)
-		err := service.Execute()
+		service := NewGet(log, client)
+		err := service.Execute(param, output)
 		if err == nil {
 			t.Errorf("Error should not be nil")
 		}
@@ -184,8 +184,8 @@ func TestGetExecute(t *testing.T) {
 		client.Status = "findbyphoneerror"
 		output := &InsertOutputDtoMock{}
 		param := "12345678"
-		service := NewGet(log, client, param, output)
-		err := service.Execute()
+		service := NewGet(log, client)
+		err := service.Execute(param, output)
 		if err == nil {
 			t.Errorf("Error should not be nil")
 		}

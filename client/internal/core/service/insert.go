@@ -12,92 +12,84 @@ import (
 type Insert struct {
 	log    port.Log
 	client port.Client
-	input  port.InsertInputDto
-	output port.InsertOutputDto
 }
 
 // NewInsert creates a new client create service
-func NewInsert(log port.Log, client port.Client, input port.InsertInputDto, output port.InsertOutputDto) *Insert {
+func NewInsert(log port.Log, client port.Client) *Insert {
 	return &Insert{
 		log:    log,
 		client: client,
-		input:  input,
-		output: output,
 	}
 }
 
 // Execute executes the service
-func (s *Insert) Execute() error {
-	if err := s.validateInput(); err != nil {
-		return err
+func (s *Insert) Execute(input port.InsertInputDto, output port.InsertOutputDto) error {
+	execOrder := []func(port.InsertInputDto) error{	
+		s.validateInput,
+		s.loadClient,
+		s.duplicity,
+		s.store,
 	}
-	if err := s.loadClient(); err != nil {
-		return err
+	for _, f := range execOrder {
+		if err := f(input); err != nil {
+			return err
+		}
 	}
-	if err := s.duplicity(); err != nil {
-		return err
-	}
-	if err := s.store(); err != nil {
-		return err
-	}
-	s.prepareOutput()
-	s.log.Infof(s.input, "created")
+	s.prepareOutput(output)
+	s.log.Infof(input, "created")
 	return nil
 }
 
 // loadClient loads a client from the input dto
-func (s *Insert) loadClient() error {
-	s.input.Format()
-	name, nick, doc, phone, email := s.input.Get()
+func (s *Insert) loadClient(input port.InsertInputDto) error {
+	input.Format()
+	name, nick, doc, phone, email := input.Get()
 	idoc, _ := strconv.ParseUint(doc, 10, 64)
 	iphone, _ := strconv.ParseUint(phone, 10, 64)
 	if err := s.client.Insert(name, nick, idoc, iphone, email); err != nil {
-		s.log.Errorf(s.input, err)
+		s.log.Errorf(input, err)
 		return errors.New("internal server error")
 	}
 	return nil
 }
 
 // validateInput validates input data of Insert service
-func (s *Insert) validateInput() error {
-	if err := s.input.Validate(); err != nil {
-		s.log.Infof(s.input, "bad request: "+err.Error())
+func (s *Insert) validateInput(input port.InsertInputDto) error {
+	if err := input.Validate(); err != nil {
+		s.log.Infof(input, "bad request: "+err.Error())
 		return errors.New("bad request: " + err.Error())
 	}
 	return nil
 }
 
 // duplicity checks if a document or email is already registered
-func (s *Insert) duplicity() error {
+func (s *Insert) duplicity(input port.InsertInputDto) error {
+	execOrder := []func(port.InsertInputDto) (string, error){
+		s.duplicityDocument,
+		s.duplicityEmail,
+		s.duplicityNick,
+	}
 	message := ""
-	m, err := s.duplicityDocument()
-	if err != nil {
-		return err
+	for _, f := range execOrder {
+		m, err := f(input)
+		if err != nil {
+			return err
+		}
+		message += m
 	}
-	message += m
-	m, err = s.duplicityEmail()
-	if err != nil {
-		return err
-	}
-	message += m
-	m, err = s.duplicityNick()
-	if err != nil {
-		return err
-	}
-	message += m
 	if message != "" {
 		message = strings.Trim(message, " |")
-		s.log.Infof(s.input, "conflict: "+message)
+		s.log.Infof(input, "conflict: "+message)
 		return errors.New("conflict: " + message)
 	}
 	return nil
 }
 
 // duplicityDocument treats the document duplicity
-func (s *Insert) duplicityDocument() (string, error) {
+func (s *Insert) duplicityDocument(input port.InsertInputDto) (string, error) {
 	b, err := s.client.DocumentDuplicity()
 	if err != nil {
-		s.log.Errorf(s.input, err)
+		s.log.Errorf(input, err)
 		return "", errors.New("internal server error")
 	}
 	if b {
@@ -107,10 +99,10 @@ func (s *Insert) duplicityDocument() (string, error) {
 }
 
 // duplicityEmail treats the email duplicity
-func (s *Insert) duplicityEmail() (string, error) {
+func (s *Insert) duplicityEmail(input port.InsertInputDto) (string, error) {
 	e, err := s.client.EmailDuplicity()
 	if err != nil {
-		s.log.Errorf(s.input, err)
+		s.log.Errorf(input, err)
 		return "", errors.New("internal server error |")
 	}
 	if e {
@@ -119,10 +111,10 @@ func (s *Insert) duplicityEmail() (string, error) {
 	return "", nil
 }
 
-func (s *Insert) duplicityNick() (string, error) {
+func (s *Insert) duplicityNick(input port.InsertInputDto) (string, error) {
 	n, err := s.client.NickDuplicity()
 	if err != nil {
-		s.log.Errorf(s.input, err)
+		s.log.Errorf(input, err)
 		return "", errors.New("internal server error |")
 	}
 	if n {
@@ -132,17 +124,17 @@ func (s *Insert) duplicityNick() (string, error) {
 }
 
 // store stores a new client
-func (s *Insert) store() error {
+func (s *Insert) store(input port.InsertInputDto) error {
 	// Store client
 	if err := s.client.Save(); err != nil {
-		s.log.Errorf(s.input, err)
+		s.log.Errorf(input, err)
 		return errors.New("internal server error")
 	}
 	return nil
 }
 
 // prepareOutput prepares output data of Insert service
-func (s *Insert) prepareOutput() {
+func (s *Insert) prepareOutput(output port.InsertOutputDto) {
 	id, name, nick, doc, phone, email := s.client.GetFormatted()
-	s.output.Fill(id, name, nick, doc, phone, email)
+	output.Fill(id, name, nick, doc, phone, email)
 }

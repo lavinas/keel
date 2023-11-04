@@ -8,38 +8,40 @@ import (
 type Service struct {
 	domain port.Domain
 	log    port.Log
-	repo   port.Repo
+	insert Insert
+	update Update
+	find   Find
+	get    Get
 }
 
 // NewInsert creates a new Insert service
-func NewService(domain port.Domain, log port.Log, repo port.Repo) *Service {
+func NewService(domain port.Domain, log port.Log) *Service {
 	return &Service{
 		domain: domain,
 		log:    log,
-		repo:   repo,
+		insert: *NewInsert(log, domain.GetClient()),
+		update: *NewUpdate(log, domain.GetClient()),
+		find:  *NewFind(log, domain.GetClientSet()),
+		get:   *NewGet(log, domain.GetClient()),
 	}
 }
 
 // Insert is orquestration of Creating a new client
 func (s *Service) Insert(input port.InsertInputDto, output port.InsertOutputDto) error {
-	service_client := NewInsert(s.log, s.domain.GetClient(), input, output)
-	return service_client.Execute()
+	return s.insert.Execute(input, output)
 }
 
 // Find is orquestration of Updating a client
 func (s *Service) Find(input port.FindInputDto, output port.FindOutputDto) error {
-	service_client := NewFind(s.log, s.domain.GetClientSet(), input, output)
-	return service_client.Execute()
+	return s.find.Execute(input, output)
 }
 
 // Update is orquestration of Updating a client
 func (s *Service) Update(id string, input port.UpdateInputDto, output port.UpdateOutputDto) error {
-	service_client := NewUpdate(s.log, s.domain.GetClient(), id, input, output)
-	return service_client.Execute()
+	return s.update.Execute(id, input, output)
 }
 
 // Get is orquestration of Getting a client
-func (s *Service) Get(param string, input port.InsertInputDto, output port.InsertOutputDto) error {
-	service_client := NewGet(s.log, s.domain.GetClient(), param, output)
-	return service_client.Execute()
+func (s *Service) Get(param string, output port.InsertOutputDto) error {
+	return s.get.Execute(param, output)
 }

@@ -18,8 +18,8 @@ func TestFindExecute(t *testing.T) {
 		input := &FindInputDtoMock{}
 		input.Status = "ok"
 		output := &FindOutputDtoMock{}
-		service := NewFind(log, client, input, output)
-		err := service.Execute()
+		service := NewFind(log, client)
+		err := service.Execute(input, output)
 		if err != nil {
 			t.Errorf("Error: %s", err.Error())
 		}
@@ -37,8 +37,8 @@ func TestFindExecute(t *testing.T) {
 		input := &FindInputDtoMock{}
 		input.Status = "invalid"
 		output := &FindOutputDtoMock{}
-		service := NewFind(log, client, input, output)
-		err := service.Execute()
+		service := NewFind(log, client)
+		err := service.Execute(input, output)
 		if err == nil {
 			t.Errorf("Error should not be nil")
 		}
@@ -59,8 +59,8 @@ func TestFindExecute(t *testing.T) {
 		input := &FindInputDtoMock{}
 		input.Status = "internal"
 		output := &FindOutputDtoMock{}
-		service := NewFind(log, client, input, output)
-		err := service.Execute()
+		service := NewFind(log, client)
+		err := service.Execute(input, output)
 		if err == nil {
 			t.Errorf("Error should not be nil")
 		}
@@ -81,9 +81,8 @@ func TestFindGetAll(t *testing.T) {
 		client := &ClientSetMock{}
 		input := &FindInputDtoMock{}
 		input.Status = "blank"
-		output := &FindOutputDtoMock{}
-		service := NewFind(log, client, input, output)
-		page, perPage, _, _, _, _, _ := service.getAll()
+		service := NewFind(log, client)
+		page, perPage, _, _, _, _, _ := service.getAll(input)
 		if page != 1 {
 			t.Errorf("invalid page. Expected: 1, got: %d", page)
 		}
@@ -101,9 +100,8 @@ func TestFindGetAll(t *testing.T) {
 		client := &ClientSetMock{}
 		input := &FindInputDtoMock{}
 		input.Status = "invalid"
-		output := &FindOutputDtoMock{}
-		service := NewFind(log, client, input, output)
-		_, perPage, _, _, _, _, _ := service.getAll()
+		service := NewFind(log, client)
+		_, perPage, _, _, _, _, _ := service.getAll(input)
 		if perPage != 10 {
 			t.Errorf("invalid perPage. Expected: 10, got: %d", perPage)
 		}

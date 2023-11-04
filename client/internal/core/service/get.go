@@ -11,43 +11,39 @@ import (
 type Get struct {
 	log    port.Log
 	client port.Client
-	param  string
-	output port.InsertOutputDto
 }
 
 // NewGet creates a new client get service
-func NewGet(log port.Log, client port.Client, param string, output port.InsertOutputDto) *Get {
+func NewGet(log port.Log, client port.Client) *Get {
 	return &Get{
 		log:    log,
 		client: client,
-		param:  param,
-		output: output,
 	}
 }
 
 // Execute executes the service
-func (s *Get) Execute() error {
-	if s.param == "" {
+func (s *Get) Execute(param string, output port.InsertOutputDto) error {
+	if param == "" {
 		s.log.Info("bad request: blank param")
 		return errors.New("bad request: blank param")
 	}
-	if err := s.load(); err != nil {
+	if err := s.load(param); err != nil {
 		return err
 	}
-	s.prepareOutput()
-	s.log.Info("get: " + s.param)
+	s.prepareOutput(output)
+	s.log.Info("get: " + param)
 	return nil
 }
 
 // loadClient loads a client from the repository
-func (s *Get) load() error {
+func (s *Get) load(param string) error {
 	maps := map[string]func(string) (bool, error){
 		"id":       s.client.LoadById,
 		"nickname": s.client.LoadByNick,
 		"email":    s.client.LoadByEmail,
 	}
 	for _, funct := range maps {
-		found, err := funct(s.param)
+		found, err := funct(param)
 		if err != nil {
 			return err
 		}
@@ -60,10 +56,10 @@ func (s *Get) load() error {
 		"phone":    s.client.LoadByPhone,
 	}
 
-	iparam, err := strconv.ParseUint(s.param, 10, 64)
+	iparam, err := strconv.ParseUint(param, 10, 64)
 	if err != nil {
-		s.log.Info("not found: " + s.param)
-		return errors.New("not found: " + s.param)
+		s.log.Info("not found x: " + param)
+		return errors.New("not found x: " + param)
 	}
 	for _, value := range maps2 {
 		found, err := value(iparam)
@@ -74,12 +70,12 @@ func (s *Get) load() error {
 			return nil
 		}
 	}
-	s.log.Info("no content: " + s.param + " not found")
-	return errors.New("no content: " + s.param + " not found")
+	s.log.Info("no content: " + param + " not found")
+	return errors.New("no content: " + param + " not found")
 }
 
 // prepareOutput prepares the output data
-func (s *Get) prepareOutput() {
+func (s *Get) prepareOutput(output port.InsertOutputDto) {
 	id, name, nick, doc, phone, email := s.client.GetFormatted()
-	s.output.Fill(id, name, nick, doc, phone, email)
+	output.Fill(id, name, nick, doc, phone, email)
 }

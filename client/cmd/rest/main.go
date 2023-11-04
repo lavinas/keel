@@ -19,7 +19,7 @@ func main() {
 	r := mysql.NewRepoMysql()
 	defer r.Close()
 	d := domain.NewDomain(r)
-	s := service.NewService(d, l, r)
+	s := service.NewService(d, l)
 	h := rest.NewHandlerRest(l, s)
 	h.Run()
 }

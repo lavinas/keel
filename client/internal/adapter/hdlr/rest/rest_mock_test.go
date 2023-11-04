@@ -150,9 +150,9 @@ func (s *ServiceMock) Update(id string, input port.UpdateInputDto, output port.U
 	}
 	return nil
 }
-func (s *ServiceMock) Get(param string, input port.InsertInputDto, output port.InsertOutputDto) error {
+func (s *ServiceMock) Get(param string, output port.InsertOutputDto) error {
 	if s.Status == "ok" {
-		name, nick, doc, phone, email := input.Get()
+		name, nick, doc, phone, email := "name", "nick", "doc", "phone", "email"
 		output.Fill("1", name, nick, doc, phone, email)
 		return nil
 	}

@@ -14,8 +14,8 @@ func TestUpdateExecute(t *testing.T) {
 		input.Status = "ok"
 		output := UpdateOutputDtoMock{}
 		id := "957134b5-8de1-4121-80e0-275bb16e1b11"
-		s := NewUpdate(&log, &client, id, &input, &output)
-		err := s.Execute()
+		s := NewUpdate(&log, &client)
+		err := s.Execute(id, &input, &output)
 		if err != nil {
 			t.Errorf("Error: %s", err)
 		}
@@ -34,8 +34,8 @@ func TestUpdateExecute(t *testing.T) {
 		input.Status = "ok"
 		output := UpdateOutputDtoMock{}
 		id := ""
-		s := NewUpdate(&log, &client, id, &input, &output)
-		err := s.Execute()
+		s := NewUpdate(&log, &client)
+		err := s.Execute(id, &input, &output)
 		if err == nil {
 			t.Errorf("Error: %s", err)
 		}
@@ -54,8 +54,8 @@ func TestUpdateExecute(t *testing.T) {
 		input.Status = "ok"
 		output := UpdateOutputDtoMock{}
 		id := "invalid"
-		s := NewUpdate(&log, &client, id, &input, &output)
-		err := s.Execute()
+		s := NewUpdate(&log, &client)
+		err := s.Execute(id, &input, &output)
 		if err == nil {
 			t.Errorf("Error: %s", err)
 		}
@@ -74,8 +74,8 @@ func TestUpdateExecute(t *testing.T) {
 		input.Status = "blank"
 		output := UpdateOutputDtoMock{}
 		id := "957134b5-8de1-4121-80e0-275bb16e1b11"
-		s := NewUpdate(&log, &client, id, &input, &output)
-		err := s.Execute()
+		s := NewUpdate(&log, &client)
+		err := s.Execute(id, &input, &output)
 		if err == nil {
 			t.Errorf("Error: %s", err)
 		}
@@ -94,8 +94,8 @@ func TestUpdateExecute(t *testing.T) {
 		input.Status = "invalid"
 		output := UpdateOutputDtoMock{}
 		id := "957134b5-8de1-4121-80e0-275bb16e1b11"
-		s := NewUpdate(&log, &client, id, &input, &output)
-		err := s.Execute()
+		s := NewUpdate(&log, &client)
+		err := s.Execute(id, &input, &output)
 		if err == nil {
 			t.Errorf("Error: %s", err)
 		}
@@ -114,8 +114,8 @@ func TestUpdateExecute(t *testing.T) {
 		input.Status = "ok"
 		output := UpdateOutputDtoMock{}
 		id := "957134b5-8de1-4121-80e0-275bb16e1b11"
-		s := NewUpdate(&log, &client, id, &input, &output)
-		err := s.Execute()
+		s := NewUpdate(&log, &client)
+		err := s.Execute(id, &input, &output)
 		if err == nil {
 			t.Errorf("Error: %s", err)
 		}
@@ -134,8 +134,8 @@ func TestUpdateExecute(t *testing.T) {
 		input.Status = "formaterror"
 		output := UpdateOutputDtoMock{}
 		id := "957134b5-8de1-4121-80e0-275bb16e1b11"
-		s := NewUpdate(&log, &client, id, &input, &output)
-		err := s.Execute()
+		s := NewUpdate(&log, &client)
+		err := s.Execute(id, &input, &output)
 		if err == nil {
 			t.Errorf("Error: %s", err)
 		}
@@ -151,8 +151,8 @@ func TestUpdateExecute(t *testing.T) {
 		input.Status = "ok"
 		output := UpdateOutputDtoMock{}
 		id := "957134b5-8de1-4121-80e0-275bb16e1b11"
-		s := NewUpdate(&log, &client, id, &input, &output)
-		err := s.Execute()
+		s := NewUpdate(&log, &client)
+		err := s.Execute(id, &input, &output)
 		if err == nil {
 			t.Errorf("Error: %s", err)
 		}
@@ -168,8 +168,8 @@ func TestUpdateExecute(t *testing.T) {
 		input.Status = "ok"
 		output := UpdateOutputDtoMock{}
 		id := "957134b5-8de1-4121-80e0-275bb16e1b11"
-		s := NewUpdate(&log, &client, id, &input, &output)
-		err := s.Execute()
+		s := NewUpdate(&log, &client)
+		err := s.Execute(id, &input, &output)
 		if err == nil {
 			t.Errorf("Error: %s", err)
 		}
@@ -189,8 +189,8 @@ func TestUpdateExecute(t *testing.T) {
 		input.Status = "ok"
 		output := UpdateOutputDtoMock{}
 		id := "957134b5-8de1-4121-80e0-275bb16e1b11"
-		s := NewUpdate(&log, &client, id, &input, &output)
-		err := s.Execute()
+		s := NewUpdate(&log, &client)
+		err := s.Execute(id, &input, &output)
 		if err == nil {
 			t.Errorf("Error: %s", err)
 		}
@@ -209,8 +209,8 @@ func TestUpdateExecute(t *testing.T) {
 		input.Status = "ok"
 		output := UpdateOutputDtoMock{}
 		id := "957134b5-8de1-4121-80e0-275bb16e1b11"
-		s := NewUpdate(&log, &client, id, &input, &output)
-		err := s.Execute()
+		s := NewUpdate(&log, &client)
+		err := s.Execute(id, &input, &output)
 		if err == nil {
 			t.Errorf("Error: %s", err)
 		}
@@ -230,8 +230,8 @@ func TestUpdateExecute(t *testing.T) {
 		input.Status = "ok"
 		output := UpdateOutputDtoMock{}
 		id := "957134b5-8de1-4121-80e0-275bb16e1b11"
-		s := NewUpdate(&log, &client, id, &input, &output)
-		err := s.Execute()
+		s := NewUpdate(&log, &client)
+		err := s.Execute(id, &input, &output)
 		if err == nil {
 			t.Errorf("Error: %s", err)
 		}
@@ -250,8 +250,8 @@ func TestUpdateExecute(t *testing.T) {
 		input.Status = "ok"
 		output := UpdateOutputDtoMock{}
 		id := "957134b5-8de1-4121-80e0-275bb16e1b11"
-		s := NewUpdate(&log, &client, id, &input, &output)
-		err := s.Execute()
+		s := NewUpdate(&log, &client)
+		err := s.Execute(id, &input, &output)
 		if err == nil {
 			t.Errorf("Error: %s", err)
 		}
@@ -270,8 +270,8 @@ func TestUpdateExecute(t *testing.T) {
 		input.Status = "ok"
 		output := UpdateOutputDtoMock{}
 		id := "957134b5-8de1-4121-80e0-275bb16e1b11"
-		s := NewUpdate(&log, &client, id, &input, &output)
-		err := s.Execute()
+		s := NewUpdate(&log, &client)
+		err := s.Execute(id, &input, &output)
 		if err == nil {
 			t.Errorf("Error: %s", err)
 		}
@@ -290,8 +290,8 @@ func TestUpdateExecute(t *testing.T) {
 		input.Status = "ok"
 		output := UpdateOutputDtoMock{}
 		id := "957134b5-8de1-4121-80e0-275bb16e1b11"
-		s := NewUpdate(&log, &client, id, &input, &output)
-		err := s.Execute()
+		s := NewUpdate(&log, &client)
+		err := s.Execute(id, &input, &output)
 		if err == nil {
 			t.Errorf("Expected error, got %s", err)
 		}

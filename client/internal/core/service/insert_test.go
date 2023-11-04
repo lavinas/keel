@@ -15,8 +15,8 @@ func TestInsertExecute(t *testing.T) {
 		input := InsertInputDtoMock{}
 		input.Status = "ok"
 		output := InsertOutputDtoMock{}
-		s := NewInsert(&log, &client, &input, &output)
-		err := s.Execute()
+		s := NewInsert(&log, &client)
+		err := s.Execute(&input, &output)
 		if err != nil {
 			t.Errorf("Error: %s", err)
 		}
@@ -35,9 +35,9 @@ func TestInsertExecute(t *testing.T) {
 		input := InsertInputDtoMock{}
 		input.Status = "invalid"
 		output := InsertOutputDtoMock{}
-		s := NewInsert(&log, &client, &input, &output)
+		s := NewInsert(&log, &client)
 		fmt.Println(s)
-		err := s.Execute()
+		err := s.Execute(&input, &output)
 		if err == nil {
 			t.Errorf("Error should not be nil")
 		}
@@ -56,8 +56,8 @@ func TestInsertExecute(t *testing.T) {
 		input := InsertInputDtoMock{}
 		input.Status = "ok"
 		output := InsertOutputDtoMock{}
-		s := NewInsert(&log, &client, &input, &output)
-		err := s.Execute()
+		s := NewInsert(&log, &client)
+		err := s.Execute(&input, &output)
 		if err == nil {
 			t.Errorf("Error should not be nil")
 		}
@@ -76,8 +76,8 @@ func TestInsertExecute(t *testing.T) {
 		input := InsertInputDtoMock{}
 		input.Status = "ok"
 		output := InsertOutputDtoMock{}
-		s := NewInsert(&log, &client, &input, &output)
-		err := s.Execute()
+		s := NewInsert(&log, &client)
+		err := s.Execute(&input, &output)
 		if err == nil {
 			t.Errorf("Error should not be nil")
 		}
@@ -97,8 +97,8 @@ func TestInsertExecute(t *testing.T) {
 		input := InsertInputDtoMock{}
 		input.Status = "ok"
 		output := InsertOutputDtoMock{}
-		s := NewInsert(&log, &client, &input, &output)
-		err := s.Execute()
+		s := NewInsert(&log, &client)
+		err := s.Execute(&input, &output)
 		if err == nil {
 			t.Errorf("Error should not be nil")
 		}
@@ -117,8 +117,8 @@ func TestInsertExecute(t *testing.T) {
 		input := InsertInputDtoMock{}
 		input.Status = "ok"
 		output := InsertOutputDtoMock{}
-		s := NewInsert(&log, &client, &input, &output)
-		err := s.Execute()
+		s := NewInsert(&log, &client)
+		err := s.Execute(&input, &output)
 		if err == nil {
 			t.Errorf("Error should not be nil")
 		}
@@ -138,8 +138,8 @@ func TestInsertExecute(t *testing.T) {
 		input := InsertInputDtoMock{}
 		input.Status = "ok"
 		output := InsertOutputDtoMock{}
-		s := NewInsert(&log, &client, &input, &output)
-		err := s.Execute()
+		s := NewInsert(&log, &client)
+		err := s.Execute(&input, &output)
 		if err == nil {
 			t.Errorf("Error should not be nil")
 		}
@@ -158,8 +158,8 @@ func TestInsertExecute(t *testing.T) {
 		input := InsertInputDtoMock{}
 		input.Status = "ok"
 		output := InsertOutputDtoMock{}
-		s := NewInsert(&log, &client, &input, &output)
-		err := s.Execute()
+		s := NewInsert(&log, &client)
+		err := s.Execute(&input, &output)
 		if err == nil {
 			t.Errorf("Error should not be nil")
 		}
@@ -178,8 +178,8 @@ func TestInsertExecute(t *testing.T) {
 		input := InsertInputDtoMock{}
 		input.Status = "ok"
 		output := InsertOutputDtoMock{}
-		s := NewInsert(&log, &client, &input, &output)
-		err := s.Execute()
+		s := NewInsert(&log, &client)
+		err := s.Execute(&input, &output)
 		if err == nil {
 			t.Errorf("Error should not be nil")
 		}
@@ -198,8 +198,8 @@ func TestInsertExecute(t *testing.T) {
 		input := InsertInputDtoMock{}
 		input.Status = "ok"
 		output := InsertOutputDtoMock{}
-		s := NewInsert(&log, &client, &input, &output)
-		err := s.Execute()
+		s := NewInsert(&log, &client)
+		err := s.Execute(&input, &output)
 		if err == nil {
 			t.Errorf("Error should not be nil")
 		}

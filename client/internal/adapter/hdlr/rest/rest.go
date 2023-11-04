@@ -101,10 +101,9 @@ func (h *HandlerRest) Update(c *gin.Context) {
 
 // Get responds for call of get a client
 func (h *HandlerRest) Get(c *gin.Context) {
-	var input dto.InsertInputDto
 	var output dto.InsertOutputDto
 	param := c.Param("param")
-	if err := h.service.Get(param, &input, &output); err != nil {
+	if err := h.service.Get(param, &output); err != nil {
 		c.JSON(h.gin.MapError(err.Error()), h.gin.H("error", err.Error()))
 		return
 	}

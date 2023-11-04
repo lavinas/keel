@@ -17,32 +17,28 @@ const (
 type Find struct {
 	log     port.Log
 	clients port.ClientSet
-	input   port.FindInputDto
-	output  port.FindOutputDto
 }
 
 // NewFind creates a new Find
-func NewFind(log port.Log, clients port.ClientSet, input port.FindInputDto, output port.FindOutputDto) *Find {
+func NewFind(log port.Log, clients port.ClientSet) *Find {
 	return &Find{
 		log:     log,
 		clients: clients,
-		input:   input,
-		output:  output,
 	}
 }
 
 // Execute executes the service to list all clients
-func (s *Find) Execute() error {
-	if err := s.validateInput(s.log, s.input); err != nil {
+func (s *Find) Execute(input port.FindInputDto, output port.FindOutputDto) error {
+	if err := s.validateInput(s.log, input); err != nil {
 		return err
 	}
-	page, perPage, name, nick, doc, phone, email := s.getAll()
+	page, perPage, name, nick, doc, phone, email := s.getAll(input)
 	if err := s.clients.Load(page, perPage, name, nick, doc, phone, email); err != nil {
 		s.log.Error("Error loading clients: " + err.Error())
 		return errors.New("internal error")
 	}
-	s.clients.SetOutput(s.output)
-	s.log.Info(fmt.Sprintf("Listing %d clients", s.output.Count()))
+	s.clients.SetOutput(output)
+	s.log.Info(fmt.Sprintf("Listing %d clients", output.Count()))
 	return nil
 }
 
@@ -55,8 +51,8 @@ func (s *Find) validateInput(log port.Log, input port.FindInputDto) error {
 }
 
 // getPage returns the page and perPage values from the input dto
-func (s *Find) getAll() (uint64, uint64, string, string, string, string, string) {
-	page, perPage, name, nick, doc, phone, email := s.input.Get()
+func (s *Find) getAll(input port.FindInputDto) (uint64, uint64, string, string, string, string, string) {
+	page, perPage, name, nick, doc, phone, email := input.Get()
 	if page == "" {
 		page = "1"
 	}

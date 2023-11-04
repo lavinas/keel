@@ -13,108 +13,102 @@ import (
 type Update struct {
 	log    port.Log
 	client port.Client
-	id     string
-	input  port.UpdateInputDto
-	output port.UpdateOutputDto
 }
 
 // NewUpdate creates a new client update service
-func NewUpdate(log port.Log, client port.Client, id string, input port.UpdateInputDto, output port.UpdateOutputDto) *Update {
+func NewUpdate(log port.Log, client port.Client) *Update {
 	return &Update{
 		log:    log,
 		client: client,
-		id:     id,
-		input:  input,
-		output: output,
 	}
 }
 
 // Execute executes the service
-func (s *Update) Execute() error {
-	if err := s.validateId(); err != nil {
+func (s *Update) Execute(id string, input port.UpdateInputDto, output port.UpdateOutputDto) error {
+	if err := s.validateId(id, input); err != nil {
 		return err
 	}
-	if err := s.validateInput(); err != nil {
+	if err := s.validateInput(input); err != nil {
 		return err
 	}
-	if err := s.loadClient(); err != nil {
+	if err := s.loadClient(id, input); err != nil {
 		return err
 	}
-	if err := s.duplicity(); err != nil {
+	if err := s.duplicity(input); err != nil {
 		return err
 	}
-	if err := s.update(); err != nil {
+	if err := s.update(id, input); err != nil {
 		return err
 	}
-	s.prepareOutput()
-	s.log.Infof(s.input, "updated")
+	s.prepareOutput(output)
+	s.log.Infof(input, "updated")
 	return nil
 }
 
 // validateId validates id of Update service
-func (s *Update) validateId() error {
-	if s.id == "" {
-		s.log.Infof(s.input, "bad request: blank id")
+func (s *Update) validateId(id string, input port.UpdateInputDto) error {
+	if id == "" {
+		s.log.Infof(input, "bad request: blank id")
 		return errors.New("bad request: blank id")
 	}
-	if _, err := uuid.Parse(s.id); err != nil {
-		s.log.Infof(s.input, "bad request: invalid id "+s.id)
+	if _, err := uuid.Parse(id); err != nil {
+		s.log.Infof(input, "bad request: invalid id "+id)
 		return errors.New("bad request: invalid id")
 	}
 	return nil
 }
 
 // validateInput validates input data of Update service
-func (s *Update) validateInput() error {
-	if s.input.IsBlank() {
-		s.log.Infof(s.input, "bad request: blank input ")
+func (s *Update) validateInput(input port.UpdateInputDto) error {
+	if input.IsBlank() {
+		s.log.Infof(input, "bad request: blank input ")
 		return errors.New("bad request: blank input")
 	}
-	if err := s.input.Validate(); err != nil {
-		s.log.Infof(s.input, "bad request: "+err.Error())
+	if err := input.Validate(); err != nil {
+		s.log.Infof(input, "bad request: "+err.Error())
 		return errors.New("bad request: " + err.Error())
 	}
-	if err := s.input.Format(); err != nil {
-		s.log.Infof(s.input, err.Error())
+	if err := input.Format(); err != nil {
+		s.log.Infof(input, err.Error())
 		return errors.New("internal error")
 	}
 	return nil
 }
 
 // loadClient loads a client from repository
-func (s *Update) loadClient() error {
-	result, err := s.client.LoadById(s.id)
+func (s *Update) loadClient(id string, input port.UpdateInputDto) error {
+	result, err := s.client.LoadById(id)
 	if err != nil {
-		s.log.Infof(s.input, err.Error())
+		s.log.Infof(input, err.Error())
 		return errors.New("internal error")
 	}
 	if !result {
-		s.log.Infof(s.input, "not found")
+		s.log.Infof(input, "not found")
 		return errors.New("not found")
 	}
 	return nil
 }
 
 // duplicity checks if a document or email is already registered
-func (s *Update) duplicity() error {
+func (s *Update) duplicity(input port.UpdateInputDto) error {
 	message := ""
-	_, nick, doc, _, email := s.input.Get()
+	_, nick, doc, _, email := input.Get()
 	if strings.Trim(doc, " ") != "" {
-		m, err := s.duplicityDocument()
+		m, err := s.duplicityDocument(input)
 		if err != nil {
 			return err
 		}
 		message += m
 	}
 	if strings.Trim(email, " ") != "" {
-		m, err := s.duplicityEmail()
+		m, err := s.duplicityEmail(input)
 		if err != nil {
 			return err
 		}
 		message += m
 	}
 	if strings.Trim(nick, " ") != "" {
-		m, err := s.duplicityNick()
+		m, err := s.duplicityNick(input)
 		if err != nil {
 			return err
 		}
@@ -122,17 +116,17 @@ func (s *Update) duplicity() error {
 	}
 	if message != "" {
 		message = strings.Trim(message, " |")
-		s.log.Infof(s.input, "conflict: "+message)
+		s.log.Infof(input, "conflict: "+message)
 		return errors.New("conflict: " + message)
 	}
 	return nil
 }
 
 // duplicityDocument treats the document duplicity
-func (s *Update) duplicityDocument() (string, error) {
+func (s *Update) duplicityDocument(input port.UpdateInputDto) (string, error) {
 	b, err := s.client.DocumentDuplicity()
 	if err != nil {
-		s.log.Errorf(s.input, err)
+		s.log.Errorf(input, err)
 		return "", errors.New("internal server error")
 	}
 	if b {
@@ -142,10 +136,10 @@ func (s *Update) duplicityDocument() (string, error) {
 }
 
 // duplicityEmail treats the email duplicity
-func (s *Update) duplicityEmail() (string, error) {
+func (s *Update) duplicityEmail(input port.UpdateInputDto) (string, error) {
 	e, err := s.client.EmailDuplicity()
 	if err != nil {
-		s.log.Errorf(s.input, err)
+		s.log.Errorf(input, err)
 		return "", errors.New("internal server error |")
 	}
 	if e {
@@ -155,10 +149,10 @@ func (s *Update) duplicityEmail() (string, error) {
 }
 
 // duplicityNick treats the nickname duplicity
-func (s *Update) duplicityNick() (string, error) {
+func (s *Update) duplicityNick(input port.UpdateInputDto) (string, error) {
 	n, err := s.client.NickDuplicity()
 	if err != nil {
-		s.log.Errorf(s.input, err)
+		s.log.Errorf(input, err)
 		return "", errors.New("internal server error |")
 	}
 	if n {
@@ -168,9 +162,9 @@ func (s *Update) duplicityNick() (string, error) {
 }
 
 // update updates a client
-func (s *Update) update() error {
+func (s *Update) update(id string, input port.UpdateInputDto) error {
 	_, uname, unick, udoc, uphone, uemail := s.client.Get()
-	name, nick, doc, phone, email := s.input.Get()
+	name, nick, doc, phone, email := input.Get()
 	if strings.Trim(name, " ") != "" {
 		uname = name
 	}
@@ -186,16 +180,16 @@ func (s *Update) update() error {
 	if strings.Trim(email, " ") != "" {
 		uemail = email
 	}
-	s.client.Load(s.id, uname, unick, udoc, uphone, uemail)
+	s.client.Load(id, uname, unick, udoc, uphone, uemail)
 	if err := s.client.Update(); err != nil {
-		s.log.Errorf(s.input, err)
+		s.log.Errorf(input, err)
 		return errors.New("internal server error")
 	}
 	return nil
 }
 
 // prepareOutput prepares output data of Update service
-func (s *Update) prepareOutput() {
+func (s *Update) prepareOutput(output port.UpdateOutputDto) {
 	id, name, nick, doc, phone, email := s.client.GetFormatted()
-	s.output.Fill(id, name, nick, doc, phone, email)
+	output.Fill(id, name, nick, doc, phone, email)
 }
