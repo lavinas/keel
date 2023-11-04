@@ -35,7 +35,7 @@ func TestRestconsumer_baseByNickname(t *testing.T) {
 		rc := NewRestConsumer()
 		dto := dto.NewGetClientByNicknameInputDto()
 		b, err := rc.GetClientByNickname("consumer_doe_not_found", dto)
-		if err != nil {
+		if err == nil {
 			t.Errorf("Expected nil, got error: %s", err.Error())
 		}
 		if b == true {

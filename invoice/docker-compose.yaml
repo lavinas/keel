@@ -15,7 +15,7 @@ services:
       MYSQL_INVOICE_DATABASE: keel_invoice
       KEEL_INVOICE_PER_PAGE: 10
       KEEL_INVOICE_LOG_PATH: .
-      KEEL_INVOICE_CLIENT_URL: http://keel_client:8081/client/get
+      KEEL_INVOICE_CLIENT_URL: http://keel_client:8081/client/get/nickname
     ports:
       - "8082:8081"
     networks:
