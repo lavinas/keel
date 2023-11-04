@@ -60,6 +60,15 @@ func (*InvoiceMock) SetAmount(amount float64) {
 func (*InvoiceMock) Save() error {
 	return nil
 }
+func (*InvoiceMock) LoadBusiness(dto port.GetClientByNicknameInputDto) error {
+	return nil
+}
+func (*InvoiceMock) LoadCustomer(dto port.GetClientByNicknameInputDto) error {
+	return nil
+}
+func (*InvoiceMock) Update() error {
+	return nil
+}
 func (*InvoiceMock) GetId() string {
 	return "id"
 }
@@ -75,7 +84,7 @@ func (*InvoiceMock) GetBusiness() port.InvoiceClient {
 func (*InvoiceMock) GetCustomerId() string {
 	return "1"
 }
-func (*InvoiceMock) GetConsumer() port.InvoiceClient {
+func (*InvoiceMock) GetCustomer() port.InvoiceClient {
 	return &InvoiceClientMock{}
 }
 func (*InvoiceMock) GetAmount() float64 {

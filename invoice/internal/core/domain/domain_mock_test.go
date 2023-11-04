@@ -46,6 +46,12 @@ func (r *RepoMock) UpdateInvoiceClient(client port.InvoiceClient) error {
 	if r.Status == "updateInvoiceClientError" {
 		return errors.New("update error")
 	}
+	if r.Status == "updateBusinessError" && client.GetNickname() == "businessNickname" {
+		return errors.New("update business error")
+	}
+	if r.Status == "updateCustomerError" && client.GetNickname() == "customerNickname" {
+		return errors.New("update customer error")
+	}
 	return nil
 }
 
@@ -143,4 +149,32 @@ func (d *CreateInputDtoMock) GetItems() []port.CreateInputItemDto {
 		&CreateInputItemDtoMock{},
 	}
 	return items
+}
+
+type GetClientByNicknameInputDtoMock struct {
+	Status string
+}
+func (d *GetClientByNicknameInputDtoMock) GetId() string {
+	return "0000"
+}
+func (d *GetClientByNicknameInputDtoMock) GetName() string {
+	return "name"
+}
+func (d *GetClientByNicknameInputDtoMock) GetNickname() string {
+	return "nickname"
+}
+func (d *GetClientByNicknameInputDtoMock) GetDocument() (uint64, error) {
+	if d.Status == "documentError" {
+		return 0, errors.New("document error")
+	}
+	return 1, nil
+}
+func (d *GetClientByNicknameInputDtoMock) GetPhone() (uint64, error) {
+	if d.Status == "phoneError" {
+		return 0, errors.New("phone error")
+	}
+	return 1, nil
+}
+func (d *GetClientByNicknameInputDtoMock) GetEmail() string {
+	return "email"
 }

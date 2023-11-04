@@ -1,8 +1,10 @@
 version: "3.1"
 
 services:    
-  app_invoice:
+  keel_invoice:
     build: .
+    container_name: keel_invoice
+    restart: always
     volumes:
       - .:/go/src/
     environment:
@@ -13,16 +15,18 @@ services:
       MYSQL_INVOICE_DATABASE: keel_invoice
       KEEL_INVOICE_PER_PAGE: 10
       KEEL_INVOICE_LOG_PATH: .
-      KEEL_INVOICE_CLIENT_URL: http://app_client:8081/client/get
+      KEEL_INVOICE_CLIENT_URL: http://keel_client:8081/client/get
     ports:
       - "8082:8081"
     networks:
-      - docker_keel
+      - keelnet
 
   mysql_invoice:
     image: mysql:8
+    container_name: mysql_invoice
     command: --default-authentication-plugin=mysql_native_password
     restart: always
+    tty: true
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: keel_invoice
@@ -31,8 +35,9 @@ services:
     ports:
       - "3311:3306"
     networks:
-      - docker_keel
+      - keelnet
 
 networks:
-  docker_keel:
-    driver: bridge
+  keelnet:
+    name: keelnet
+    external: true

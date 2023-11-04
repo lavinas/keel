@@ -369,3 +369,137 @@ func TestInvoiceGetUpdatedAt(t *testing.T) {
 		}
 	})
 }
+
+func TestGetBusiness(t *testing.T) {
+	t.Run("should return business", func(t *testing.T) {
+		repo := new(RepoMock)
+		invoice := NewInvoice(repo)
+		business := NewInvoiceClient(repo)
+		invoice.business = business
+		if invoice.GetBusiness() != business {
+			t.Errorf("expected business, got empty")
+		}
+	})
+}
+
+func TestGetConsumer(t *testing.T) {
+	t.Run("should return consumer", func(t *testing.T) {
+		repo := new(RepoMock)
+		invoice := NewInvoice(repo)
+		customer := NewInvoiceClient(repo)
+		invoice.customer = customer
+		if invoice.GetCustomer() != customer {
+			t.Errorf("expected customer, got empty")
+		}
+	})
+}
+
+func TestInvoiceLoadBusiness(t *testing.T) {
+	t.Run("should load business", func(t *testing.T) {
+		repo := new(RepoMock)
+		invoice := NewInvoice(repo)
+		invoice.Load(&CreateInputDtoMock{})
+		if err := invoice.LoadBusiness(&GetClientByNicknameInputDtoMock{}); err != nil {
+			t.Errorf("expected nil, got %v", err.Error())
+		}
+	})
+	t.Run("should create a new business when nil", func(t *testing.T) {
+		repo := new(RepoMock)
+		invoice := NewInvoice(repo)
+		if err := invoice.LoadBusiness(&GetClientByNicknameInputDtoMock{}); err != nil {
+			t.Errorf("expected nil, got %v", err.Error())
+		}
+		if invoice.business == nil {
+			t.Errorf("expected business, got nil")
+		}
+	})
+}
+
+func TestInvoiceLoadCustomer(t *testing.T) {
+	t.Run("should load customer", func(t *testing.T) {
+		repo := new(RepoMock)
+		invoice := NewInvoice(repo)
+		invoice.Load(&CreateInputDtoMock{})
+		if err := invoice.LoadCustomer(&GetClientByNicknameInputDtoMock{}); err != nil {
+			t.Errorf("expected nil, got %v", err.Error())
+		}
+	})
+	t.Run("should create a new customer when nil", func(t *testing.T) {
+		repo := new(RepoMock)
+		invoice := NewInvoice(repo)
+		if err := invoice.LoadCustomer(&GetClientByNicknameInputDtoMock{}); err != nil {
+			t.Errorf("expected nil, got %v", err.Error())
+		}
+		if invoice.customer == nil {
+			t.Errorf("expected customer, got nil")
+		}
+	})
+}
+
+func TestInvoiceUpdate(t *testing.T) {
+	t.Run("should update invoice", func(t *testing.T) {
+		repo := new(RepoMock)
+		invoice := NewInvoice(repo)
+		invoice.Load(&CreateInputDtoMock{})
+		if err := invoice.Update(); err != nil {
+			t.Errorf("expected nil, got %v", err.Error())
+		}
+	})
+	t.Run("should return error on update business", func(t *testing.T) {
+		repo := new(RepoMock)
+		repo.Status = "updateBusinessError"
+		invoice := NewInvoice(repo)
+		invoice.Load(&CreateInputDtoMock{})
+		if err := invoice.Update(); err == nil {
+			t.Errorf("expected error, got nil")
+		}
+	})
+	t.Run("should return error on update customer", func(t *testing.T) {
+		repo := new(RepoMock)
+		repo.Status = "updateCustomerError"
+		invoice := NewInvoice(repo)
+		invoice.Load(&CreateInputDtoMock{})
+		if err := invoice.Update(); err == nil {
+			t.Errorf("expected error, got nil")
+		}
+	})
+	t.Run("should return error on begin transaction", func(t *testing.T) {
+		repo := new(RepoMock)
+		repo.Status = "beginError"
+		invoice := NewInvoice(repo)
+		invoice.Load(&CreateInputDtoMock{})
+		if err := invoice.Update(); err == nil {
+			t.Errorf("expected error, got nil")
+		}
+	})
+	t.Run("should return error on commit transaction", func(t *testing.T) {
+		repo := new(RepoMock)
+		repo.Status = "commitError"
+		invoice := NewInvoice(repo)
+		invoice.Load(&CreateInputDtoMock{})
+		if err := invoice.Update(); err == nil {
+			t.Errorf("expected error, got nil")
+		}
+	})
+	t.Run("should create a new business when nil", func(t *testing.T) {
+		repo := new(RepoMock)
+		invoice := NewInvoice(repo)
+		if err := invoice.Update(); err != nil {
+			t.Errorf("expected nil, got %s", err.Error())
+		}
+		if invoice.business == nil {
+			t.Errorf("expected business, got nil")
+		}
+	})
+	t.Run("should create a new customer when nil", func(t *testing.T) {
+		repo := new(RepoMock)
+		invoice := NewInvoice(repo)
+		if err := invoice.Update(); err != nil {
+			t.Errorf("expected nil, got %s", err.Error())
+		}
+		if invoice.customer == nil {
+			t.Errorf("expected customer, got nil")
+		}
+	})
+}	
+

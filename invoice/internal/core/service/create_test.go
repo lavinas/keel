@@ -157,4 +157,42 @@ func TestCreateExecute(t *testing.T) {
 			t.Errorf("expected reference to be empty, got %v", o.reference)
 		}
 	})
+	t.Run("should return error when loading business", func(t *testing.T) {
+		l := LogMock{}
+		r := RestConsumerMock{}
+		d := InvoiceMock{Status: "load business error"}
+		i := CreateInputDtoMock{}
+		o := CreateOutputDtoMock{}
+		c := NewCreate(&l, &r, &d, &i, &o)
+
+		err := c.Execute()
+		if err == nil {
+			t.Errorf("expected errors, got %v", err)
+		}
+		if !strings.Contains(o.status, "internal error") {
+			t.Errorf("expected internal error, got %v", o.status)
+		}
+		if o.reference != "" {
+			t.Errorf("expected reference to be empty, got %v", o.reference)
+		}
+	})
+	t.Run("should return error when updating invoice", func(t *testing.T) {
+		l := LogMock{}
+		r := RestConsumerMock{}
+		d := InvoiceMock{Status: "update invoice error"}
+		i := CreateInputDtoMock{}
+		o := CreateOutputDtoMock{}
+		c := NewCreate(&l, &r, &d, &i, &o)
+		err := c.Execute()
+		if err == nil {
+			t.Errorf("expected errors, got %v", err)
+		}
+		if !strings.Contains(o.status, "internal error") {
+			t.Errorf("expected internal error, got %v", o.status)
+		}
+		if o.reference != "" {
+			t.Errorf("expected reference to be empty, got %v", o.reference)
+		}
+	})
 }
+

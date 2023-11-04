@@ -38,7 +38,6 @@ func (l *LogMock) Close() {
 type RestConsumerMock struct {
 	Status string
 }
-
 func (r *RestConsumerMock) GetClientByNickname(nickname string, client port.GetClientByNicknameInputDto) (bool, error) {
 	if r.Status == "get client error" {
 		return false, errors.New("get client error")
@@ -122,6 +121,24 @@ func (i *InvoiceMock) Save() error {
 	}
 	return nil
 }
+func (i *InvoiceMock) LoadBusiness(dto port.GetClientByNicknameInputDto) error {
+	if i.Status == "load business error" {
+		return errors.New("load business error")
+	}
+	return nil
+}
+func (i *InvoiceMock) LoadCustomer(dto port.GetClientByNicknameInputDto) error {
+	if i.Status == "load customer error" {
+		return errors.New("load customer error")
+	}
+	return nil
+}
+func (i *InvoiceMock) Update() error {
+	if i.Status == "update invoice error" {
+		return errors.New("update error")
+	}
+	return nil
+}
 func (i *InvoiceMock) GetId() string {
 	return ""
 }
@@ -137,7 +154,7 @@ func (i *InvoiceMock) GetBusiness() port.InvoiceClient {
 func (i *InvoiceMock) GetCustomerId() string {
 	return ""
 }
-func (i *InvoiceMock) GetConsumer() port.InvoiceClient {
+func (i *InvoiceMock) GetCustomer() port.InvoiceClient {
 	return &InvoiceClientMock{}
 }
 func (i *InvoiceMock) GetAmount() float64 {

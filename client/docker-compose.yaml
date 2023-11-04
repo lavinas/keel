@@ -1,8 +1,10 @@
 version: "3.1"
 
 services:
-  app_client:
+  keel_client:
     build: .
+    container_name: keel_client
+    restart: always
     volumes:
       - .:/go/src/
     environment:
@@ -17,12 +19,14 @@ services:
     ports:
       - "8081:8081"
     networks:
-      - docker_keel
+      - keelnet
     
   mysql_client:
     image: mysql:8
+    container_name: mysql_client
     command: --default-authentication-plugin=mysql_native_password
     restart: always
+    tty: true
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: keel_client
@@ -31,8 +35,9 @@ services:
     ports:
       - "3310:3306"
     networks:
-      - docker_keel
+      - keelnet
 
 networks:
-  docker_keel:
-    driver: bridge
+  keelnet:
+    name: keelnet
+    external: true

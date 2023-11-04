@@ -58,6 +58,7 @@ func (i *InvoiceClient) Save() error {
 	return i.repo.SaveInvoiceClient(i)
 }
 
+// Update updates the invoice client on the repository
 func (i *InvoiceClient) Update() error {
 	return i.repo.UpdateInvoiceClient(i)
 }

@@ -27,11 +27,14 @@ type Invoice interface {
 	SetAmount(amount float64)
 	IsDuplicated() (bool, error)
 	Save() error
+	Update() error
+	LoadBusiness(dto GetClientByNicknameInputDto) error
+	LoadCustomer(dto GetClientByNicknameInputDto) error
 	GetId() string
 	GetReference() string
 	GetBusinessId() string
 	GetBusiness() InvoiceClient
-	GetConsumer() InvoiceClient
+	GetCustomer() InvoiceClient
 	GetCustomerId() string
 	GetAmount() float64
 	GetDate() time.Time

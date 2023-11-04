@@ -29,16 +29,15 @@ func NewCreate(log port.Log, consumer port.RestConsumer, invoice port.Invoice, i
 
 // Execute is a method that executes the service
 func (s *Create) Execute() error {
-	execMap := map[string]func() error{
-		"validate":       s.valiedateInput,
-		"load":           s.loadDomain,
-		"duplicity":      s.checkDuplicity,
-		"save":           s.saveDomain,
-		"updateBusiness": s.updateBusinnes,
-		"updateConsumer": s.updateConsumer,
-		"output":         s.createOutput,
+	execOrder := []func() error{
+		s.valiedateInput,
+		s.loadDomain,
+		s.checkDuplicity,
+		s.saveDomain,
+		s.updateInvoiceClients,
+		s.createOutput,
 	}
-	for _, v := range execMap {
+	for _, v := range execOrder {
 		if err := v(); err != nil {
 			return err
 		}
@@ -47,7 +46,8 @@ func (s *Create) Execute() error {
 	return nil
 }
 
-// valiedateInput is a method that validates the input for the service
+// valiedateInput is a method that validates the input 
+//   for the service
 func (s *Create) valiedateInput() error {
 	if err := s.input.Validate(); err != nil {
 		err = errors.New("bad request: " + err.Error())
@@ -70,6 +70,7 @@ func (s *Create) loadDomain() error {
 	return nil
 }
 
+// checkDuplicity is a method that checks the duplicity
 func (s *Create) checkDuplicity() error {
 	if duplicated, err := s.invoice.IsDuplicated(); err != nil {
 		rerr := errors.New("internal error")
@@ -96,36 +97,68 @@ func (s *Create) saveDomain() error {
 	return nil
 }
 
-// createOutput is a method that creates the output for the service
+// createOutput is a method that creates the output 
+//   for the service
 func (s *Create) createOutput() error {
 	s.output.Load("created", s.invoice.GetReference())
 	return nil
 }
 
-// updateBusinnes updates the business client invoice after consulting the external service
-func (s *Create) updateBusinnes() error {
-	return s.updateClient(s.invoice.GetBusiness())
+// updateClients updates the clients of invoice after call the client service
+func (s *Create) updateInvoiceClients() error {
+	updateMap := map[string]func(port.GetClientByNicknameInputDto) error{
+		s.input.GetBusinessNickname(): s.invoice.LoadBusiness,
+		s.input.GetCustomerNickname(): s.invoice.LoadCustomer,
+	}
+	for k, f := range updateMap {
+		dto, err := s.getInvoiceClientDto(k)
+		if err != nil {
+			return err
+		}
+		if err := s.loadInvoiceClient(f, dto); err != nil {
+			return err
+		}
+	}
+	if err := s.updateInvoice(); err != nil {
+		return err
+	}
+	return nil
 }
 
-// updateConsumer updates the consumer client invoice after consulting the external service
-func (s *Create) updateConsumer() error {
-	return s.updateClient(s.invoice.GetConsumer())
-}
-
-// updateClientInvoice is a method that updates the client invoice after consulting the external service
-func (s *Create) updateClient(client port.InvoiceClient) error {
+// updateClientInvoice  updates the client invoice after consulting the external service
+func (s *Create) getInvoiceClientDto(nickname string) (port.GetClientByNicknameInputDto, error) {
 	dto := dto.NewGetClientByNicknameInputDto()
-	nickname := client.GetNickname()
 	ok, err := s.consumer.GetClientByNickname(nickname, dto)
 	if err != nil {
 		rerr := errors.New("internal error")
-		s.log.Infof(s.input, "update: "+err.Error())
+		s.log.Infof(s.input, "getting "+nickname+": "+err.Error())
+		s.output.Load(rerr.Error(), "")
+		return nil, rerr
+	}
+	if !ok {
+		return nil, nil
+	}
+	return dto, nil
+}
+
+// loadInvoice loads the invoice client
+func (s *Create) loadInvoiceClient(f func(port.GetClientByNicknameInputDto) error, dto port.GetClientByNicknameInputDto) error {
+	if err := f(dto); err != nil {
+		rerr := errors.New("internal error")
+		s.log.Infof(s.input, "update consumer: "+err.Error())
 		s.output.Load(rerr.Error(), "")
 		return rerr
 	}
-	if !ok {
-		return nil
+	return nil
+}
+
+// updateInvoice updates the invoice
+func (s *Create) updateInvoice() error {
+	if err := s.invoice.Update(); err != nil {
+		rerr := errors.New("internal error")
+		s.log.Infof(s.input, "update invoice: "+err.Error())
+		s.output.Load(rerr.Error(), "")
+		return rerr
 	}
-	client.LoadGetClientNicknameDto(dto)
 	return nil
 }

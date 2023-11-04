@@ -78,5 +78,38 @@ func TestInvoiceClientUpdate(t *testing.T) {
 			t.Errorf("should not be nil")
 		}
 	})
+	
 
 }
+
+func TestInvoiceClientLoadGetClientNicknameDto(t *testing.T) {
+	t.Run("should load get client nickname dto", func(t *testing.T) {
+		repo := new(RepoMock)
+		client := NewInvoiceClient(repo)
+		input := new(GetClientByNicknameInputDtoMock)
+		if err := client.LoadGetClientNicknameDto(input); err != nil {
+			t.Errorf("error on load get client nickname dto")
+		}
+	})
+	t.Run("should return document error on load get client nickname dto", func(t *testing.T) {
+		repo := new(RepoMock)
+		repo.Status = "loadGetClientNicknameDtoError"
+		client := NewInvoiceClient(repo)
+		input := new(GetClientByNicknameInputDtoMock)
+		input.Status = "documentError"
+		if err := client.LoadGetClientNicknameDto(input); err == nil {
+			t.Errorf("should not be nil")
+		}
+	})
+	t.Run("should return phone error on load get client nickname dto", func(t *testing.T) {
+		repo := new(RepoMock)
+		repo.Status = "loadGetClientNicknameDtoError"
+		client := NewInvoiceClient(repo)
+		input := new(GetClientByNicknameInputDtoMock)
+		input.Status = "phoneError"
+		if err := client.LoadGetClientNicknameDto(input); err == nil {
+			t.Errorf("should not be nil")
+		}
+	})
+}
+
