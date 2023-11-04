@@ -33,7 +33,7 @@ func (h *HandlerRest) MapHandlers() {
 	h.gin.POST("/client/insert", h.Insert)
 	h.gin.POST("/client/update/:id", h.Update)
 	h.gin.GET("/client/find", h.Find)
-	h.gin.GET("/client/get/:param", h.Get)
+	h.gin.GET("/client/get/:paramtype/:param", h.Get)
 }
 
 // Run runs the gin service
@@ -103,7 +103,8 @@ func (h *HandlerRest) Update(c *gin.Context) {
 func (h *HandlerRest) Get(c *gin.Context) {
 	var output dto.InsertOutputDto
 	param := c.Param("param")
-	if err := h.service.Get(param, &output); err != nil {
+	paramType := c.Param("paramtype")
+	if err := h.service.Get(param, paramType, &output); err != nil {
 		c.JSON(h.gin.MapError(err.Error()), h.gin.H("error", err.Error()))
 		return
 	}

@@ -42,6 +42,6 @@ func (s *Service) Update(id string, input port.UpdateInputDto, output port.Updat
 }
 
 // Get is orquestration of Getting a client
-func (s *Service) Get(param string, output port.InsertOutputDto) error {
-	return s.get.Execute(param, output)
+func (s *Service) Get(param string, paramType string, output port.InsertOutputDto) error {
+	return s.get.Execute(param, paramType, output)
 }

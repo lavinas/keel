@@ -118,7 +118,7 @@ func (s *ServiceMock) Insert(input port.InsertInputDto, output port.InsertOutput
 		return nil
 	}
 	if s.Status == "bad request" {
-		return errors.New("bad request: invalid json body")
+		return errors.New("bad request: invalid xxxx")
 	}
 	if s.Status == "internal error" {
 		return errors.New("internal error")
@@ -150,7 +150,7 @@ func (s *ServiceMock) Update(id string, input port.UpdateInputDto, output port.U
 	}
 	return nil
 }
-func (s *ServiceMock) Get(param string, output port.InsertOutputDto) error {
+func (s *ServiceMock) Get(param string, paramType string, output port.InsertOutputDto) error {
 	if s.Status == "ok" {
 		name, nick, doc, phone, email := "name", "nick", "doc", "phone", "email"
 		output.Fill("1", name, nick, doc, phone, email)

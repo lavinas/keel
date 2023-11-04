@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"reflect"
 	"strconv"
 
 	"github.com/lavinas/keel/client/internal/core/port"
@@ -22,13 +23,18 @@ func NewGet(log port.Log, client port.Client) *Get {
 }
 
 // Execute executes the service
-func (s *Get) Execute(param string, output port.InsertOutputDto) error {
+func (s *Get) Execute(param string, paramType string, output port.InsertOutputDto) error {
 	if param == "" {
-		s.log.Info("bad request: blank param")
+		s.log.Info("bad request: blank param - param: " + param + " - paramType: " + paramType)
 		return errors.New("bad request: blank param")
 	}
-	if err := s.load(param); err != nil {
+	ok, err := s.load(param, paramType)
+	if err != nil {
 		return err
+	}
+	if !ok {
+		s.log.Info("no content: client not found - param: " + param + " - paramType: " + paramType)
+		return errors.New("no content: client not found")
 	}
 	s.prepareOutput(output)
 	s.log.Info("get: " + param)
@@ -36,42 +42,28 @@ func (s *Get) Execute(param string, output port.InsertOutputDto) error {
 }
 
 // loadClient loads a client from the repository
-func (s *Get) load(param string) error {
-	maps := map[string]func(string) (bool, error){
+func (s *Get) load(param string, paramType string) (bool, error) {
+	maps := map[string]interface{}{
 		"id":       s.client.LoadById,
 		"nickname": s.client.LoadByNick,
 		"email":    s.client.LoadByEmail,
-	}
-	for _, funct := range maps {
-		found, err := funct(param)
-		if err != nil {
-			return err
-		}
-		if found {
-			return nil
-		}
-	}
-	maps2 := map[string]func(uint64) (bool, error){
 		"document": s.client.LoadByDoc,
 		"phone":    s.client.LoadByPhone,
 	}
-
-	iparam, err := strconv.ParseUint(param, 10, 64)
-	if err != nil {
-		s.log.Info("not found x: " + param)
-		return errors.New("not found x: " + param)
+	f := maps[paramType]
+	if f == nil {
+		s.log.Info("bad request: invalid param type")
+		return false, errors.New("bad request: invalid param type - " + paramType + " - " + param)
 	}
-	for _, value := range maps2 {
-		found, err := value(iparam)
+	if reflect.TypeOf(f) == reflect.TypeOf(s.client.LoadByDoc) {
+		iparam, err := strconv.ParseUint(param, 10, 64)
 		if err != nil {
-			return err
+			s.log.Info("bad request: param should be a number - param" + param + " - paramType: " + paramType) 
+			return false, errors.New("bad request: param should be a number")
 		}
-		if found {
-			return nil
-		}
+		return f.(func(uint64) (bool, error))(iparam)
 	}
-	s.log.Info("no content: " + param + " not found")
-	return errors.New("no content: " + param + " not found")
+	return f.(func(string) (bool, error))(param)
 }
 
 // prepareOutput prepares the output data

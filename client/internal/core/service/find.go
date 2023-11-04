@@ -38,7 +38,7 @@ func (s *Find) Execute(input port.FindInputDto, output port.FindOutputDto) error
 		return errors.New("internal error")
 	}
 	s.clients.SetOutput(output)
-	s.log.Info(fmt.Sprintf("Listing %d clients", output.Count()))
+	s.log.Info(fmt.Sprintf("Found %d clients", output.Count()))
 	return nil
 }
 

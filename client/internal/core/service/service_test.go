@@ -93,7 +93,7 @@ func TestServiceGet(t *testing.T) {
 		log := &LogMock{}
 		output := &InsertOutputDtoMock{}
 		service := NewService(domain, log)
-		err := service.Get("1", output)
+		err := service.Get("1", "id", output)
 		if err != nil {
 			t.Errorf("Error should not be nil")
 		}
@@ -103,7 +103,7 @@ func TestServiceGet(t *testing.T) {
 		log := &LogMock{}
 		output := &InsertOutputDtoMock{}
 		service := NewService(domain, log)
-		err := service.Get("1", output)
+		err := service.Get("1", "id", output)
 		if err == nil {
 			t.Errorf("Error should not be nil")
 		}
