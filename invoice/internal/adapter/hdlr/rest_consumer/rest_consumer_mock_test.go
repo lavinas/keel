@@ -3,8 +3,6 @@ package restconsumer
 import (
 	"os"
 
-	"github.com/gin-gonic/gin"
-	"github.com/lavinas/keel/invoice/pkg/gin_wrapper"
 )
 
 
@@ -33,22 +31,6 @@ func (l *LogMock) Errorf(input any, err error) {
 	l.message = err.Error()
 }
 func (l *LogMock) Close() {
-}
-
-// ServerMock is a mock of Server interface
-type ServerMock struct {
-	handlerName string
-	outCode int
-	outBody interface{}
-}
-func (s *ServerMock) Run() {
-	log := LogMock{}
-	h := gin_wrapper.NewGinEngineWrapper(&log)
-	h.POST(s.handlerName, s.GetOutput)
-	h.Run()
-}
-func (s *ServerMock) GetOutput(c *gin.Context) {
-	c.JSON(s.outCode, s.outBody)
 }
 
 

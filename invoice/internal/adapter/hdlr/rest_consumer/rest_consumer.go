@@ -43,7 +43,7 @@ func (rc *RestConsumer) GetClientByNickname(nickname string, client port.GetClie
 	if err != nil {
 		return false, err
 	}
-	if response.StatusCode == http.StatusNotFound {
+	if response.StatusCode == http.StatusNoContent {
 		return false, nil
 	}
 	if response.StatusCode != http.StatusOK {

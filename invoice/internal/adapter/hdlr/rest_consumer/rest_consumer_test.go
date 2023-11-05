@@ -2,8 +2,21 @@ package restconsumer
 
 import (
 	"testing"
+	"net/http"
 
 	"github.com/lavinas/keel/invoice/internal/core/dto"
+	"github.com/lavinas/keel/invoice/pkg/gin_mock"
+)
+
+var (
+	default_consumer = map[string]string{
+		"id": "1", 
+		"name": "John Doe",
+		"nickname": "consumer_doe",
+		"document": "12345678900",
+		"phone": "11999999999",
+		"email": "test@test.com",
+	}
 )
 
 func TestNewRestConsumer(t *testing.T) {
@@ -17,6 +30,10 @@ func TestNewRestConsumer(t *testing.T) {
 
 func TestRestconsumer_baseByNickname(t *testing.T) {
 	t.Run("should return a client", func(t *testing.T) {
+		g := ginmock.NewGinMock(8085)
+		g.Start("/client/get/nickname/:nickname", "GET", http.StatusOK, default_consumer)
+		defer g.Stop()
+		consumer_base = "http://localhost:8085/client/get/nickname"
 		rc := NewRestConsumer()
 		dto := dto.NewGetClientByNicknameInputDto()
 		b, err := rc.GetClientByNickname("consumer_doe", dto)
@@ -30,12 +47,15 @@ func TestRestconsumer_baseByNickname(t *testing.T) {
 			t.Errorf("Expected 1, got %s", dto.GetId())
 		}
 	})
-	
 	t.Run("should not return a client", func(t *testing.T) {
+		g := ginmock.NewGinMock(8085)
+		g.Start("/client/get/nickname/:nickname", "GET", http.StatusNoContent, default_consumer)
+		defer g.Stop()
+		consumer_base = "http://localhost:8085/client/get/nickname"
 		rc := NewRestConsumer()
 		dto := dto.NewGetClientByNicknameInputDto()
 		b, err := rc.GetClientByNickname("consumer_doe_not_found", dto)
-		if err == nil {
+		if err != nil {
 			t.Errorf("Expected nil, got error: %s", err.Error())
 		}
 		if b == true {
