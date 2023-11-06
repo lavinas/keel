@@ -68,6 +68,9 @@ func (ic *InvoiceClientMock) LoadGetClientNicknameDto(input port.GetClientByNick
 	}
 	return nil
 }
+func (ic *InvoiceClientMock) GetLastInvoiceClientId(nickname string, created_after time.Time) (string, error) {
+	return "1", nil
+}
 func (ic *InvoiceClientMock) Save() error {
 	if ic.status == "save error" {
 		return errors.New("save error")

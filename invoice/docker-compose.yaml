@@ -16,6 +16,7 @@ services:
       KEEL_INVOICE_PER_PAGE: 10
       KEEL_INVOICE_LOG_PATH: .
       KEEL_INVOICE_CLIENT_URL: http://keel_client:8081/client/get/nickname
+      KEEL_INVOICE_CLIENT_EXPIRATION_SECONDS: 3600
     ports:
       - "8082:8081"
     networks:

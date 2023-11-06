@@ -31,6 +31,7 @@ CREATE TABLE keel_invoice.invoice_client(
     document DECIMAL(20) NULL,
     phone DECIMAL(20) NULL,
     email VARCHAR(50) NULL,
+    created_at TIMESTAMP NOT NULL,
     INDEX idx_nick (nickname ASC),
     INDEX idx_document (document ASC),
     INDEX idx_email (email ASC),
@@ -93,7 +94,8 @@ create table keel_invoice.invoice_sending(
     method varchar(50) not null,
     address varchar(100) not null,
     created_at timestamp not null,
-    INDEX idx_invoice_id (invoice_id ASC)
+    INDEX idx_invoice_id (invoice_id ASC),
+    FOREIGN KEY (invoice_id) REFERENCES keel_invoice.invoice(id)
 );
 
 create table keel_invoice.invoice_status_log(
@@ -102,5 +104,7 @@ create table keel_invoice.invoice_status_log(
     status_id int not null,
     created_at timestamp not null,
     name varchar(50) not null,
-    INDEX idx_invoice_id (invoice_id ASC)
+    INDEX idx_invoice_id (invoice_id ASC),
+    FOREIGN KEY (invoice_id) REFERENCES keel_invoice.invoice(id),
+    FOREIGN KEY (status_id) REFERENCES keel_invoice.invoice_status(id)
 );

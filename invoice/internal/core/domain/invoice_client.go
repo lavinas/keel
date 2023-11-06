@@ -1,6 +1,8 @@
 package domain
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/lavinas/keel/invoice/internal/core/port"
 )
@@ -15,6 +17,7 @@ type InvoiceClient struct {
 	document uint64
 	phone    uint64
 	email    string
+	created_at time.Time
 }
 
 // NewInvoiceClient creates a new invoice client
@@ -33,6 +36,11 @@ func (i *InvoiceClient) Load(nickname, clientId, name, email string, phone, docu
 	i.email = email
 	i.phone = phone
 	i.document = document
+	i.created_at = time.Now()
+}
+
+func (i *InvoiceClient) GetLastInvoiceClientId(nickname string, created_after time.Time) (string, error) {
+	return i.repo.GetLastInvoiceClientId(nickname, created_after)
 }
 
 func (i *InvoiceClient) LoadGetClientNicknameDto(input port.GetClientByNicknameInputDto) error {
@@ -50,8 +58,10 @@ func (i *InvoiceClient) LoadGetClientNicknameDto(input port.GetClientByNicknameI
 	}
 	i.phone = phone
 	i.document = doc
+	i.created_at = time.Now()
 	return nil
 }
+
 
 // Save stores the invoice client on the repository
 func (i *InvoiceClient) Save() error {

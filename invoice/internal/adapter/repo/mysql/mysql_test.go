@@ -3,6 +3,7 @@ package mysql
 import (
 	"os"
 	"testing"
+	"time"
 )
 
 func TestNewRepoMysql(t *testing.T) {
@@ -304,6 +305,72 @@ func TestUpdateInvoiceClient(t *testing.T) {
 		err := repo.UpdateInvoiceClient(&InvoiceClientMock{})
 		if err == nil {
 			t.Errorf("Expected error, got nil")
+		}
+	})
+}
+
+func TestGetLastInvoiceClientId(t *testing.T) {
+	t.Run("should return last invoice client id", func(t *testing.T) {
+		repo, _ := NewRepoMysql()
+		defer repo.Close()
+		repo.Begin()
+		repo.TruncateInvoiceClient()
+		if err := repo.SaveInvoiceClient(&InvoiceClientMock{}); err != nil {
+			t.Errorf("Expected nil, got %s", err.Error())
+		}
+		if err := repo.Commit(); err != nil {
+			t.Errorf("Expected nil, got %s", err.Error())
+		}
+		created_after := time.Now().Add(-time.Hour * 24)
+		id, err := repo.GetLastInvoiceClientId("nickname", created_after)
+		if err != nil {
+			t.Errorf("Expected nil, got %s", err.Error())
+		}
+		if id != "1" {
+			t.Errorf("Expected id, got %s", id)
+		}
+		repo.Begin()
+		repo.TruncateInvoiceClient()
+		repo.Commit()
+	})
+	t.Run("should return error blank where no rows found", func(t *testing.T) {
+		repo, _ := NewRepoMysql()
+		defer repo.Close()
+		repo.Begin()
+		repo.TruncateInvoiceClient()
+		created_after := time.Now().Add(-time.Hour * 24)
+		id, err := repo.GetLastInvoiceClientId("nickname", created_after)
+		if err != nil {
+			t.Errorf("Expected nil, got %s", err.Error())
+		}
+		if id != "" {
+			t.Errorf("Expected blank, got %s", id)
+		}
+		repo.Begin()
+		repo.TruncateInvoiceClient()
+		repo.Commit()
+	})
+	t.Run("should return error when there is no db", func(t *testing.T) {
+		repo, _ := NewRepoMysql()
+		defer repo.Close()
+		repo.db = nil
+		_, err := repo.GetLastInvoiceClientId("nickname", time.Now())
+		if err == nil {
+			t.Errorf("Expected error, got nil")
+		}
+		if err != nil && err.Error() != "sql: database is closed" {
+			t.Errorf("Expected sql: database is closed, got %s", err.Error())
+		}
+	})
+	t.Run("should return error when dabase is closed", func(t *testing.T) {
+		repo, _ := NewRepoMysql()
+		repo.db.Close()
+		_, err := repo.GetLastInvoiceClientId("nickname", time.Now())
+		if err == nil {
+			t.Errorf("Expected error, got nil")
+		}
+		if err != nil && err.Error() != "sql: database is closed" {
+			t.Errorf("Expected sql: database is closed, got %s", err.Error())
 		}
 	})
 }

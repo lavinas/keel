@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/lavinas/keel/invoice/internal/core/port"
@@ -116,11 +117,27 @@ func (r *RepoMysql) SaveInvoiceClient(client port.InvoiceClient) error {
 	q := querieMap["SaveInvoiceClient"]
 	c := client
 	_, err := r.tx.Exec(q, c.GetId(), c.GetNickname(), c.GetClientId(),
-		c.GetName(), c.GetDocument(), c.GetPhone(), c.GetEmail())
+		c.GetName(), c.GetDocument(), c.GetPhone(), c.GetEmail(), time.Now())
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+func (r *RepoMysql) GetLastInvoiceClientId(nickname string, created_after time.Time) (string, error) {
+	if r.db == nil {
+		return "", errors.New("sql: database is closed")
+	}
+	q := querieMap["GetInvoiceClient"]
+	var id string
+	err := r.db.QueryRow(q, nickname, created_after).Scan(&id)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return "", nil
+		}
+		return "", err
+	}
+	return id, nil
 }
 
 // UpdateInvoiceClient updates the invoice client on the repository

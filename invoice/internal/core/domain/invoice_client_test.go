@@ -2,6 +2,7 @@ package domain
 
 import (
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -113,3 +114,10 @@ func TestInvoiceClientLoadGetClientNicknameDto(t *testing.T) {
 	})
 }
 
+func TestGetLastInvoiceClient(t *testing.T) {
+	t.Run("should get last invoice client", func(t *testing.T) {
+		repo := new(RepoMock)
+		client := NewInvoiceClient(repo)
+		client.GetLastInvoiceClientId("nickname", time.Now())
+	})
+}

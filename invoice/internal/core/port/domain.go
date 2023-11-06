@@ -11,6 +11,7 @@ type Domain interface {
 type InvoiceClient interface {
 	Load(nickname, clientId, name, email string, phone, document uint64)
 	LoadGetClientNicknameDto(input GetClientByNicknameInputDto) error
+	GetLastInvoiceClientId(nickname string, created_after time.Time) (string, error)
 	Save() error
 	Update() error
 	GetId() string
