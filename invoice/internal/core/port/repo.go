@@ -10,7 +10,7 @@ type Repo interface {
 	Rollback() error
 	IsDuplicatedInvoice(reference string) (bool, error)
 	SaveInvoiceClient(client InvoiceClient) error
-	GetLastInvoiceClientId(nickname string, created_after time.Time) (string, error)
+	GetLastInvoiceClient(nickname string, created_after time.Time, client InvoiceClient) (bool, error)
 	UpdateInvoiceClient(client InvoiceClient) error
 	SaveInvoice(invoice Invoice) error
 	SaveInvoiceItem(item InvoiceItem) error

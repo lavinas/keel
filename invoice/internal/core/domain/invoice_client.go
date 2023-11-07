@@ -18,6 +18,7 @@ type InvoiceClient struct {
 	phone      uint64
 	email      string
 	created_at time.Time
+	isNew      bool
 }
 
 // NewInvoiceClient creates a new invoice client
@@ -28,19 +29,18 @@ func NewInvoiceClient(repo port.Repo) *InvoiceClient {
 }
 
 // Load loads a invoice client from input
-func (i *InvoiceClient) Load(id, nickname, clientId, name, email string, phone, document uint64, created_at time.Time) {
+func (i *InvoiceClient) Load(id, nickname, clientId, name, email string, phone, 
+								document uint64, created_at time.Time) {
 	if id == "" {
 		i.id = uuid.New().String()
+		i.isNew = true
 	} else {
 		i.id = id
+		i.isNew = false
 	}
 	i.id = uuid.New().String()
-	i.nickname = nickname
-	i.clientId = clientId
-	i.name = name
-	i.email = email
-	i.phone = phone
-	i.document = document
+	i.nickname, i.clientId, i.name, i.email, i.phone, i.document = nickname, clientId, 
+				name, email, phone, document
 	if created_at.IsZero() {
 		i.created_at = time.Now()
 	} else {
@@ -48,15 +48,15 @@ func (i *InvoiceClient) Load(id, nickname, clientId, name, email string, phone, 
 	}
 }
 
-func (i *InvoiceClient) GetLastInvoiceClientId(nickname string, created_after time.Time) (string, error) {
-	return i.repo.GetLastInvoiceClientId(nickname, created_after)
+// GetLastInvoiceClient returns the last invoice client from repository
+func (i *InvoiceClient) GetLastInvoiceClient(nickname string, 
+												created_after time.Time) (bool, error) {
+	return i.repo.GetLastInvoiceClient(nickname, created_after, i)
 }
 
 func (i *InvoiceClient) LoadGetClientNicknameDto(input port.GetClientByNicknameInputDto) error {
-	i.nickname = input.GetNickname()
-	i.clientId = input.GetId()
-	i.name = input.GetName()
-	i.email = input.GetEmail()
+	i.nickname, i.clientId, i.name, i.email = input.GetNickname(), input.GetId(), 
+			input.GetName(), input.GetEmail()
 	phone, err := input.GetPhone()
 	if err != nil {
 		return err
@@ -119,4 +119,8 @@ func (i *InvoiceClient) GetEmail() string {
 // GetCreatedAt returns the created_at of invoice client
 func (i *InvoiceClient) GetCreatedAt() time.Time {
 	return i.created_at
+}
+
+func (i *InvoiceClient) IsNew() bool {
+	return i.isNew
 }

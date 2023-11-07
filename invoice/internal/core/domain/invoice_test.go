@@ -12,7 +12,7 @@ func TestInvoiceLoad(t *testing.T) {
 	t.Run("should load a invoice", func(t *testing.T) {
 		repo := new(RepoMock)
 		business := NewInvoiceClient(repo)
-		business.Load("","business", "clientId", "name", "email", 123456789, 123456789, time.Time{})
+		business.Load("", "business", "clientId", "name", "email", 123456789, 123456789, time.Time{})
 		customer := NewInvoiceClient(repo)
 		customer.Load("", "customer", "clientId", "name", "email", 123456789, 123456789, time.Time{})
 		dto := CreateInputDtoMock{}
@@ -72,10 +72,6 @@ func TestInvoiceLoad(t *testing.T) {
 	})
 	t.Run("should return amount error", func(t *testing.T) {
 		repo := new(RepoMock)
-		business := NewInvoiceClient(repo)
-		business.Load("","business", "clientId", "name", "email", 123456789, 123456789, time.Time{})
-		customer := NewInvoiceClient(repo)
-		customer.Load("", "customer", "clientId", "name", "email", 123456789, 123456789, time.Time{})
 		dto := CreateInputDtoMock{}
 		dto.Status = "amountError"
 		invoice := NewInvoice(repo)
@@ -89,10 +85,6 @@ func TestInvoiceLoad(t *testing.T) {
 	})
 	t.Run("should return date error", func(t *testing.T) {
 		repo := new(RepoMock)
-		business := NewInvoiceClient(repo)
-		business.Load("", "business", "clientId", "name", "email", 123456789, 123456789, time.Time{})
-		customer := NewInvoiceClient(repo)
-		customer.Load("", "customer", "clientId", "name", "email", 123456789, 123456789, time.Time{})
 		dto := CreateInputDtoMock{}
 		dto.Status = "dateError"
 		invoice := NewInvoice(repo)
@@ -106,10 +98,6 @@ func TestInvoiceLoad(t *testing.T) {
 	})
 	t.Run("should return due error", func(t *testing.T) {
 		repo := new(RepoMock)
-		business := NewInvoiceClient(repo)
-		business.Load("","business", "clientId", "name", "email", 123456789, 123456789, time.Time{})
-		customer := NewInvoiceClient(repo)
-		customer.Load("", "customer", "clientId", "name", "email", 123456789, 123456789, time.Time{})
 		dto := CreateInputDtoMock{}
 		dto.Status = "dueError"
 		invoice := NewInvoice(repo)
@@ -123,10 +111,6 @@ func TestInvoiceLoad(t *testing.T) {
 	})
 	t.Run("should return error loading items", func(t *testing.T) {
 		repo := new(RepoMock)
-		business := NewInvoiceClient(repo)
-		business.Load("","business", "clientId", "name", "email", 123456789, 123456789, time.Time{})
-		customer := NewInvoiceClient(repo)
-		customer.Load("", "customer", "clientId", "name", "email", 123456789, 123456789, time.Time{})
 		dto := CreateInputDtoMock{}
 		dto.Status = "itemsError"
 		invoice := NewInvoice(repo)
@@ -136,6 +120,32 @@ func TestInvoiceLoad(t *testing.T) {
 		}
 		if err != nil && err.Error() != "quantity error" {
 			t.Errorf("expected quantity error, got %v", err.Error())
+		}
+	})
+	t.Run("should return error loading business", func(t *testing.T) {
+		repo := new(RepoMock)
+		repo.Status = "getLastInvoiceBusinessError"
+		dto := CreateInputDtoMock{}
+		invoice := NewInvoice(repo)
+		err := invoice.Load(&dto)
+		if err == nil {
+			t.Errorf("expected error, got nil")
+		}
+		if err != nil && err.Error() != "get last invoice client error" {
+			t.Errorf("expected get last invoice client error, got %v", err.Error())
+		}
+	})
+	t.Run("should return error loading customer", func(t *testing.T) {
+		repo := new(RepoMock)
+		repo.Status = "getLastInvoiceCustomerError"
+		dto := CreateInputDtoMock{}
+		invoice := NewInvoice(repo)
+		err := invoice.Load(&dto)
+		if err == nil {
+			t.Errorf("expected error, got nil")
+		}
+		if err != nil && err.Error() != "get last invoice client error" {
+			t.Errorf("expected get last invoice client error, got %v", err.Error())
 		}
 	})
 }

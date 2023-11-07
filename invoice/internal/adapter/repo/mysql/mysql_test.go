@@ -345,7 +345,7 @@ func TestGetLastInvoiceClientId(t *testing.T) {
 		if err != nil {
 			t.Errorf("Expected nil, got %s", err.Error())
 		}
-		if ok  {
+		if ok {
 			t.Errorf("Expected !ok, got ok")
 		}
 		repo.Begin()

@@ -16,6 +16,7 @@ var (
 		"Paid":      3,
 		"Cancelled": 4,
 	}
+	client_expiration_seconds = 60 * 60 * 24 * 30
 )
 
 // Invoice is the domain model for a invoice
@@ -45,7 +46,9 @@ func NewInvoice(repo port.Repo) *Invoice {
 func (i *Invoice) Load(input port.CreateInputDto) error {
 	i.id = uuid.New().String()
 	i.reference = input.GetReference()
-	i.loadClients(input)
+	if err := i.loadClients(input); err != nil {
+		return err
+	}
 	if err := ktools.MergeError(i.loadAmount(input), i.loadDate(input), i.loadDue(input),
 		i.loadItems(input.GetItems())); err != nil {
 		return err
@@ -191,11 +194,21 @@ func (i *Invoice) GetUpdatedAt() time.Time {
 }
 
 // loadClients loads the clients (business and customer) from input
-func (i *Invoice) loadClients(input port.CreateInputDto) {
+func (i *Invoice) loadClients(input port.CreateInputDto) error {
 	i.business = NewInvoiceClient(i.repo)
-	i.business.Load("",input.GetBusinessNickname(), "", "", "", 0, 0, time.Time{})
+	createdAfter := time.Now().Add(time.Duration(-client_expiration_seconds) * time.Second)
+	if b, err := i.business.GetLastInvoiceClient(input.GetBusinessNickname(), createdAfter); err != nil {
+		return err
+	} else if !b {
+		i.business.Load("", input.GetBusinessNickname(), "", "", "", 0, 0, time.Time{})
+	}
 	i.customer = NewInvoiceClient(i.repo)
-	i.customer.Load("",input.GetCustomerNickname(), "", "", "", 0, 0, time.Time{})
+	if b, err := i.customer.GetLastInvoiceClient(input.GetCustomerNickname(), createdAfter); err != nil {
+		return err
+	} else if !b {	
+		i.customer.Load("", input.GetCustomerNickname(), "", "", "", 0, 0, time.Time{})
+	}
+	return nil
 }
 
 // loadAmount loads the amount from input
@@ -243,11 +256,15 @@ func (i *Invoice) loadItems(inputItems []port.CreateInputItemDto) error {
 
 // saveClients saves the clients (business and customer) on the repository
 func (i *Invoice) saveClients() error {
-	if err := i.business.Save(); err != nil {
-		return err
+	if i.business.IsNew() {
+		if err := i.business.Save(); err != nil {
+			return err
+		}
 	}
-	if err := i.customer.Save(); err != nil {
-		return err
+	if i.customer.IsNew() {
+		if err := i.customer.Save(); err != nil {
+			return err
+		}
 	}
 	return nil
 }

@@ -28,7 +28,8 @@ type RepoMysql struct {
 
 // NewRepo creates a new Repo service
 func NewRepoMysql() (*RepoMysql, error) {
-	conn := fmt.Sprintf("%s:%s@tcp(%s:%s)/", os.Getenv(mysql_user), os.Getenv(mysql_pass), os.Getenv(mysql_host), os.Getenv(mysql_port))
+	conn := fmt.Sprintf("%s:%s@tcp(%s:%s)/", os.Getenv(mysql_user), os.Getenv(mysql_pass),
+		os.Getenv(mysql_host), os.Getenv(mysql_port))
 	db, _ := sql.Open("mysql", conn)
 	if err := db.Ping(); err != nil {
 		return nil, err
@@ -124,26 +125,28 @@ func (r *RepoMysql) SaveInvoiceClient(client port.InvoiceClient) error {
 	return nil
 }
 
-func (r *RepoMysql) GetLastInvoiceClient(nickname string, created_after time.Time, client port.InvoiceClient) (bool, error) {
+func (r *RepoMysql) GetLastInvoiceClient(nickname string, created_after time.Time,
+	client port.InvoiceClient) (bool, error) {
 	if r.db == nil {
 		return false, errors.New("sql: database is closed")
 	}
 	q := querieMap["GetInvoiceClient"]
-	var rId int
-	var rNickname string
-	var rClientId string
-	var rName string
-	var rDocument uint64
-	var rPhone uint64
-	var rEmail string
-	var rCreatedAt time.Time
-	err := r.db.QueryRow(q, nickname, created_after).Scan(&rId, &rNickname, &rClientId, &rName, &rDocument, &rPhone, &rEmail, &rCreatedAt)
+	var rId, rNickname, rClientId, rName, rEmail string
+	var rDocument, rPhone uint64
+	var rCreatedAt []uint8
+	err := r.db.QueryRow(q, nickname, created_after).Scan(&rId, &rNickname, &rClientId,
+		&rName, &rDocument, &rPhone, &rEmail, &rCreatedAt)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return false, nil
 		}
 		return false, err
 	}
+	rCreatedAtTime, err := time.Parse("2006-01-02 15:04:05", string(rCreatedAt))
+	if err != nil {
+		return false, err
+	}
+	client.Load(rId, rNickname, rClientId, rName, rEmail, rDocument, rPhone, rCreatedAtTime)
 	return true, nil
 }
 

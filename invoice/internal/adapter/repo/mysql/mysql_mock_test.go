@@ -20,7 +20,7 @@ func (i *InvoiceClientMock) LoadGetClientNicknameDto(input port.GetClientByNickn
 	}
 	return nil
 }
-func (i *InvoiceClientMock) GetLastInvoiceClient(nickname string, created_after time.Time, client port.InvoiceClient) (bool, error) {
+func (i *InvoiceClientMock) GetLastInvoiceClient(nickname string, created_after time.Time) (bool, error) {
 	return false, nil
 }
 func (i *InvoiceClientMock) Save() error {
@@ -52,6 +52,9 @@ func (i *InvoiceClientMock) GetEmail() string {
 }
 func (i *InvoiceClientMock) GetCreatedAt() time.Time {
 	return time.Time{}
+}
+func (i *InvoiceClientMock) IsNew() bool {
+	return true
 }
 
 // Invoice mock
