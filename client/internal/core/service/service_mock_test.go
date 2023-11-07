@@ -10,6 +10,16 @@ import (
 	"github.com/lavinas/keel/client/internal/core/port"
 )
 
+// Config Mock
+type ConfigMock struct {
+}
+func (c *ConfigMock) Get(param string) string {
+	return os.Getenv(param)
+}
+func (c *ConfigMock) Set(param, value string) {
+	os.Setenv(param, value)
+}
+
 // Log Mock
 type LogMock struct {
 	mtype string

@@ -10,7 +10,7 @@ import (
 
 func TestNewRepoMysql(t *testing.T) {
 
-	repo := NewRepoMysql()
+	repo := NewRepoMysql(&ConfigMock{})
 	repo.Truncate()
 	defer repo.Close()
 	defer repo.Truncate()
@@ -23,7 +23,7 @@ func TestNewRepoMysql(t *testing.T) {
 func TestSave(t *testing.T) {
 	// Ok
 
-	repo := NewRepoMysql()
+	repo := NewRepoMysql(&ConfigMock{})
 	repo.Truncate()
 	defer repo.Close()
 	defer repo.Truncate()
@@ -52,7 +52,7 @@ func TestSave(t *testing.T) {
 	defer func() {
 		os.Setenv(mysql_user, "root")
 	}()
-	repo2 := NewRepoMysql()
+	repo2 := NewRepoMysql(&ConfigMock{})
 	defer repo2.Close()
 	defer repo2.Truncate()
 	client2 := domain.NewClient(repo2)
@@ -71,7 +71,7 @@ func TestSave(t *testing.T) {
 
 func TestUpdate(t *testing.T) {
 
-	repo := NewRepoMysql()
+	repo := NewRepoMysql(&ConfigMock{})
 	repo.Truncate()
 	defer repo.Close()
 	defer repo.Truncate()
@@ -94,7 +94,7 @@ func TestUpdate(t *testing.T) {
 	defer func() {
 		os.Setenv(mysql_user, "root")
 	}()
-	repo2 := NewRepoMysql()
+	repo2 := NewRepoMysql(&ConfigMock{})
 	defer repo2.Close()
 	defer repo2.Truncate()
 	client2 := domain.NewClient(repo2)
@@ -113,7 +113,7 @@ func TestUpdate(t *testing.T) {
 
 func TestDocumentDuplicity(t *testing.T) {
 
-	repo := NewRepoMysql()
+	repo := NewRepoMysql(&ConfigMock{})
 	repo.Truncate()
 	defer repo.Close()
 	defer repo.Truncate()
@@ -147,7 +147,7 @@ func TestDocumentDuplicity(t *testing.T) {
 	defer func() {
 		os.Setenv(mysql_user, "root")
 	}()
-	repo2 := NewRepoMysql()
+	repo2 := NewRepoMysql(&ConfigMock{})
 	defer repo2.Close()
 	defer repo2.Truncate()
 	client2 := domain.NewClient(repo2)
@@ -166,7 +166,7 @@ func TestDocumentDuplicity(t *testing.T) {
 
 func TestEmailDuplicityQuery(t *testing.T) {
 
-	repo := NewRepoMysql()
+	repo := NewRepoMysql(&ConfigMock{})
 	repo.Truncate()
 	defer repo.Close()
 	defer repo.Truncate()
@@ -200,7 +200,7 @@ func TestEmailDuplicityQuery(t *testing.T) {
 	defer func() {
 		os.Setenv(mysql_user, "root")
 	}()
-	repo2 := NewRepoMysql()
+	repo2 := NewRepoMysql(&ConfigMock{})
 	defer repo2.Close()
 	defer repo2.Truncate()
 	client2 := domain.NewClient(repo2)
@@ -219,7 +219,7 @@ func TestEmailDuplicityQuery(t *testing.T) {
 
 func TestNickDuplicityQuery(t *testing.T) {
 
-	repo := NewRepoMysql()
+	repo := NewRepoMysql(&ConfigMock{})
 	repo.Truncate()
 	defer repo.Close()
 	defer repo.Truncate()
@@ -253,7 +253,7 @@ func TestNickDuplicityQuery(t *testing.T) {
 	defer func() {
 		os.Setenv(mysql_user, "root")
 	}()
-	repo2 := NewRepoMysql()
+	repo2 := NewRepoMysql(&ConfigMock{})
 	defer repo2.Close()
 	defer repo2.Truncate()
 	client2 := domain.NewClient(repo2)
@@ -272,7 +272,7 @@ func TestNickDuplicityQuery(t *testing.T) {
 
 func TestLoadSet(t *testing.T) {
 
-	repo := NewRepoMysql()
+	repo := NewRepoMysql(&ConfigMock{})
 	repo.Truncate()
 	defer repo.Close()
 	defer repo.Truncate()
@@ -337,7 +337,7 @@ func TestLoadSet(t *testing.T) {
 	defer func() {
 		os.Setenv(mysql_user, "root")
 	}()
-	repo2 := NewRepoMysql()
+	repo2 := NewRepoMysql(&ConfigMock{})
 	defer repo2.Close()
 	defer repo2.Truncate()
 	clientset2 := domain.NewClientSet(repo2)
@@ -352,7 +352,7 @@ func TestLoadSet(t *testing.T) {
 
 func TestGetById(t *testing.T) {
 
-	repo := NewRepoMysql()
+	repo := NewRepoMysql(&ConfigMock{})
 	repo.Truncate()
 	defer repo.Close()
 	defer repo.Truncate()
@@ -402,7 +402,7 @@ func TestGetById(t *testing.T) {
 	defer func() {
 		os.Setenv(mysql_user, "root")
 	}()
-	repo2 := NewRepoMysql()
+	repo2 := NewRepoMysql(&ConfigMock{})
 	defer repo2.Close()
 	defer repo2.Truncate()
 	client2 := domain.NewClient(repo2)
@@ -417,7 +417,7 @@ func TestGetById(t *testing.T) {
 
 func TestGetByNick(t *testing.T) {
 
-	repo := NewRepoMysql()
+	repo := NewRepoMysql(&ConfigMock{})
 	repo.Truncate()
 	defer repo.Close()
 	defer repo.Truncate()
@@ -467,7 +467,7 @@ func TestGetByNick(t *testing.T) {
 	defer func() {
 		os.Setenv(mysql_user, "root")
 	}()
-	repo2 := NewRepoMysql()
+	repo2 := NewRepoMysql(&ConfigMock{})
 	defer repo2.Close()
 	defer repo2.Truncate()
 	client2 = domain.NewClient(repo2)
@@ -482,7 +482,7 @@ func TestGetByNick(t *testing.T) {
 
 func TestGetByEmail(t *testing.T) {
 
-	repo := NewRepoMysql()
+	repo := NewRepoMysql(&ConfigMock{})
 	repo.Truncate()
 	defer repo.Close()
 	defer repo.Truncate()
@@ -532,7 +532,7 @@ func TestGetByEmail(t *testing.T) {
 	defer func() {
 		os.Setenv(mysql_user, "root")
 	}()
-	repo2 := NewRepoMysql()
+	repo2 := NewRepoMysql(&ConfigMock{})
 	defer repo2.Close()
 	defer repo2.Truncate()
 	client2 = domain.NewClient(repo2)
@@ -547,7 +547,7 @@ func TestGetByEmail(t *testing.T) {
 
 func TestGetByDoc(t *testing.T) {
 
-	repo := NewRepoMysql()
+	repo := NewRepoMysql(&ConfigMock{})
 	repo.Truncate()
 	defer repo.Close()
 	defer repo.Truncate()
@@ -597,7 +597,7 @@ func TestGetByDoc(t *testing.T) {
 	defer func() {
 		os.Setenv(mysql_user, "root")
 	}()
-	repo2 := NewRepoMysql()
+	repo2 := NewRepoMysql(&ConfigMock{})
 	defer repo2.Close()
 	defer repo2.Truncate()
 	client2 = domain.NewClient(repo2)
@@ -612,7 +612,7 @@ func TestGetByDoc(t *testing.T) {
 
 func TestGetByPhone(t *testing.T) {
 
-	repo := NewRepoMysql()
+	repo := NewRepoMysql(&ConfigMock{})
 	repo.Truncate()
 	defer repo.Close()
 	defer repo.Truncate()
@@ -662,7 +662,7 @@ func TestGetByPhone(t *testing.T) {
 	defer func() {
 		os.Setenv(mysql_user, "root")
 	}()
-	repo2 := NewRepoMysql()
+	repo2 := NewRepoMysql(&ConfigMock{})
 	defer repo2.Close()
 	defer repo2.Truncate()
 	client2 = domain.NewClient(repo2)

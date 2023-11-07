@@ -3,7 +3,6 @@ package service
 import (
 	"errors"
 	"fmt"
-	"os"
 	"strconv"
 
 	"github.com/lavinas/keel/client/internal/core/port"
@@ -15,13 +14,15 @@ const (
 
 // Find is the service used to list all clients
 type Find struct {
+	config port.Config
 	log     port.Log
 	clients port.ClientSet
 }
 
 // NewFind creates a new Find
-func NewFind(log port.Log, clients port.ClientSet) *Find {
+func NewFind(config port.Config, log port.Log, clients port.ClientSet) *Find {
 	return &Find{
+		config: config,
 		log:     log,
 		clients: clients,
 	}
@@ -58,7 +59,7 @@ func (s *Find) getAll(input port.FindInputDto) (uint64, uint64, string, string, 
 	}
 	p, _ := strconv.ParseUint(page, 10, 64)
 	if perPage == "" {
-		perPage = os.Getenv(per_page)
+		perPage = s.config.Get(per_page)
 		if perPage == "" {
 			perPage = "10"
 		}

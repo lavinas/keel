@@ -3,7 +3,6 @@ package mysql
 import (
 	"context"
 	"database/sql"
-	"os"
 	"strings"
 	"time"
 
@@ -26,12 +25,12 @@ type RepoMysql struct {
 }
 
 // NewRepo creates a new Repo service
-func NewRepoMysql() *RepoMysql {
-	user := os.Getenv(mysql_user)
-	pass := os.Getenv(mysql_pass)
-	host := os.Getenv(mysql_host)
-	port := os.Getenv(mysql_port)
-	dbname := os.Getenv(mysql_dbname)
+func NewRepoMysql(config port.Config) *RepoMysql {
+	user := config.Get(mysql_user)
+	pass := config.Get(mysql_pass)
+	host := config.Get(mysql_host)
+	port := config.Get(mysql_port)
+	dbname := config.Get(mysql_dbname)
 	db, err := sql.Open("mysql", user+":"+pass+"@tcp("+host+":"+port+")/")
 	if err != nil {
 		panic(err)

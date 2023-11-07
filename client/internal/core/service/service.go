@@ -15,13 +15,14 @@ type Service struct {
 }
 
 // NewInsert creates a new Insert service
-func NewService(domain port.Domain, log port.Log) *Service {
+func NewService(domain port.Domain, config port.Config, log port.Log) *Service {
 	return &Service{
 		domain: domain,
+
 		log:    log,
 		insert: *NewInsert(log, domain.GetClient()),
 		update: *NewUpdate(log, domain.GetClient()),
-		find:  *NewFind(log, domain.GetClientSet()),
+		find:  *NewFind(config, log, domain.GetClientSet()),
 		get:   *NewGet(log, domain.GetClient()),
 	}
 }
