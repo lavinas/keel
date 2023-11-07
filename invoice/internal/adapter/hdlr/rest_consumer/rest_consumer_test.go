@@ -21,9 +21,9 @@ var (
 
 func TestNewRestConsumer(t *testing.T) {
 	t.Run("should not return nil", func(t *testing.T) {
-		rc := NewRestConsumer()
+		rc := NewRestConsumer(&ConfigMock{})
 		if rc == nil {
-			t.Error("NewRestConsumer() should not return nil")
+			t.Error("NewRestConsumer(&ConfigMock{}) should not return nil")
 		}
 	})
 }
@@ -33,8 +33,8 @@ func TestRestconsumer_baseByNickname(t *testing.T) {
 		g := ginmock.NewGinMock(8085)
 		g.Start("/client/get/nickname/:nickname", "GET", http.StatusOK, default_consumer)
 		defer g.Stop()
-		consumer_base = "http://localhost:8085/client/get/nickname"
-		rc := NewRestConsumer()
+		rc := NewRestConsumer(&ConfigMock{})
+		rc.consumer_base = "http://localhost:8085/client/get/nickname"
 		dto := dto.NewGetClientByNicknameInputDto()
 		b, err := rc.GetClientByNickname("consumer_doe", dto)
 		if err != nil {
@@ -51,8 +51,8 @@ func TestRestconsumer_baseByNickname(t *testing.T) {
 		g := ginmock.NewGinMock(8085)
 		g.Start("/client/get/nickname/:nickname", "GET", http.StatusNoContent, default_consumer)
 		defer g.Stop()
-		consumer_base = "http://localhost:8085/client/get/nickname"
-		rc := NewRestConsumer()
+		rc := NewRestConsumer(&ConfigMock{})
+		rc.consumer_base = "http://localhost:8085/client/get/nickname"
 		dto := dto.NewGetClientByNicknameInputDto()
 		b, err := rc.GetClientByNickname("consumer_doe_not_found", dto)
 		if err != nil {
@@ -66,12 +66,12 @@ func TestRestconsumer_baseByNickname(t *testing.T) {
 		}
 	})
 	t.Run("should return a url malformed error", func(t *testing.T) {
-		rconsumer_base := consumer_base
-		consumer_base = "123"
+		rc := NewRestConsumer(&ConfigMock{})
+		rconsumer_base := rc.consumer_base
+		rc.consumer_base = "123"
 		defer func() {
-			consumer_base = rconsumer_base
+			rc.consumer_base = rconsumer_base
 		}()
-		rc := NewRestConsumer()
 		dto := dto.NewGetClientByNicknameInputDto()
 		b, err := rc.GetClientByNickname("consumer_doe", dto)
 		if err == nil {
@@ -82,12 +82,12 @@ func TestRestconsumer_baseByNickname(t *testing.T) {
 		}
 	})
 	t.Run("should return a http get error", func(t *testing.T) {
-		rconsumer_base := consumer_base
-		consumer_base = "http://localhost:8083/client/get_error"
+		rc := NewRestConsumer(&ConfigMock{})
+		rconsumer_base := rc.consumer_base
+		rc.consumer_base = "http://localhost:8083/client/get_error"
 		defer func() {
-			consumer_base = rconsumer_base
+			rc.consumer_base = rconsumer_base
 		}()
-		rc := NewRestConsumer()
 		dto := dto.NewGetClientByNicknameInputDto()
 		b, err := rc.GetClientByNickname("consumer_doe", dto)
 		if err == nil {
@@ -97,5 +97,53 @@ func TestRestconsumer_baseByNickname(t *testing.T) {
 			t.Error("Expected false, got true")
 		}
 	})
+	t.Run("should return a http status error", func(t *testing.T) {
+		g := ginmock.NewGinMock(8085)
+		g.Start("/client/get/nickname/:nickname", "GET", http.StatusNotFound, default_consumer)
+		defer g.Stop()
+		rc := NewRestConsumer(&ConfigMock{})
+		rc.consumer_base = "http://localhost:8085/client/get/nickname"
+		dto := dto.NewGetClientByNicknameInputDto()
+		b, err := rc.GetClientByNickname("consumer_doe", dto)
+		if err == nil {
+			t.Errorf("Expected error, got nil")
+		}
+		if b == true {
+			t.Error("Expected false, got true")
+		}
+	})
+	t.Run("should return a json unmarshal error", func(t *testing.T) {
+		g := ginmock.NewGinMock(8085)
+		g.Start("/client/get/nickname/:nickname", "GET", http.StatusOK, "invalid json")
+		defer g.Stop()
+		rc := NewRestConsumer(&ConfigMock{})
+		rc.consumer_base = "http://localhost:8085/client/get/nickname"
+		dto := dto.NewGetClientByNicknameInputDto()
+		b, err := rc.GetClientByNickname("consumer_doe", dto)
+		if err == nil {
+			t.Errorf("Expected error, got nil")
+		}
+		if b == true {
+			t.Error("Expected false, got true")
+		}
+	})
+	t.Run("should return a KEEL_INVOICE_CLIENT_URL not set error", func(t *testing.T) {
+		rc := NewRestConsumer(&ConfigMock{})
+		rconsumer_base := rc.consumer_base
+		rc.consumer_base = ""
+		defer func() {
+			rc.consumer_base = rconsumer_base
+		}()
+		dto := dto.NewGetClientByNicknameInputDto()
+		b, err := rc.GetClientByNickname("consumer_doe", dto)
+		if err == nil {
+			t.Errorf("Expected error, got nil")
+		}
+		if b == true {
+			t.Error("Expected false, got true")
+		}
+	})
+	
+
 
 }

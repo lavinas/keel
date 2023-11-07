@@ -34,7 +34,7 @@ func (s *Create) Execute() error {
 		s.loadDomain,
 		s.checkDuplicity,
 		s.saveDomain,
-		s.updateInvoiceClients,
+		// s.updateInvoiceClients,
 		s.createOutput,
 	}
 	for _, v := range execOrder {

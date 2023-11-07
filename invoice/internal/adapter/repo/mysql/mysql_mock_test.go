@@ -3,9 +3,23 @@ package mysql
 import (
 	"errors"
 	"time"
+	"os"
 
 	"github.com/lavinas/keel/invoice/internal/core/port"
 )
+
+
+// ConfigMock is a mock for config
+type ConfigMock struct {
+}
+
+func (c *ConfigMock) Get(key string) string {
+	return os.Getenv(key)
+}
+
+func (c *ConfigMock) Set(key, value string) {
+	os.Setenv(key, value)
+}
 
 // Invoice Client Mock
 type InvoiceClientMock struct {

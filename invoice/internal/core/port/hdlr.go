@@ -13,3 +13,7 @@ type ApiConsumer interface {
 type RestConsumer interface {
 	GetClientByNickname(nickname string, client GetClientByNicknameInputDto) (bool, error)
 }
+
+type Config interface {
+	Get(param string) string
+}

@@ -6,31 +6,26 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"os"
 
 	"github.com/lavinas/keel/invoice/internal/core/port"
 )
 
-var (
-	// api url
-	consumer_base = os.Getenv("KEEL_INVOICE_CLIENT_URL")
-)
-
 // Rest comsumer implements ApiConsumer interface
 type RestConsumer struct {
+	consumer_base string
 }
 
 // NewRestComsumer is the constructor of RestComsumer
-func NewRestConsumer() *RestConsumer {
-	return &RestConsumer{}
+func NewRestConsumer(config port.Config) *RestConsumer {
+	return &RestConsumer{consumer_base: config.Get("KEEL_INVOICE_CLIENT_URL")}
 }
 
 // GetClientByNickname returns a GetClientByNicknameInputDto
 func (rc *RestConsumer) GetClientByNickname(nickname string, client port.GetClientByNicknameInputDto) (bool, error) {
-	if consumer_base == "" {
+	if rc.consumer_base == "" {
 		return false, fmt.Errorf("error: KEEL_INVOICE_CLIENT_URL is not set")
 	}
-	r, err := url.JoinPath(consumer_base, nickname)
+	r, err := url.JoinPath(rc.consumer_base, nickname)
 	if err != nil {
 		return false, err
 	}

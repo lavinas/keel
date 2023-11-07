@@ -4,6 +4,14 @@ import (
 	"os"
 )
 
+// ConfigMock is a mock of Config interface
+type ConfigMock struct {
+}
+
+func (*ConfigMock) Get(key string) string {
+	return "value"
+}
+
 // LogMock is a mock of Log interface
 type LogMock struct {
 	lType   string

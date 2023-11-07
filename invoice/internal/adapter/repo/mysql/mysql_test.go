@@ -1,41 +1,42 @@
 package mysql
 
 import (
-	"os"
 	"testing"
 	"time"
 )
 
 func TestNewRepoMysql(t *testing.T) {
 	t.Run("should create new repo mysql", func(t *testing.T) {
-		_, err := NewRepoMysql()
+		_, err := NewRepoMysql(&ConfigMock{})
 		if err != nil {
 			t.Errorf("Expected nil, got %s", err.Error())
 		}
 	})
 	t.Run("should return error when MYSQL_INVOICE_USER is empty", func(t *testing.T) {
-		user := os.Getenv(mysql_user)
-		os.Setenv(mysql_user, "")
-		_, err := NewRepoMysql()
+		c := ConfigMock{}
+		user := c.Get(mysql_user)
+		c.Set(mysql_user, "")
+		_, err := NewRepoMysql(&c)
 		if err == nil {
 			t.Errorf("Expected error, got nil")
 		}
-		os.Setenv(mysql_user, user)
+		c.Set(mysql_user, user)
 	})
 	t.Run("should return error when MYSQL_DATABASE is empty", func(t *testing.T) {
-		dbname := os.Getenv(mysql_dbname)
-		os.Setenv(mysql_dbname, "")
-		_, err := NewRepoMysql()
+		c := ConfigMock{}
+		dbname := c.Get(mysql_dbname)
+		c.Set(mysql_dbname, "")
+		_, err := NewRepoMysql(&c)
 		if err == nil {
 			t.Errorf("Expected error, got nil")
 		}
-		os.Setenv(mysql_dbname, dbname)
+		c.Set(mysql_dbname, dbname)
 	})
 }
 
 func TestBegin(t *testing.T) {
 	t.Run("should commit without error", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		defer repo.Close()
 		err := repo.Begin()
 		if err != nil {
@@ -44,7 +45,7 @@ func TestBegin(t *testing.T) {
 	})
 
 	t.Run("should return error when already openned", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		defer repo.Close()
 		repo.Begin()
 		err := repo.Begin()
@@ -66,7 +67,7 @@ func TestBegin(t *testing.T) {
 		}
 	})
 	t.Run("should return error when wrong connection", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		err := repo.db.Close()
 		if err != nil {
 			t.Errorf("Expected nil, got %s", err.Error())
@@ -83,7 +84,7 @@ func TestBegin(t *testing.T) {
 
 func TestCommit(t *testing.T) {
 	t.Run("should commit without error", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		defer repo.Close()
 		repo.Begin()
 		err := repo.Commit()
@@ -92,7 +93,7 @@ func TestCommit(t *testing.T) {
 		}
 	})
 	t.Run("should return error when there is no transaction", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		defer repo.Close()
 		err := repo.Commit()
 		if err == nil {
@@ -103,7 +104,7 @@ func TestCommit(t *testing.T) {
 		}
 	})
 	t.Run("should return error when connection is nil", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		repo.Begin()
 		repo.db = nil
 		err := repo.Commit()
@@ -115,7 +116,7 @@ func TestCommit(t *testing.T) {
 		}
 	})
 	t.Run("should return error when connection error", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		repo.Begin()
 		repo.tx.Commit()
 		err := repo.Commit()
@@ -127,7 +128,7 @@ func TestCommit(t *testing.T) {
 
 func TestRollback(t *testing.T) {
 	t.Run("should rollback without error", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		defer repo.Close()
 		repo.Begin()
 		err := repo.Rollback()
@@ -136,7 +137,7 @@ func TestRollback(t *testing.T) {
 		}
 	})
 	t.Run("should return error when there is no transaction", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		defer repo.Close()
 		err := repo.Rollback()
 		if err == nil {
@@ -147,7 +148,7 @@ func TestRollback(t *testing.T) {
 		}
 	})
 	t.Run("should return error when connection error", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		err := repo.db.Close()
 		if err != nil {
 			t.Errorf("Expected nil, got %s", err.Error())
@@ -161,7 +162,7 @@ func TestRollback(t *testing.T) {
 		}
 	})
 	t.Run("should return error when connection is nil", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		repo.Begin()
 		repo.db = nil
 		err := repo.Rollback()
@@ -173,7 +174,7 @@ func TestRollback(t *testing.T) {
 		}
 	})
 	t.Run("should return error when connection error", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		repo.Begin()
 		repo.tx.Commit()
 		err := repo.Rollback()
@@ -185,14 +186,14 @@ func TestRollback(t *testing.T) {
 
 func TestClose(t *testing.T) {
 	t.Run("should close without error", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		err := repo.Close()
 		if err != nil {
 			t.Errorf("Expected nil, got %s", err.Error())
 		}
 	})
 	t.Run("should return error when connection is nil", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		repo.db = nil
 		err := repo.Close()
 		if err == nil {
@@ -203,7 +204,7 @@ func TestClose(t *testing.T) {
 		}
 	})
 	t.Run("should close with error", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		repo.db.Close()
 		err := repo.Close()
 		if err != nil {
@@ -214,7 +215,7 @@ func TestClose(t *testing.T) {
 
 func TestSaveInvoiceClient(t *testing.T) {
 	t.Run("should save invoice client", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		defer repo.Close()
 		repo.Begin()
 		repo.TruncateInvoiceClient()
@@ -227,7 +228,7 @@ func TestSaveInvoiceClient(t *testing.T) {
 		repo.Commit()
 	})
 	t.Run("should return error when there is no transaction", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		defer repo.Close()
 		err := repo.SaveInvoiceClient(&InvoiceClientMock{})
 		if err == nil {
@@ -238,7 +239,7 @@ func TestSaveInvoiceClient(t *testing.T) {
 		}
 	})
 	t.Run("should return error when connection is nil", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		repo.Begin()
 		repo.db = nil
 		err := repo.SaveInvoiceClient(&InvoiceClientMock{})
@@ -250,7 +251,7 @@ func TestSaveInvoiceClient(t *testing.T) {
 		}
 	})
 	t.Run("should return error when connection error", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		repo.Begin()
 		repo.tx.Commit()
 		err := repo.SaveInvoiceClient(&InvoiceClientMock{})
@@ -262,7 +263,7 @@ func TestSaveInvoiceClient(t *testing.T) {
 
 func TestUpdateInvoiceClient(t *testing.T) {
 	t.Run("should update invoice client", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		defer repo.Close()
 		repo.Begin()
 		repo.TruncateInvoiceClient()
@@ -276,7 +277,7 @@ func TestUpdateInvoiceClient(t *testing.T) {
 		repo.Commit()
 	})
 	t.Run("should return error when there is no transaction", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		defer repo.Close()
 		err := repo.UpdateInvoiceClient(&InvoiceClientMock{})
 		if err == nil {
@@ -287,7 +288,7 @@ func TestUpdateInvoiceClient(t *testing.T) {
 		}
 	})
 	t.Run("should return error when connection is nil", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		repo.Begin()
 		repo.db = nil
 		err := repo.UpdateInvoiceClient(&InvoiceClientMock{})
@@ -299,7 +300,7 @@ func TestUpdateInvoiceClient(t *testing.T) {
 		}
 	})
 	t.Run("should return error when connection error", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		repo.Begin()
 		repo.tx.Commit()
 		err := repo.UpdateInvoiceClient(&InvoiceClientMock{})
@@ -311,7 +312,7 @@ func TestUpdateInvoiceClient(t *testing.T) {
 
 func TestGetLastInvoiceClientId(t *testing.T) {
 	t.Run("should return last invoice client id", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		defer repo.Close()
 		repo.Begin()
 		repo.TruncateInvoiceClient()
@@ -335,7 +336,7 @@ func TestGetLastInvoiceClientId(t *testing.T) {
 		repo.Commit()
 	})
 	t.Run("should return error blank where no rows found", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		defer repo.Close()
 		repo.Begin()
 		repo.TruncateInvoiceClient()
@@ -353,7 +354,7 @@ func TestGetLastInvoiceClientId(t *testing.T) {
 		repo.Commit()
 	})
 	t.Run("should return error when there is no db", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		defer repo.Close()
 		repo.db = nil
 		client := InvoiceClientMock{}
@@ -366,7 +367,7 @@ func TestGetLastInvoiceClientId(t *testing.T) {
 		}
 	})
 	t.Run("should return error when dabase is closed", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		repo.db.Close()
 		client := InvoiceClientMock{}
 		_, err := repo.GetLastInvoiceClient("nickname", time.Now(), &client)
@@ -381,7 +382,7 @@ func TestGetLastInvoiceClientId(t *testing.T) {
 
 func TestIsDuplicatedInvoice(t *testing.T) {
 	t.Run("should return false when there is no duplicated invoice", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		defer repo.Close()
 		repo.Begin()
 		repo.TruncateInvoice()
@@ -401,7 +402,7 @@ func TestIsDuplicatedInvoice(t *testing.T) {
 		repo.Commit()
 	})
 	t.Run("should return true when there is duplicated invoice", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		defer repo.Close()
 		repo.Begin()
 		repo.TruncateInvoice()
@@ -424,7 +425,7 @@ func TestIsDuplicatedInvoice(t *testing.T) {
 		repo.Commit()
 	})
 	t.Run("should return error when there is no db", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		defer repo.Close()
 		repo.db = nil
 		_, err := repo.IsDuplicatedInvoice("reference")
@@ -436,7 +437,7 @@ func TestIsDuplicatedInvoice(t *testing.T) {
 		}
 	})
 	t.Run("should return error when dabase is closed", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		repo.db.Close()
 		_, err := repo.IsDuplicatedInvoice("reference")
 		if err == nil {
@@ -451,7 +452,7 @@ func TestIsDuplicatedInvoice(t *testing.T) {
 
 func TestSaveInvoice(t *testing.T) {
 	t.Run("should save invoice", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		repo.Begin()
 		defer repo.Close()
 		repo.TruncateInvoice()
@@ -467,7 +468,7 @@ func TestSaveInvoice(t *testing.T) {
 		repo.Commit()
 	})
 	t.Run("should return error when there is no transaction", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		defer repo.Close()
 		err := repo.SaveInvoice(&InvoiceMock{})
 		if err == nil {
@@ -478,7 +479,7 @@ func TestSaveInvoice(t *testing.T) {
 		}
 	})
 	t.Run("should return error when connection is nil", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		repo.Begin()
 		repo.db = nil
 		err := repo.SaveInvoice(&InvoiceMock{})
@@ -490,7 +491,7 @@ func TestSaveInvoice(t *testing.T) {
 		}
 	})
 	t.Run("should return error when connection error", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		repo.Begin()
 		repo.tx.Commit()
 		err := repo.SaveInvoice(&InvoiceMock{})
@@ -502,7 +503,7 @@ func TestSaveInvoice(t *testing.T) {
 
 func TestSaveInvoiceItem(t *testing.T) {
 	t.Run("should save invoice item", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		defer repo.Close()
 		repo.Begin()
 		repo.TruncateInvoiceItem()
@@ -521,7 +522,7 @@ func TestSaveInvoiceItem(t *testing.T) {
 		repo.Commit()
 	})
 	t.Run("should return error when there is no transaction", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		defer repo.Close()
 		err := repo.SaveInvoiceItem(&InvoiceItemMock{})
 		if err == nil {
@@ -532,7 +533,7 @@ func TestSaveInvoiceItem(t *testing.T) {
 		}
 	})
 	t.Run("should return error when connection is nil", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		repo.Begin()
 		repo.db = nil
 		err := repo.SaveInvoiceItem(&InvoiceItemMock{})
@@ -544,7 +545,7 @@ func TestSaveInvoiceItem(t *testing.T) {
 		}
 	})
 	t.Run("should return error when connection error", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		repo.Begin()
 		repo.tx.Commit()
 		err := repo.SaveInvoiceItem(&InvoiceItemMock{})
@@ -557,7 +558,7 @@ func TestSaveInvoiceItem(t *testing.T) {
 
 func TestTruncateInvoiceClient(t *testing.T) {
 	t.Run("should truncate without error", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		defer repo.Close()
 		repo.Begin()
 		err := repo.TruncateInvoiceClient()
@@ -566,7 +567,7 @@ func TestTruncateInvoiceClient(t *testing.T) {
 		}
 	})
 	t.Run("should return error when there is no transaction", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		defer repo.Close()
 		err := repo.TruncateInvoiceClient()
 		if err == nil {
@@ -577,7 +578,7 @@ func TestTruncateInvoiceClient(t *testing.T) {
 		}
 	})
 	t.Run("should return error when connection is nil", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		repo.Begin()
 		repo.db = nil
 		err := repo.TruncateInvoiceClient()
@@ -589,7 +590,7 @@ func TestTruncateInvoiceClient(t *testing.T) {
 		}
 	})
 	t.Run("should return error when connection error", func(t *testing.T) {
-		repo, _ := NewRepoMysql()
+		repo, _ := NewRepoMysql(&ConfigMock{})
 		repo.Begin()
 		repo.tx.Commit()
 		err := repo.TruncateInvoiceClient()

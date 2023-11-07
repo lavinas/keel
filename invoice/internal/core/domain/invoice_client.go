@@ -38,7 +38,6 @@ func (i *InvoiceClient) Load(id, nickname, clientId, name, email string, phone,
 		i.id = id
 		i.isNew = false
 	}
-	i.id = uuid.New().String()
 	i.nickname, i.clientId, i.name, i.email, i.phone, i.document = nickname, clientId,
 		name, email, phone, document
 	if created_at.IsZero() {

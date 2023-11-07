@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"os"
 	"strings"
 	"time"
 
@@ -22,26 +21,27 @@ const (
 
 // Repo is a service to interact with the database Mysql
 type RepoMysql struct {
+	config port.Config
 	db *sql.DB
 	tx *sql.Tx
 }
 
 // NewRepo creates a new Repo service
-func NewRepoMysql() (*RepoMysql, error) {
-	conn := fmt.Sprintf("%s:%s@tcp(%s:%s)/", os.Getenv(mysql_user), os.Getenv(mysql_pass),
-		os.Getenv(mysql_host), os.Getenv(mysql_port))
+func NewRepoMysql(config port.Config) (*RepoMysql, error) {
+	conn := fmt.Sprintf("%s:%s@tcp(%s:%s)/", config.Get(mysql_user), config.Get(mysql_pass),
+		config.Get(mysql_host), config.Get(mysql_port))
 	db, _ := sql.Open("mysql", conn)
 	if err := db.Ping(); err != nil {
 		return nil, err
 	}
-	dbname := os.Getenv(mysql_dbname)
+	dbname := config.Get(mysql_dbname)
 	if dbname == "" {
 		return nil, errors.New("MYSQL_DATABASE is empty")
 	}
 	for i, q := range querieMap {
 		querieMap[i] = strings.Replace(q, "{DB}", dbname, -1)
 	}
-	return &RepoMysql{db: db}, nil
+	return &RepoMysql{config: config, db: db}, nil
 }
 
 // Begin starts a transaction
