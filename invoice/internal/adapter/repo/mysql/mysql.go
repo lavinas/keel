@@ -124,20 +124,27 @@ func (r *RepoMysql) SaveInvoiceClient(client port.InvoiceClient) error {
 	return nil
 }
 
-func (r *RepoMysql) GetLastInvoiceClientId(nickname string, created_after time.Time) (string, error) {
+func (r *RepoMysql) GetLastInvoiceClient(nickname string, created_after time.Time, client port.InvoiceClient) (bool, error) {
 	if r.db == nil {
-		return "", errors.New("sql: database is closed")
+		return false, errors.New("sql: database is closed")
 	}
 	q := querieMap["GetInvoiceClient"]
-	var id string
-	err := r.db.QueryRow(q, nickname, created_after).Scan(&id)
+	var rId int
+	var rNickname string
+	var rClientId string
+	var rName string
+	var rDocument uint64
+	var rPhone uint64
+	var rEmail string
+	var rCreatedAt time.Time
+	err := r.db.QueryRow(q, nickname, created_after).Scan(&rId, &rNickname, &rClientId, &rName, &rDocument, &rPhone, &rEmail, &rCreatedAt)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return "", nil
+			return false, nil
 		}
-		return "", err
+		return false, err
 	}
-	return id, nil
+	return true, nil
 }
 
 // UpdateInvoiceClient updates the invoice client on the repository

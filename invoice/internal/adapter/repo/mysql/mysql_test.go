@@ -322,12 +322,13 @@ func TestGetLastInvoiceClientId(t *testing.T) {
 			t.Errorf("Expected nil, got %s", err.Error())
 		}
 		created_after := time.Now().Add(-time.Hour * 24)
-		id, err := repo.GetLastInvoiceClientId("nickname", created_after)
+		client := InvoiceClientMock{}
+		ok, err := repo.GetLastInvoiceClient("nickname", created_after, &client)
 		if err != nil {
 			t.Errorf("Expected nil, got %s", err.Error())
 		}
-		if id != "1" {
-			t.Errorf("Expected id, got %s", id)
+		if !ok {
+			t.Errorf("Expected ok, got !ok")
 		}
 		repo.Begin()
 		repo.TruncateInvoiceClient()
@@ -339,12 +340,13 @@ func TestGetLastInvoiceClientId(t *testing.T) {
 		repo.Begin()
 		repo.TruncateInvoiceClient()
 		created_after := time.Now().Add(-time.Hour * 24)
-		id, err := repo.GetLastInvoiceClientId("nickname", created_after)
+		client := InvoiceClientMock{}
+		ok, err := repo.GetLastInvoiceClient("nickname", created_after, &client)
 		if err != nil {
 			t.Errorf("Expected nil, got %s", err.Error())
 		}
-		if id != "" {
-			t.Errorf("Expected blank, got %s", id)
+		if ok  {
+			t.Errorf("Expected !ok, got ok")
 		}
 		repo.Begin()
 		repo.TruncateInvoiceClient()
@@ -354,7 +356,8 @@ func TestGetLastInvoiceClientId(t *testing.T) {
 		repo, _ := NewRepoMysql()
 		defer repo.Close()
 		repo.db = nil
-		_, err := repo.GetLastInvoiceClientId("nickname", time.Now())
+		client := InvoiceClientMock{}
+		_, err := repo.GetLastInvoiceClient("nickname", time.Now(), &client)
 		if err == nil {
 			t.Errorf("Expected error, got nil")
 		}
@@ -365,7 +368,8 @@ func TestGetLastInvoiceClientId(t *testing.T) {
 	t.Run("should return error when dabase is closed", func(t *testing.T) {
 		repo, _ := NewRepoMysql()
 		repo.db.Close()
-		_, err := repo.GetLastInvoiceClientId("nickname", time.Now())
+		client := InvoiceClientMock{}
+		_, err := repo.GetLastInvoiceClient("nickname", time.Now(), &client)
 		if err == nil {
 			t.Errorf("Expected error, got nil")
 		}

@@ -11,6 +11,6 @@ var (
 		"TruncateInvoice":       "DELETE FROM {DB}.invoice;",
 		"TruncateInvoiceItem":   "DELETE FROM {DB}.invoice_item;",
 		"IsDuplicatedInvoice":   "SELECT COUNT(*) count FROM {DB}.invoice WHERE reference = ?;",
-		"GetInvoiceClient":      "SELECT id FROM {DB}.invoice_client WHERE nickname = ? and created_at >= ? order by created_at desc limit 1;",
+		"GetInvoiceClient":      "SELECT id, nickname, client_id, name, document, phone, email, created_at FROM {DB}.invoice_client WHERE nickname = ? and created_at >= ? order by created_at desc limit 1;",
 	}
 )

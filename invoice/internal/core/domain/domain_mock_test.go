@@ -42,8 +42,8 @@ func (r *RepoMock) SaveInvoiceClient(client port.InvoiceClient) error {
 	}
 	return nil
 }
-func (r *RepoMock) GetLastInvoiceClientId(nickname string, created_after time.Time) (string, error) {
-	return "1", nil
+func (r *RepoMock) GetLastInvoiceClient(nickname string, created_after time.Time, client port.InvoiceClient) (bool, error) {
+	return false, nil
 }
 func (r *RepoMock) UpdateInvoiceClient(client port.InvoiceClient) error {
 	if r.Status == "updateInvoiceClientError" {
