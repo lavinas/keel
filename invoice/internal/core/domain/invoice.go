@@ -90,45 +90,6 @@ func (i *Invoice) Save() error {
 	return nil
 }
 
-// UpdateBusiness updates the business invoice from dto
-func (i *Invoice) LoadBusiness(dto port.GetClientByNicknameInputDto) error {
-	if i.business == nil {
-		i.business = NewInvoiceClient(i.repo)
-	}
-	return i.business.LoadGetClientNicknameDto(dto)
-}
-
-// Updatecustomerupdates the customerinvoice from dto
-func (i *Invoice) LoadCustomer(dto port.GetClientByNicknameInputDto) error {
-	if i.customer == nil {
-		i.customer = NewInvoiceClient(i.repo)
-	}
-	return i.customer.LoadGetClientNicknameDto(dto)
-}
-
-func (i *Invoice) Update() error {
-	if err := i.repo.Begin(); err != nil {
-		return err
-	}
-	defer i.repo.Rollback()
-	if i.customer == nil {
-		i.customer = NewInvoiceClient(i.repo)
-	}
-	if err := i.customer.Update(); err != nil {
-		return err
-	}
-	if i.business == nil {
-		i.business = NewInvoiceClient(i.repo)
-	}
-	if err := i.business.Update(); err != nil {
-		return err
-	}
-	if err := i.repo.Commit(); err != nil {
-		return err
-	}
-	return nil
-}
-
 // GetId returns the id of invoice
 func (i *Invoice) GetId() string {
 	return i.id

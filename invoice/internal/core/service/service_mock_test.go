@@ -131,24 +131,6 @@ func (i *InvoiceMock) Save() error {
 	}
 	return nil
 }
-func (i *InvoiceMock) LoadBusiness(dto port.GetClientByNicknameInputDto) error {
-	if i.Status == "load business error" {
-		return errors.New("load business error")
-	}
-	return nil
-}
-func (i *InvoiceMock) LoadCustomer(dto port.GetClientByNicknameInputDto) error {
-	if i.Status == "load customer error" {
-		return errors.New("load customer error")
-	}
-	return nil
-}
-func (i *InvoiceMock) Update() error {
-	if i.Status == "update invoice error" {
-		return errors.New("update error")
-	}
-	return nil
-}
 func (i *InvoiceMock) GetId() string {
 	return ""
 }

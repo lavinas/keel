@@ -2,6 +2,8 @@ package service
 
 import (
 	"errors"
+	"strings"
+	"fmt"
 
 	"github.com/lavinas/keel/invoice/internal/core/dto"
 	"github.com/lavinas/keel/invoice/internal/core/port"
@@ -34,11 +36,17 @@ func (s *Create) Execute() error {
 		s.loadDomain,
 		s.checkDuplicity,
 		s.saveDomain,
-		// s.updateInvoiceClients,
+		s.updateInvoiceBusiness,
+		s.updateInvoiceCustomer,
 		s.createOutput,
 	}
 	for _, v := range execOrder {
 		if err := v(); err != nil {
+			s.log.Errorf(s.input, err)
+			if strings.Contains(err.Error(), "internal") {
+				err = errors.New("internal error")
+			}
+			s.output.Load(err.Error(), "")
 			return err
 		}
 	}
@@ -51,10 +59,7 @@ func (s *Create) Execute() error {
 //	for the service
 func (s *Create) valiedateInput() error {
 	if err := s.input.Validate(); err != nil {
-		err = errors.New("bad request: " + err.Error())
-		s.log.Infof(s.input, "validate: "+err.Error())
-		s.output.Load(err.Error(), "")
-		return err
+		return fmt.Errorf("bad request: %w", err)
 	}
 	return nil
 }
@@ -63,10 +68,7 @@ func (s *Create) valiedateInput() error {
 func (s *Create) loadDomain() error {
 	// load invoice
 	if err := s.invoice.Load(s.input); err != nil {
-		rerr := errors.New("internal error")
-		s.log.Infof(s.input, "load: "+err.Error())
-		s.output.Load(rerr.Error(), "")
-		return rerr
+		return fmt.Errorf("internal error: %w", err)
 	}
 	return nil
 }
@@ -74,15 +76,9 @@ func (s *Create) loadDomain() error {
 // checkDuplicity is a method that checks the duplicity
 func (s *Create) checkDuplicity() error {
 	if duplicated, err := s.invoice.IsDuplicated(); err != nil {
-		rerr := errors.New("internal error")
-		s.log.Infof(s.input, "load: "+err.Error())
-		s.output.Load(rerr.Error(), "")
-		return rerr
+		return fmt.Errorf("internal error: %w", err)
 	} else if duplicated {
-		err = errors.New("conflict: duplicated invoice reference")
-		s.log.Infof(s.input, "load: "+err.Error())
-		s.output.Load(err.Error(), "")
-		return err
+		return fmt.Errorf("conflict: duplicated invoice reference")
 	}
 	return nil
 }
@@ -90,10 +86,7 @@ func (s *Create) checkDuplicity() error {
 // saveDomain is a method that saves the domain for the service
 func (s *Create) saveDomain() error {
 	if err := s.invoice.Save(); err != nil {
-		rerr := errors.New("internal error")
-		s.log.Infof(s.input, "save: "+err.Error())
-		s.output.Load(rerr.Error(), "")
-		return rerr
+		return fmt.Errorf("internal error: %w", err)
 	}
 	return nil
 }
@@ -106,23 +99,36 @@ func (s *Create) createOutput() error {
 	return nil
 }
 
-// updateClients updates the clients of invoice after call the client service
-func (s *Create) updateInvoiceClients() error {
-	updateMap := map[string]func(port.GetClientByNicknameInputDto) error{
-		s.input.GetBusinessNickname(): s.invoice.LoadBusiness,
-		s.input.GetCustomerNickname(): s.invoice.LoadCustomer,
-	}
-	for k, f := range updateMap {
-		dto, err := s.getInvoiceClientDto(k)
-		if err != nil {
-			return err
-		}
-		if err := s.loadInvoiceClient(f, dto); err != nil {
-			return err
-		}
-	}
-	if err := s.updateInvoice(); err != nil {
+// updateInvoiceBusiness updates the business client of invoice after call the client service
+func (s *Create) updateInvoiceBusiness() error {
+	if err := s.updateClient(s.invoice.GetBusiness()); err != nil {
 		return err
+	}
+	return nil
+}
+
+// updateInvoiceCustomer updates the customer client of invoice after call the client service
+func (s *Create) updateInvoiceCustomer() error {
+	if err := s.updateClient(s.invoice.GetCustomer()); err != nil {
+		return err
+	}
+	return nil
+}
+
+// updateClient updates the client after consulting the external service
+func (s *Create) updateClient(client port.InvoiceClient) error {
+	if !client.IsNew() {
+		return nil
+	}
+	dto, err := s.getInvoiceClientDto(client.GetNickname())
+	if err != nil {
+		return err
+	}
+	if err := client.LoadGetClientNicknameDto(dto); err != nil {
+		return fmt.Errorf("internal error: %w", err)
+	}
+	if err := client.Update(); err != nil {
+		return fmt.Errorf("internal error: %w", err)
 	}
 	return nil
 }
@@ -132,35 +138,10 @@ func (s *Create) getInvoiceClientDto(nickname string) (port.GetClientByNicknameI
 	dto := dto.NewGetClientByNicknameInputDto()
 	ok, err := s.consumer.GetClientByNickname(nickname, dto)
 	if err != nil {
-		rerr := errors.New("internal error")
-		s.log.Infof(s.input, "getting "+nickname+": "+err.Error())
-		s.output.Load(rerr.Error(), "")
-		return nil, rerr
+		return nil, fmt.Errorf("internal error: %w", err)
 	}
 	if !ok {
 		return nil, nil
 	}
 	return dto, nil
-}
-
-// loadInvoice loads the invoice client
-func (s *Create) loadInvoiceClient(f func(port.GetClientByNicknameInputDto) error, dto port.GetClientByNicknameInputDto) error {
-	if err := f(dto); err != nil {
-		rerr := errors.New("internal error")
-		s.log.Infof(s.input, "update consumer: "+err.Error())
-		s.output.Load(rerr.Error(), "")
-		return rerr
-	}
-	return nil
-}
-
-// updateInvoice updates the invoice
-func (s *Create) updateInvoice() error {
-	if err := s.invoice.Update(); err != nil {
-		rerr := errors.New("internal error")
-		s.log.Infof(s.input, "update invoice: "+err.Error())
-		s.output.Load(rerr.Error(), "")
-		return rerr
-	}
-	return nil
 }
