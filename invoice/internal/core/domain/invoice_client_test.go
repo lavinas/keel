@@ -11,7 +11,7 @@ func TestInvoiceClientLoad(t *testing.T) {
 	t.Run("should load invoice client", func(t *testing.T) {
 		repo := new(RepoMock)
 		client := NewInvoiceClient(repo)
-		client.Load("nickname", "clientId", "name", "email", 123456789, 123456789)
+		client.Load("","nickname", "clientId", "name", "email", 123456789, 123456789, time.Time{})
 		_, err := uuid.Parse(client.GetId())
 		if err != nil {
 			t.Errorf("id is empty")
@@ -38,13 +38,25 @@ func TestInvoiceClientLoad(t *testing.T) {
 			t.Errorf("mobile phone is not equal")
 		}
 	})
+	t.Run("should load id and created_at on load invoice client", func(t *testing.T) {
+		repo := new(RepoMock)
+		client := NewInvoiceClient(repo)
+		client.Load(uuid.NewString(),"nickname", "clientId", "name", "email", 123456789, 123456789, time.Now())
+		_, err := uuid.Parse(client.GetId())
+		if err != nil {
+			t.Errorf("id is empty")
+		}
+		if client.GetCreatedAt().IsZero() {
+			t.Errorf("created_at is empty")
+		}
+	})
 }
 
 func TestInvoiceClientSave(t *testing.T) {
 	t.Run("should save invoice client", func(t *testing.T) {
 		repo := new(RepoMock)
 		client := NewInvoiceClient(repo)
-		client.Load("nickname", "clientId", "name", "email", 123456789, 123456789)
+		client.Load("","nickname", "clientId", "name", "email", 123456789, 123456789, time.Time{})
 		if err := client.Save(); err != nil {
 			t.Errorf("error on save")
 		}
@@ -53,7 +65,7 @@ func TestInvoiceClientSave(t *testing.T) {
 		repo := new(RepoMock)
 		repo.Status = "saveInvoiceClientError"
 		client := NewInvoiceClient(repo)
-		client.Load("nickname", "clientId", "name", "email", 123456789, 123456789)
+		client.Load("","nickname", "clientId", "name", "email", 123456789, 123456789, time.Time{})
 		if err := client.Save(); err == nil {
 			t.Errorf("should not be nil")
 		}
@@ -65,7 +77,7 @@ func TestInvoiceClientUpdate(t *testing.T) {
 	t.Run("should update invoice client", func(t *testing.T) {
 		repo := new(RepoMock)
 		client := NewInvoiceClient(repo)
-		client.Load("nickname", "clientId", "name", "email", 123456789, 123456789)
+		client.Load("","nickname", "clientId", "name", "email", 123456789, 123456789, time.Time{})
 		if err := client.Update(); err != nil {
 			t.Errorf("error on update")
 		}
@@ -74,12 +86,11 @@ func TestInvoiceClientUpdate(t *testing.T) {
 		repo := new(RepoMock)
 		repo.Status = "updateInvoiceClientError"
 		client := NewInvoiceClient(repo)
-		client.Load("nickname", "clientId", "name", "email", 123456789, 123456789)
+		client.Load("","nickname", "clientId", "name", "email", 123456789, 123456789, time.Time{})
 		if err := client.Update(); err == nil {
 			t.Errorf("should not be nil")
 		}
 	})
-	
 
 }
 

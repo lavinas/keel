@@ -2,15 +2,14 @@ package restconsumer
 
 import (
 	"os"
-
 )
-
 
 // LogMock is a mock of Log interface
 type LogMock struct {
-	lType string
+	lType   string
 	message string
 }
+
 func (l *LogMock) GetFile() *os.File {
 	return nil
 }
@@ -32,9 +31,3 @@ func (l *LogMock) Errorf(input any, err error) {
 }
 func (l *LogMock) Close() {
 }
-
-
-
-
-
-

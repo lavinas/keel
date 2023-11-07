@@ -9,14 +9,14 @@ import (
 
 // InvoiceClient is the domain entity for client data in invoice
 type InvoiceClient struct {
-	repo     port.Repo
-	id       string
-	nickname string
-	clientId string
-	name     string
-	document uint64
-	phone    uint64
-	email    string
+	repo       port.Repo
+	id         string
+	nickname   string
+	clientId   string
+	name       string
+	document   uint64
+	phone      uint64
+	email      string
 	created_at time.Time
 }
 
@@ -28,7 +28,12 @@ func NewInvoiceClient(repo port.Repo) *InvoiceClient {
 }
 
 // Load loads a invoice client from input
-func (i *InvoiceClient) Load(nickname, clientId, name, email string, phone, document uint64) {
+func (i *InvoiceClient) Load(id, nickname, clientId, name, email string, phone, document uint64, created_at time.Time) {
+	if id == "" {
+		i.id = uuid.New().String()
+	} else {
+		i.id = id
+	}
 	i.id = uuid.New().String()
 	i.nickname = nickname
 	i.clientId = clientId
@@ -36,7 +41,11 @@ func (i *InvoiceClient) Load(nickname, clientId, name, email string, phone, docu
 	i.email = email
 	i.phone = phone
 	i.document = document
-	i.created_at = time.Now()
+	if created_at.IsZero() {
+		i.created_at = time.Now()
+	} else {
+		i.created_at = created_at
+	}
 }
 
 func (i *InvoiceClient) GetLastInvoiceClientId(nickname string, created_after time.Time) (string, error) {
@@ -61,7 +70,6 @@ func (i *InvoiceClient) LoadGetClientNicknameDto(input port.GetClientByNicknameI
 	i.created_at = time.Now()
 	return nil
 }
-
 
 // Save stores the invoice client on the repository
 func (i *InvoiceClient) Save() error {
@@ -106,4 +114,9 @@ func (i *InvoiceClient) GetPhone() uint64 {
 // GetEmail returns the email of invoice client
 func (i *InvoiceClient) GetEmail() string {
 	return i.email
+}
+
+// GetCreatedAt returns the created_at of invoice client
+func (i *InvoiceClient) GetCreatedAt() time.Time {
+	return i.created_at
 }

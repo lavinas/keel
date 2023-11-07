@@ -157,6 +157,7 @@ func (d *CreateInputDtoMock) GetItems() []port.CreateInputItemDto {
 type GetClientByNicknameInputDtoMock struct {
 	Status string
 }
+
 func (d *GetClientByNicknameInputDtoMock) GetId() string {
 	return "0000"
 }

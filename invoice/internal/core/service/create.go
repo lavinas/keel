@@ -46,8 +46,9 @@ func (s *Create) Execute() error {
 	return nil
 }
 
-// valiedateInput is a method that validates the input 
-//   for the service
+// valiedateInput is a method that validates the input
+//
+//	for the service
 func (s *Create) valiedateInput() error {
 	if err := s.input.Validate(); err != nil {
 		err = errors.New("bad request: " + err.Error())
@@ -97,8 +98,9 @@ func (s *Create) saveDomain() error {
 	return nil
 }
 
-// createOutput is a method that creates the output 
-//   for the service
+// createOutput is a method that creates the output
+//
+//	for the service
 func (s *Create) createOutput() error {
 	s.output.Load("created", s.invoice.GetReference())
 	return nil

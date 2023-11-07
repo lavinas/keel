@@ -95,7 +95,7 @@ func (i *Invoice) LoadBusiness(dto port.GetClientByNicknameInputDto) error {
 	return i.business.LoadGetClientNicknameDto(dto)
 }
 
-// UpdateCustomer updates the customer invoice from dto
+// Updatecustomerupdates the customerinvoice from dto
 func (i *Invoice) LoadCustomer(dto port.GetClientByNicknameInputDto) error {
 	if i.customer == nil {
 		i.customer = NewInvoiceClient(i.repo)
@@ -146,12 +146,12 @@ func (i *Invoice) GetBusiness() port.InvoiceClient {
 	return i.business
 }
 
-// GetCustomer returns the customer of invoice
+// Getcustomerreturns the customerof invoice
 func (i *Invoice) GetCustomerId() string {
 	return i.customer.GetId()
 }
 
-// GetCustomer returns the customer client object of invoice
+// Getcustomerreturns the customerclient object of invoice
 func (i *Invoice) GetCustomer() port.InvoiceClient {
 	return i.customer
 }
@@ -193,9 +193,9 @@ func (i *Invoice) GetUpdatedAt() time.Time {
 // loadClients loads the clients (business and customer) from input
 func (i *Invoice) loadClients(input port.CreateInputDto) {
 	i.business = NewInvoiceClient(i.repo)
-	i.business.Load(input.GetBusinessNickname(), "", "", "", 0, 0)
+	i.business.Load("",input.GetBusinessNickname(), "", "", "", 0, 0, time.Time{})
 	i.customer = NewInvoiceClient(i.repo)
-	i.customer.Load(input.GetCustomerNickname(), "", "", "", 0, 0)
+	i.customer.Load("",input.GetCustomerNickname(), "", "", "", 0, 0, time.Time{})
 }
 
 // loadAmount loads the amount from input

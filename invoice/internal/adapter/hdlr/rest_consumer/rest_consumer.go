@@ -37,7 +37,7 @@ func (rc *RestConsumer) GetClientByNickname(nickname string, client port.GetClie
 	response, err := http.Get(r)
 	if err != nil {
 		return false, err
-	} 
+	}
 	defer response.Body.Close()
 	data, err := io.ReadAll(response.Body)
 	if err != nil {

@@ -4,21 +4,21 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"sync"
 	"strings"
+	"sync"
 
 	"github.com/gin-gonic/gin"
 )
 
 // GinMock is a mock of a rest gin server
 type GinMock struct {
-	port int
-	handlerName string
-	handlerType string
-	statusCode int
-	output interface{}
-	gin *gin.Engine
-	srv *http.Server
+	port               int
+	handlerName        string
+	handlerType        string
+	statusCode         int
+	output             interface{}
+	gin                *gin.Engine
+	srv                *http.Server
 	httpServerExitDone *sync.WaitGroup
 }
 
@@ -31,12 +31,12 @@ func NewGinMock(port int) *GinMock {
 	g := gin.Default()
 	g.SetTrustedProxies([]string{"127.0.0.1"})
 	return &GinMock{
-		port: port,
-		handlerName: "/",
-		handlerType: "get",
-		output: map[string]string{"message": "hello world"},
-		gin: g,
-		srv: &http.Server{Addr: fmt.Sprintf(":%d", port), Handler: g},
+		port:               port,
+		handlerName:        "/",
+		handlerType:        "get",
+		output:             map[string]string{"message": "hello world"},
+		gin:                g,
+		srv:                &http.Server{Addr: fmt.Sprintf(":%d", port), Handler: g},
 		httpServerExitDone: &sync.WaitGroup{},
 	}
 }
@@ -49,16 +49,21 @@ func (g *GinMock) Start(handlerName string, handlerType string, statusCode int, 
 	g.output = output
 	g.httpServerExitDone.Add(1)
 	switch g.handlerType {
-		case "get": g.gin.GET(g.handlerName, g.do)
-		case "post": g.gin.POST(g.handlerName, g.do)
-		case "put": g.gin.PUT(g.handlerName, g.do)
-		case "delete": g.gin.DELETE(g.handlerName, g.do)
-		default: g.gin.GET(g.handlerName, g.do)
+	case "get":
+		g.gin.GET(g.handlerName, g.do)
+	case "post":
+		g.gin.POST(g.handlerName, g.do)
+	case "put":
+		g.gin.PUT(g.handlerName, g.do)
+	case "delete":
+		g.gin.DELETE(g.handlerName, g.do)
+	default:
+		g.gin.GET(g.handlerName, g.do)
 	}
-    go func() {
-        defer g.httpServerExitDone.Done()
+	go func() {
+		defer g.httpServerExitDone.Done()
 		g.srv.ListenAndServe()
-    }()
+	}()
 }
 
 // do is the handler function
@@ -71,4 +76,3 @@ func (g *GinMock) Stop() {
 	g.srv.Shutdown(context.TODO())
 	g.httpServerExitDone.Wait()
 }
-

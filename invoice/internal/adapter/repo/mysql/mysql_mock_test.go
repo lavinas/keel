@@ -12,7 +12,7 @@ type InvoiceClientMock struct {
 	status string
 }
 
-func (i *InvoiceClientMock) Load(nickname, clientId, name, email string, phone, document uint64) {
+func (i *InvoiceClientMock) Load(id, nickname, clientId, name, email string, phone, document uint64, created_id time.Time) {
 }
 func (i *InvoiceClientMock) LoadGetClientNicknameDto(input port.GetClientByNicknameInputDto) error {
 	if i.status == "get client error" {
@@ -49,6 +49,9 @@ func (i *InvoiceClientMock) GetPhone() uint64 {
 }
 func (i *InvoiceClientMock) GetEmail() string {
 	return "email"
+}
+func (i *InvoiceClientMock) GetCreatedAt() time.Time {
+	return time.Time{}
 }
 
 // Invoice mock

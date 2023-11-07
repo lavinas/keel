@@ -38,6 +38,7 @@ func (l *LogMock) Close() {
 type RestConsumerMock struct {
 	Status string
 }
+
 func (r *RestConsumerMock) GetClientByNickname(nickname string, client port.GetClientByNicknameInputDto) (bool, error) {
 	if r.Status == "get client error" {
 		return false, errors.New("get client error")
@@ -60,7 +61,7 @@ type InvoiceClientMock struct {
 	status string
 }
 
-func (ic *InvoiceClientMock) Load(nickname, clientId, name, email string, phone, document uint64) {
+func (ic *InvoiceClientMock) Load(id, nickname, clientId, name, email string, phone, document uint64, created_at time.Time) {
 }
 func (ic *InvoiceClientMock) LoadGetClientNicknameDto(input port.GetClientByNicknameInputDto) error {
 	if ic.status == "load error" {
@@ -103,6 +104,9 @@ func (ic *InvoiceClientMock) GetPhone() uint64 {
 }
 func (ic *InvoiceClientMock) GetEmail() string {
 	return "email"
+}
+func (ic *InvoiceClientMock) GetCreatedAt() time.Time {
+	return time.Time{}
 }
 
 // InoviceMock is a mock of Invoice Domain

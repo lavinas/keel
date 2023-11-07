@@ -1,8 +1,8 @@
 package restconsumer
 
 import (
-	"testing"
 	"net/http"
+	"testing"
 
 	"github.com/lavinas/keel/invoice/internal/core/dto"
 	"github.com/lavinas/keel/invoice/pkg/gin_mock"
@@ -10,12 +10,12 @@ import (
 
 var (
 	default_consumer = map[string]string{
-		"id": "1", 
-		"name": "John Doe",
+		"id":       "1",
+		"name":     "John Doe",
 		"nickname": "consumer_doe",
 		"document": "12345678900",
-		"phone": "11999999999",
-		"email": "test@test.com",
+		"phone":    "11999999999",
+		"email":    "test@test.com",
 	}
 )
 
