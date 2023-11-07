@@ -205,7 +205,7 @@ func (i *Invoice) loadClients(input port.CreateInputDto) error {
 	i.customer = NewInvoiceClient(i.repo)
 	if b, err := i.customer.GetLastInvoiceClient(input.GetCustomerNickname(), createdAfter); err != nil {
 		return err
-	} else if !b {	
+	} else if !b {
 		i.customer.Load("", input.GetCustomerNickname(), "", "", "", 0, 0, time.Time{})
 	}
 	return nil

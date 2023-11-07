@@ -29,8 +29,8 @@ func NewInvoiceClient(repo port.Repo) *InvoiceClient {
 }
 
 // Load loads a invoice client from input
-func (i *InvoiceClient) Load(id, nickname, clientId, name, email string, phone, 
-								document uint64, created_at time.Time) {
+func (i *InvoiceClient) Load(id, nickname, clientId, name, email string, phone,
+	document uint64, created_at time.Time) {
 	if id == "" {
 		i.id = uuid.New().String()
 		i.isNew = true
@@ -39,8 +39,8 @@ func (i *InvoiceClient) Load(id, nickname, clientId, name, email string, phone,
 		i.isNew = false
 	}
 	i.id = uuid.New().String()
-	i.nickname, i.clientId, i.name, i.email, i.phone, i.document = nickname, clientId, 
-				name, email, phone, document
+	i.nickname, i.clientId, i.name, i.email, i.phone, i.document = nickname, clientId,
+		name, email, phone, document
 	if created_at.IsZero() {
 		i.created_at = time.Now()
 	} else {
@@ -49,14 +49,14 @@ func (i *InvoiceClient) Load(id, nickname, clientId, name, email string, phone,
 }
 
 // GetLastInvoiceClient returns the last invoice client from repository
-func (i *InvoiceClient) GetLastInvoiceClient(nickname string, 
-												created_after time.Time) (bool, error) {
+func (i *InvoiceClient) GetLastInvoiceClient(nickname string,
+	created_after time.Time) (bool, error) {
 	return i.repo.GetLastInvoiceClient(nickname, created_after, i)
 }
 
 func (i *InvoiceClient) LoadGetClientNicknameDto(input port.GetClientByNicknameInputDto) error {
-	i.nickname, i.clientId, i.name, i.email = input.GetNickname(), input.GetId(), 
-			input.GetName(), input.GetEmail()
+	i.nickname, i.clientId, i.name, i.email = input.GetNickname(), input.GetId(),
+		input.GetName(), input.GetEmail()
 	phone, err := input.GetPhone()
 	if err != nil {
 		return err
