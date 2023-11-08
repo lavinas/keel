@@ -14,6 +14,7 @@ type CreateInputItemDto interface {
 
 type CreateInputDto interface {
 	Validate() error
+	Format() error
 	GetReference() string
 	GetBusinessNickname() string
 	GetCustomerNickname() string

@@ -34,7 +34,7 @@ func TestCreateExecute(t *testing.T) {
 		l := LogMock{}
 		r := RestConsumerMock{}
 		d := InvoiceMock{}
-		i := CreateInputDtoMock{Status: "validate error"}
+		i := CreateInputDtoMock{Status: "format error"}
 		o := CreateOutputDtoMock{}
 		c := NewCreate(&l, &r, &d, &i, &o)
 		err := c.Execute()

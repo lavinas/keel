@@ -679,3 +679,272 @@ func TestGetItems(t *testing.T) {
 		}
 	})
 }
+
+func TestFormat(t *testing.T) {
+	t.Run("Should format all fields", func(t *testing.T) {
+		dto := CreateInputDto{
+			Reference:        "Ref",
+			BusinessNickname: " Business 223 ",
+			CustomerNickname: "Custumer 222 ",
+			Amount:           " 1.35 ",
+			Date:             " 2020-01-01 ",
+			Due:              " 2020-01-02 ",
+			NoteReference:    " note ",
+		}
+		if err := dto.Format(); err != nil {
+			t.Errorf("Expected nil, got %s", err.Error())
+		}
+		if dto.Reference != "ref" {
+			t.Errorf("Expected ref, got %s", dto.Reference)
+		}
+		if dto.BusinessNickname != "business_223" { 
+			t.Errorf("Expected business_223, got %s", dto.BusinessNickname)
+		}
+		if dto.CustomerNickname != "custumer_222" {
+			t.Errorf("Expected custumer_222, got %s", dto.CustomerNickname)
+		}
+		if dto.Amount != "1.35" {
+			t.Errorf("Expected 1.35, got %s", dto.Amount)
+		}
+		if dto.Date != "2020-01-01" {
+			t.Errorf("Expected 2020-01-01, got %s", dto.Date)
+		}
+		if dto.Due != "2020-01-02" {
+			t.Errorf("Expected 2020-01-02, got %s", dto.Due)
+		}
+	})
+	t.Run("should return error when reference is empty", func(t *testing.T) {
+		dto := CreateInputDto{
+			Reference:        "",
+			BusinessNickname: " Business 223 ",
+			CustomerNickname: "Custumer 222 ",
+			Amount:           " 1.35 ",
+			Date:             " 2020-01-01 ",
+			Due:              " 2020-01-02 ",
+			NoteReference:    " note ",
+		}
+		err := dto.Format()
+		if err == nil {
+			t.Errorf("Expected error, got nil")
+		}
+		if err != nil && err.Error() != ErrReferenceEmpty {
+			t.Errorf("Expected error %s, got %s", ErrReferenceEmpty, err.Error())
+		}
+	})
+	t.Run("should return error when business nickname is empty", func(t *testing.T) {
+		dto := CreateInputDto{
+			Reference:        "ref",
+			BusinessNickname: "",
+			CustomerNickname: "Custumer 222 ",
+			Amount:           " 1.35 ",
+			Date:             " 2020-01-01 ",
+			Due:              " 2020-01-02 ",
+			NoteReference:    " note ",
+		}
+		err := dto.Format()
+		if err == nil {
+			t.Errorf("Expected error, got nil")
+		}
+		if err != nil && err.Error() != ErrBusinessNicknameEmpty {
+			t.Errorf("Expected error %s, got %s", ErrBusinessNicknameEmpty, err.Error())
+		}
+	})
+	t.Run("should return error when customer nickname is empty", func(t *testing.T) {
+		dto := CreateInputDto{
+			Reference:        "ref",
+			BusinessNickname: " Business 223 ",
+			CustomerNickname: "",
+			Amount:           " 1.35 ",
+			Date:             " 2020-01-01 ",
+			Due:              " 2020-01-02 ",
+			NoteReference:    " note ",
+		}
+		err := dto.Format()
+		if err == nil {
+			t.Errorf("Expected error, got nil")
+		}
+		if err != nil && err.Error() != ErrCustomerNicknameEmpty {
+			t.Errorf("Expected error %s, got %s", ErrCustomerNicknameEmpty, err.Error())
+		}
+	})
+	t.Run("should return error when amount is empty", func(t *testing.T) {
+		dto := CreateInputDto{
+			Reference:        "ref",
+			BusinessNickname: " Business 223 ",
+			CustomerNickname: "Custumer 222 ",
+			Amount:           "",
+			Date:             " 2020-01-01 ",
+			Due:              " 2020-01-02 ",
+			NoteReference:    " note ",
+		}
+		err := dto.Format()
+		if err == nil {
+			t.Errorf("Expected error, got nil")
+		}
+		if err != nil && err.Error() != ErrAmountEmpty {
+			t.Errorf("Expected error %s, got %s", ErrAmountEmpty, err.Error())
+		}
+	})
+	t.Run("should return error when amount is not numeric", func(t *testing.T) {
+		dto := CreateInputDto{
+			Reference:        "ref",
+			BusinessNickname: " Business 223 ",
+			CustomerNickname: "Custumer 222 ",
+			Amount:           "a",
+			Date:             " 2020-01-01 ",
+			Due:              " 2020-01-02 ",
+			NoteReference:    " note ",
+		}
+		err := dto.Format()
+		if err == nil {
+			t.Errorf("Expected error, got nil")
+		}
+		if err != nil && err.Error() != ErrAmountInvalid {
+			t.Errorf("Expected error %s, got %s", ErrAmountInvalid, err.Error())
+		}
+	})
+	t.Run("should return error when amount is zero", func(t *testing.T) {
+		dto := CreateInputDto{
+			Reference:        "ref",
+			BusinessNickname: " Business 223 ",
+			CustomerNickname: "Custumer 222 ",
+			Amount:           "0",
+			Date:             " 2020-01-01 ",
+			Due:              " 2020-01-02 ",
+			NoteReference:    " note ",
+		}
+		err := dto.Format()
+		if err == nil {
+			t.Errorf("Expected error, got nil")
+		}
+		if err != nil && err.Error() != ErrAmountZeroOrNegative {
+			t.Errorf("Expected error %s, got %s", ErrAmountZeroOrNegative, err.Error())
+		}
+	})
+	t.Run("should return error when amount is negative", func(t *testing.T) {
+		dto := CreateInputDto{
+			Reference:        "ref",
+			BusinessNickname: " Business 223 ",
+			CustomerNickname: "Custumer 222 ",
+			Amount:           "-1",
+			Date:             " 2020-01-01 ",
+			Due:              " 2020-01-02 ",
+			NoteReference:    " note ",
+		}
+		err := dto.Format()
+		if err == nil {
+			t.Errorf("Expected error, got nil")
+		}
+		if err != nil && err.Error() != ErrAmountZeroOrNegative {
+			t.Errorf("Expected error %s, got %s", ErrAmountZeroOrNegative, err.Error())
+		}
+	})
+	t.Run("should return error when date is empty", func(t *testing.T) {
+		dto := CreateInputDto{
+			Reference:        "ref",
+			BusinessNickname: " Business 223 ",
+			CustomerNickname: "Custumer 222 ",
+			Amount:           "1.35",
+			Date:             "",
+			Due:              " 2020-01-02 ",
+			NoteReference:    " note ",
+		}
+		err := dto.Format()
+		if err == nil {
+			t.Errorf("Expected error, got nil")
+		}
+		if err != nil && err.Error() != ErrDateEmpty {
+			t.Errorf("Expected error %s, got %s", ErrDateEmpty, err.Error())
+		}
+	})
+	t.Run("should return error when date is invalid", func(t *testing.T) {
+		dto := CreateInputDto{
+			Reference:        "ref",
+			BusinessNickname: " business ",
+			CustomerNickname: " customer ",
+			Amount:           "1.35",
+			Date:             "2020-01-32",
+			Due:              " 2020-01-02 ",
+			NoteReference:    " note ",
+		}
+		err := dto.Format()
+		if err == nil {
+			t.Errorf("Expected error, got nil")
+		}
+		if err != nil && err.Error() != ErrDateInvalid {
+			t.Errorf("Expected error %s, got %s", ErrDateInvalid, err.Error())
+		}
+	})
+	t.Run("should return error when date is too old", func(t *testing.T) {
+		dto := CreateInputDto{
+			Reference:        "ref",
+			BusinessNickname: " business ",
+			CustomerNickname: " customer ",
+			Amount:           "1.35",
+			Date:             "1999-12-31",
+			Due:              " 2020-01-02 ",
+			NoteReference:    " note ",
+		}
+		err := dto.Format()
+		if err == nil {
+			t.Errorf("Expected error, got nil")
+		}
+		if err != nil && err.Error() != ErrOldDate {
+			t.Errorf("Expected error %s, got %s", ErrOldDate, err.Error())
+		}
+	})
+	t.Run("should return error when due date is empty", func(t *testing.T) {
+		dto := CreateInputDto{
+			Reference:        "ref",
+			BusinessNickname: " business ",
+			CustomerNickname: " customer ",
+			Amount:           "1.35",
+			Date:             "2020-01-01",
+			Due:              "",
+			NoteReference:    " note ",
+		}
+		err := dto.Format()
+		if err == nil {
+			t.Errorf("Expected error, got nil")
+		}
+		if err != nil && err.Error() != ErrDueDateEmpty {
+			t.Errorf("Expected error %s, got %s", ErrDueDateEmpty, err.Error())
+		}
+	})
+	t.Run("should return error when due date is invalid", func(t *testing.T) {
+		dto := CreateInputDto{
+			Reference:        "ref",
+			BusinessNickname: " business ",
+			CustomerNickname: " customer ",
+			Amount:           "1.35",
+			Date:             "2020-01-01",
+			Due:              "2020-01-32",
+			NoteReference:    " note ",
+		}
+		err := dto.Format()
+		if err == nil {
+			t.Errorf("Expected error, got nil")
+		}
+		if err != nil && err.Error() != ErrDueDateInvalid {
+			t.Errorf("Expected error %s, got %s", ErrDueDateInvalid, err.Error())
+		}
+	})
+	t.Run("should return error when due date is older than date", func(t *testing.T) {
+		dto := CreateInputDto{
+			Reference:        "ref",
+			BusinessNickname: " business ",
+			CustomerNickname: " customer ",
+			Amount:           "1.35",
+			Date:             "2020-01-02",
+			Due:              "2020-01-01",
+			NoteReference:    " note ",
+		}
+		err := dto.Format()
+		if err == nil {
+			t.Errorf("Expected error, got nil")
+		}
+		if err != nil && err.Error() != ErrDueDateOlderThanDate {
+			t.Errorf("Expected error %s, got %s", ErrDueDateOlderThanDate, err.Error())
+		}
+	})
+}

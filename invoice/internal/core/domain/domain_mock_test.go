@@ -115,6 +115,9 @@ type CreateInputDtoMock struct {
 func (d *CreateInputDtoMock) Validate() error {
 	return nil
 }
+func (d *CreateInputDtoMock) Format() error {
+	return nil
+}
 func (d *CreateInputDtoMock) GetReference() string {
 	return "ref"
 }

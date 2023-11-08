@@ -191,6 +191,12 @@ func (i *CreateInputDtoMock) Validate() error {
 	}
 	return nil
 }
+func (i *CreateInputDtoMock) Format() error {
+	if i.Status == "format error" {
+		return errors.New("format error")
+	}
+	return nil
+}
 func (i *CreateInputDtoMock) GetReference() string {
 	return "ref"
 }

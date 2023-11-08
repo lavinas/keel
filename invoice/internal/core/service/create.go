@@ -32,7 +32,7 @@ func NewCreate(log port.Log, consumer port.RestConsumer, invoice port.Invoice, i
 // Execute is a method that executes the service
 func (s *Create) Execute() error {
 	execOrder := []func() error{
-		s.valiedateInput,
+		s.formatInput,
 		s.loadDomain,
 		s.checkDuplicity,
 		s.saveDomain,
@@ -57,8 +57,8 @@ func (s *Create) Execute() error {
 // valiedateInput is a method that validates the input
 //
 //	for the service
-func (s *Create) valiedateInput() error {
-	if err := s.input.Validate(); err != nil {
+func (s *Create) formatInput() error {
+	if err := s.input.Format(); err != nil {
 		return fmt.Errorf("bad request: %w", err)
 	}
 	return nil
