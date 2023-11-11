@@ -3,21 +3,21 @@
 CREATE TABLE keel_invoice.invoice_status(
     id INT NOT NULL PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
-    description VARCHAR(500) NULL,
+    description VARCHAR(500) NULL
 );
 
-insert into keel_invoice.invoice_status values (0, 'Creating', 'System is creating invoice. Wait please ');
-insert into keel_invoice.invoice_status values (10, 'Consulting client information', 'System is Consulting clients information. Wait please');
-insert into keel_invoice.invoice_status values (20, 'Waiting client information', 'Client information missing. Plase update client information');
-insert into keel_invoice.invoice_status values (30, 'Created', 'Invoice was created sucessfully');
-insert into keel_invoice.invoice_status values (40, 'Delivered', 'Invoice was delivered to client');
-insert into keel_invoice.invoice_status values (50, 'Saw', 'Invoice was saw by client');
+insert into keel_invoice.invoice_status values (0, 'Creating', 'System is creating invoice. Wait please.');
+insert into keel_invoice.invoice_status values (10, 'Consulting client information', 'System is Consulting clients information. Wait please.');
+insert into keel_invoice.invoice_status values (20, 'Waiting client information', 'Client information missing. Plase update client information.');
+insert into keel_invoice.invoice_status values (30, 'Created', 'Invoice was created sucessfully.');
+insert into keel_invoice.invoice_status values (40, 'Delivered', 'Invoice was delivered to client.');
+insert into keel_invoice.invoice_status values (50, 'Saw', 'Invoice was saw by client.');
 insert into keel_invoice.invoice_status values (60, 'Canceled', 'Invoice was canceled.');
 
 
  create table keel_invoice.invoice_status_flow(
 	id INT NOT NULL PRIMARY KEY,
-    from_id INT NOT NULL,
+    from_id INT NULL,
     to_id INT NOT NULL,
     description VARCHAR(100) NOT NULL,
     index idx_from_id (from_id),
@@ -26,22 +26,23 @@ insert into keel_invoice.invoice_status values (60, 'Canceled', 'Invoice was can
     FOREIGN KEY (to_id) REFERENCES keel_invoice.invoice_status(id)
 );
 
-insert into keel_invoice.invoice_status_flow values (0, 0, 10, 'consulting client information');
-insert into keel_invoice.invoice_status_flow values (1, 10, 20, 'waiting client information');
-insert into keel_invoice.invoice_status_flow values (2, 10, 30, 'created after consulting client information');
-insert into keel_invoice.invoice_status_flow values (3, 20, 30, 'created after client information was updated');
-insert into keel_invoice.invoice_status_flow values (4, 20, 60, 'calceled after waiting client information');
-insert into keel_invoice.invoice_status_flow values (5, 30, 60, 'canceled after created');
-insert into keel_invoice.invoice_status_flow values (6, 30, 40, 'delivered after created');
-insert into keel_invoice.invoice_status_flow values (7, 40, 50, 'saw after delivered');
-insert into keel_invoice.invoice_status_flow values (8, 40, 60, 'canceled after delivered');
-insert into keel_invoice.invoice_status_flow values (8, 50, 60, 'canceled after saw');
+insert into keel_invoice.invoice_status_flow values (1, null, 0, 'creating invoice');
+insert into keel_invoice.invoice_status_flow values (2, 0, 10, 'consulting client information');
+insert into keel_invoice.invoice_status_flow values (3, 10, 20, 'waiting client information');
+insert into keel_invoice.invoice_status_flow values (4, 10, 30, 'created after consulting client information');
+insert into keel_invoice.invoice_status_flow values (5, 20, 30, 'created after client information was updated');
+insert into keel_invoice.invoice_status_flow values (6, 20, 60, 'calceled after waiting client information');
+insert into keel_invoice.invoice_status_flow values (7, 30, 60, 'canceled after created');
+insert into keel_invoice.invoice_status_flow values (8, 30, 40, 'delivered after created');
+insert into keel_invoice.invoice_status_flow values (9, 40, 50, 'saw after delivered');
+insert into keel_invoice.invoice_status_flow values (10, 40, 60, 'canceled after delivered');
+insert into keel_invoice.invoice_status_flow values (11, 50, 60, 'canceled after saw');
 
 
 CREATE TABLE keel_invoice.invoice_payment_status(
     id INT NOT NULL PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
-    description VARCHAR(500) NULL,
+    description VARCHAR(500) NULL
 );
 
 insert into keel_invoice.invoice_payment_status values (0, 'Opened', 'Waiting payment');
@@ -52,7 +53,7 @@ insert into keel_invoice.invoice_payment_status values (40, 'Reversed', 'Payment
 
 CREATE TABLE keel_invoice.invoice_payment_status_flow(
     id INT NOT NULL PRIMARY KEY,
-    from_id INT NOT NULL,
+    from_id INT NULL,
     to_id INT NOT NULL,
     description VARCHAR(100) NOT NULL,
     index idx_from_id (from_id),
@@ -61,15 +62,17 @@ CREATE TABLE keel_invoice.invoice_payment_status_flow(
     FOREIGN KEY (to_id) REFERENCES keel_invoice.invoice_payment_status(id)
 );
 
-insert into keel_invoice.invoice_payment_status_flow values (1, 0, 10, 'Payment was partially paid');
-insert into keel_invoice.invoice_payment_status_flow values (2, 0, 20, 'Payment was paid');
-insert into keel_invoice.invoice_payment_status_flow values (3, 0, 30, 'Payment was overpaid');
-insert into keel_invoice.invoice_payment_status_flow values (4, 10, 20, 'Payment was paid after partial payment');
-insert into keel_invoice.invoice_payment_status_flow values (5, 10, 30, 'Payment was overpaid after partial payment');
-insert into keel_invoice.invoice_payment_status_flow values (6, 20, 30, 'Payment was overpaid after payment');
-insert into keel_invoice.invoice_payment_status_flow values (7, 10, 40, 'Payment was reversed after underpayment');
-insert into keel_invoice.invoice_payment_status_flow values (8, 20, 40, 'Payment was reversed after payment');
-insert into keel_invoice.invoice_payment_status_flow values (9, 30, 40, 'Payment was reversed after overpayment');
+
+insert into keel_invoice.invoice_payment_status_flow values (1, null, 0, 'creating invoice');
+insert into keel_invoice.invoice_payment_status_flow values (2, 0, 10, 'partially paid');
+insert into keel_invoice.invoice_payment_status_flow values (3, 0, 20, 'paid');
+insert into keel_invoice.invoice_payment_status_flow values (4, 0, 30, 'overpaid');
+insert into keel_invoice.invoice_payment_status_flow values (5, 10, 20, 'paid after partial payment');
+insert into keel_invoice.invoice_payment_status_flow values (6, 10, 30, 'overpaid after partial payment');
+insert into keel_invoice.invoice_payment_status_flow values (7, 20, 30, 'overpaid after payment');
+insert into keel_invoice.invoice_payment_status_flow values (8, 10, 40, 'reversed after underpayment');
+insert into keel_invoice.invoice_payment_status_flow values (9, 20, 40, 'reversed after payment');
+insert into keel_invoice.invoice_payment_status_flow values (10, 30, 40, 'reversed after overpayment');
 
 
 CREATE TABLE keel_invoice.invoice_note(
@@ -159,10 +162,33 @@ create table keel_invoice.invoice_delivery(
 create table keel_invoice.invoice_status_log(
     id int not null primary key,
     invoice_id varchar(50) not null,
-    status_id int not null,
+    status_from int null,
+    status_to int not null,
     created_at timestamp not null,
+    author varchar(100) null,
     description varchar(500) null,
     INDEX idx_invoice_id (invoice_id ASC),
+    INDEX idx_status_from (status_from ASC),
+    INDEX idx_status_to (status_to ASC),
     FOREIGN KEY (invoice_id) REFERENCES keel_invoice.invoice(id),
-    FOREIGN KEY (status_id) REFERENCES keel_invoice.invoice_status(id)
+    FOREIGN KEY (status_from) REFERENCES keel_invoice.invoice_status(id),
+    FOREIGN KEY (status_to) REFERENCES keel_invoice.invoice_status(id)
 );
+
+create table keel_invoice.invoice_payment_status_log (
+    id int not null primary key,
+    invoice_id varchar(50) not null,
+    status_from int null,
+    status_to int not null,
+    created_at timestamp not null,
+    author varchar(100) null,
+    description varchar(500) null,
+    INDEX idx_invoice_id (invoice_id ASC),
+    INDEX idx_status_from (status_from ASC),
+    INDEX idx_status_to (status_to ASC),
+    FOREIGN KEY (invoice_id) REFERENCES keel_invoice.invoice(id),
+    FOREIGN KEY (status_from) REFERENCES keel_invoice.invoice_payment_status(id),
+    FOREIGN KEY (status_to) REFERENCES keel_invoice.invoice_payment_status(id)
+);
+
+
