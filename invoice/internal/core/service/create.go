@@ -2,8 +2,8 @@ package service
 
 import (
 	"errors"
-	"strings"
 	"fmt"
+	"strings"
 
 	"github.com/lavinas/keel/invoice/internal/core/dto"
 	"github.com/lavinas/keel/invoice/internal/core/port"

@@ -143,7 +143,5 @@ func TestRestconsumer_baseByNickname(t *testing.T) {
 			t.Error("Expected false, got true")
 		}
 	})
-	
-
 
 }

@@ -2,12 +2,11 @@ package mysql
 
 import (
 	"errors"
-	"time"
 	"os"
+	"time"
 
 	"github.com/lavinas/keel/invoice/internal/core/port"
 )
-
 
 // ConfigMock is a mock for config
 type ConfigMock struct {

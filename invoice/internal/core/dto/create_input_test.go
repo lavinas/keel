@@ -697,7 +697,7 @@ func TestFormat(t *testing.T) {
 		if dto.Reference != "ref" {
 			t.Errorf("Expected ref, got %s", dto.Reference)
 		}
-		if dto.BusinessNickname != "business_223" { 
+		if dto.BusinessNickname != "business_223" {
 			t.Errorf("Expected business_223, got %s", dto.BusinessNickname)
 		}
 		if dto.CustomerNickname != "custumer_222" {

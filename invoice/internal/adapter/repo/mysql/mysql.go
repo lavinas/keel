@@ -22,8 +22,8 @@ const (
 // Repo is a service to interact with the database Mysql
 type RepoMysql struct {
 	config port.Config
-	db *sql.DB
-	tx *sql.Tx
+	db     *sql.DB
+	tx     *sql.Tx
 }
 
 // NewRepo creates a new Repo service

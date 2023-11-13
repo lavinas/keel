@@ -54,7 +54,7 @@ type CreateInputDto struct {
 
 // Validate validates the InsertInputDto
 func (i *CreateInputDto) Validate() error {
-	execOrder := []func() error {
+	execOrder := []func() error{
 		i.ValidateReference,
 		i.ValidateBusinessNickname,
 		i.ValidateCustomerNickname,
@@ -75,7 +75,7 @@ func (i *CreateInputDto) Validate() error {
 
 // Format formats the InsertInputDto
 func (i *CreateInputDto) Format() error {
-	orderMap := []func() error {
+	orderMap := []func() error{
 		i.FormatReference,
 		i.FormatBusinessNickname,
 		i.FormatCustomerNickname,
@@ -300,4 +300,3 @@ func (i *CreateInputDto) FormatDue() error {
 	i.Due = strings.Trim(i.Due, " ")
 	return nil
 }
-
