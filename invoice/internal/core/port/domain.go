@@ -55,3 +55,14 @@ type InvoiceItem interface {
 	GetAmount() float64
 	GetQuantity() uint64
 }
+
+type InvoiceStatusGraph interface {
+	LoadRepository() error
+	ChangeStatus(class string, status string, description string, author string) error
+	SaveLog() error
+	AddVertex(class, id, name, description string)
+	AddEdge(class, vertexFrom, vertexTo, description string)
+	CheckEdge(class, vertexFrom, vertexTo string) bool
+	EnqueueEdge (class, vertexFrom, vertexTo, description, author string)
+	DequeueEdge (class string) (bool, string, string, string, string, time.Time)
+}

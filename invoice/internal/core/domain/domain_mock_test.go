@@ -76,6 +76,24 @@ func (r *RepoMock) SaveInvoiceItem(item port.InvoiceItem) error {
 	}
 	return nil
 }
+func (r *RepoMock) LoadInvoiceVertex(graph port.InvoiceStatusGraph) error {
+	if r.Status == "loadInvoiceVertexError" {
+		return errors.New("load error")
+	}
+	return nil
+}
+func (r *RepoMock) LoadInvoiceEdge(graph port.InvoiceStatusGraph) error {
+	if r.Status == "loadInvoiceEdgeError" {
+		return errors.New("load error")
+	}
+	return nil
+}
+func (r *RepoMock) LogInvoiceEdge(class string, graph port.InvoiceStatusGraph) error {
+	if r.Status == "logInvoiceEdgeError" {
+		return errors.New("log error")
+	}
+	return nil
+}
 func (r *RepoMock) Close() error {
 	return nil
 }

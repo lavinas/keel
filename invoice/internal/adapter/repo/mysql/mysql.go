@@ -21,7 +21,6 @@ const (
 
 // Repo is a service to interact with the database Mysql
 type RepoMysql struct {
-	config port.Config
 	db     *sql.DB
 	tx     *sql.Tx
 }
@@ -41,7 +40,7 @@ func NewRepoMysql(config port.Config) (*RepoMysql, error) {
 	for i, q := range querieMap {
 		querieMap[i] = strings.Replace(q, "{DB}", dbname, -1)
 	}
-	return &RepoMysql{config: config, db: db}, nil
+	return &RepoMysql{db: db}, nil
 }
 
 // Begin starts a transaction
@@ -203,6 +202,59 @@ func (r *RepoMysql) SaveInvoiceItem(item port.InvoiceItem) error {
 		return err
 	}
 	return nil
+}
+
+// LoadInvoiceVertex loads the invoice status graph vertex
+func (r *RepoMysql) LoadInvoiceVertex(graph port.InvoiceStatusGraph) error {
+	q := querieMap["LoadInvoiceVertex"]
+	rows, err := r.db.Query(q)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var class, id, name, description string
+		err = rows.Scan(&class, &id, &name, &description)
+		if err != nil {
+			return err
+		}
+		graph.AddVertex(class, id, name, description)
+	}
+	return nil
+}
+
+// LoadInvoiceEdge loads the invoice status graph edge
+func (r *RepoMysql) LoadInvoiceEdge(graph port.InvoiceStatusGraph) error {
+	q := querieMap["LoadInvoiceEdge"]
+	rows, err := r.db.Query(q)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var class, vertexFrom, vertexTo, description string
+		err = rows.Scan(&class, &vertexFrom, &vertexTo, &description)
+		if err != nil {
+			return err
+		}
+		graph.AddEdge(class, vertexFrom, vertexTo, description)
+	}
+	return nil
+}
+
+// LogInvoiceEdge logs the invoice status graph edge
+func (r *RepoMysql) LogInvoiceEdge(class string, graph port.InvoiceStatusGraph) error {
+	q := querieMap["LogInvoiceEdge"]
+	for ;; {
+		next, from, to, description, author, createdAt := graph.DequeueEdge(class)
+		if !next {
+			return nil
+		}
+		_, err := r.tx.Exec(q, from, to, description, author, createdAt)
+		if err != nil {
+			return err
+		}
+	}
 }
 
 // Close closes the database connection

@@ -1,82 +1,60 @@
 # INVOICES
 
-CREATE TABLE keel_invoice.invoice_status_vertex(
-    id INT NOT NULL PRIMARY KEY,
-    internal_name VARCHAR(50) NOT NULL UNIQUE,
+CREATE TABLE keel_invoice.invoice_vertex(
+    class VARCHAR(50) NOT NULL,
+    id VARCHAR(50) NOT NULL,
     name VARCHAR(50) NOT NULL,
-    description VARCHAR(500) NULL
+    description VARCHAR(500) NULL,
+    PRIMARY KEY (class, id)
 );
 
-insert into keel_invoice.invoice_status_vertex values (0, 'creating', 'Creating', 'System is creating invoice. Wait please.');
-insert into keel_invoice.invoice_status_vertex values (10, 'consulting', 'Client Consult', 'System is Consulting clients information. Wait please.');
-insert into keel_invoice.invoice_status_vertex values (20, 'waiting_client', 'Waiting Client Data', 'Client information missing. Plase update client information.');
-insert into keel_invoice.invoice_status_vertex values (30, 'created', 'Created', 'Invoice was created sucessfully.');
-insert into keel_invoice.invoice_status_vertex values (40, 'delivered', 'Delivered', 'Invoice was delivered to client.');
-insert into keel_invoice.invoice_status_vertex values (50, 'saw' , 'Saw', 'Invoice was saw by client.');
-insert into keel_invoice.invoice_status_vertex values (60, 'canceled', 'Canceled', 'Invoice was canceled.');
+insert into keel_invoice.invoice_vertex values ('invoice', 'none', 'Started', 'System is started.');
+insert into keel_invoice.invoice_vertex values ('invoice', 'creating', 'Creating', 'System is creating invoice. Wait please.');
+insert into keel_invoice.invoice_vertex values ('invoice', 'consulting', 'Client Consulting', 'System is Consulting clients information. Wait please.');
+insert into keel_invoice.invoice_vertex values ('invoice', 'waiting', 'Waiting Client Data', 'Client information missing. Plase update client information.');
+insert into keel_invoice.invoice_vertex values ('invoice', 'created', 'Created', 'Invoice was created sucessfully.');
+insert into keel_invoice.invoice_vertex values ('invoice', 'delivered', 'Delivered', 'Invoice was delivered to client.');
+insert into keel_invoice.invoice_vertex values ('invoice', 'saw' , 'Saw', 'Invoice was saw by client.');
+insert into keel_invoice.invoice_vertex values ('invoice', 'canceled', 'Canceled', 'Invoice was canceled.');
+insert into keel_invoice.invoice_vertex values ('payment', 'none', 'Started', 'System is started.');
+insert into keel_invoice.invoice_vertex values ('payment', 'opened', 'Opened', 'Waiting payment');
+insert into keel_invoice.invoice_vertex values ('payment', 'underpaid', 'Underpaid', 'Payment was partial paid');
+insert into keel_invoice.invoice_vertex values ('payment', 'paid', 'Paid', 'Payment was received');
+insert into keel_invoice.invoice_vertex values ('payment', 'overpaid', 'Overpaid', 'Payment was overpaid');
+insert into keel_invoice.invoice_vertex values ('payment', 'reversed', 'Reversed', 'Payment was canceled');
 
-
- create table keel_invoice.invoice_status_edge(
-	id INT NOT NULL PRIMARY KEY,
-    from_id INT NULL,
-    to_id INT NOT NULL,
+ create table keel_invoice.invoice_edge(
+    class VARCHAR(50) NOT NULL,
+    from_invoice_vertex_id VARCHAR(50) NOT NULL,
+    to_invoice_vertex_id VARCHAR(50) NOT NULL,
     description VARCHAR(100) NOT NULL,
-    index idx_from_id (from_id),
-    index idx_to_id (to_id),
-    unique (from_id, to_id),
-    FOREIGN KEY (from_id) REFERENCES keel_invoice.invoice_status_vertex(id),
-    FOREIGN KEY (to_id) REFERENCES keel_invoice.invoice_status_vertex(id)
-);
-
-insert into keel_invoice.invoice_status_edge values (1, null, 0, 'creating invoice');
-insert into keel_invoice.invoice_status_edge values (2, 0, 10, 'consulting client information');
-insert into keel_invoice.invoice_status_edge values (3, 10, 20, 'waiting client information');
-insert into keel_invoice.invoice_status_edge values (4, 10, 30, 'created after consulting client information');
-insert into keel_invoice.invoice_status_edge values (5, 20, 30, 'created after client information was updated');
-insert into keel_invoice.invoice_status_edge values (6, 20, 60, 'calceled after waiting client information');
-insert into keel_invoice.invoice_status_edge values (7, 30, 60, 'canceled after created');
-insert into keel_invoice.invoice_status_edge values (8, 30, 40, 'delivered after created');
-insert into keel_invoice.invoice_status_edge values (9, 40, 50, 'saw after delivered');
-insert into keel_invoice.invoice_status_edge values (10, 40, 60, 'canceled after delivered');
-insert into keel_invoice.invoice_status_edge values (11, 50, 60, 'canceled after saw');
-
-
-CREATE TABLE keel_invoice.invoice_payment_status_vertex(
-    id INT NOT NULL PRIMARY KEY,
-    internal_name VARCHAR(50) NOT NULL,
-    name VARCHAR(50) NOT NULL,
-    description VARCHAR(500) NULL
-);
-
-insert into keel_invoice.invoice_payment_status_vertex values (0, 'opened', 'Opened', 'Waiting payment');
-insert into keel_invoice.invoice_payment_status_vertex values (10, 'underpaid', 'Underpaid', 'Payment was partial paid');
-insert into keel_invoice.invoice_payment_status_vertex values (20, 'paid', 'Paid', 'Payment was received');
-insert into keel_invoice.invoice_payment_status_vertex values (30, 'overpaid', 'Overpaid', 'Payment was overpaid');
-insert into keel_invoice.invoice_payment_status_vertex values (40, 'reversed', 'Reversed', 'Payment was canceled');
-
-CREATE TABLE keel_invoice.invoice_payment_status_edge(
-    id INT NOT NULL PRIMARY KEY,
-    from_id INT NULL,
-    to_id INT NOT NULL,
-    description VARCHAR(100) NOT NULL,
-    index idx_from_id (from_id),
-    index idx_to_id (to_id),
-    FOREIGN KEY (from_id) REFERENCES keel_invoice.invoice_payment_status_vertex(id),
-    FOREIGN KEY (to_id) REFERENCES keel_invoice.invoice_payment_status_vertex(id)
+    PRIMARY key (class, from_invoice_vertex_id, to_invoice_vertex_id),
+    FOREIGN KEY (class, from_invoice_vertex_id) REFERENCES keel_invoice.invoice_vertex(class, id),
+    FOREIGN KEY (class, to_invoice_vertex_id) REFERENCES keel_invoice.invoice_vertex(class, id)
 );
 
 
-insert into keel_invoice.invoice_payment_status_edge values (1, null, 0, 'creating invoice');
-insert into keel_invoice.invoice_payment_status_edge values (2, 0, 10, 'partially paid');
-insert into keel_invoice.invoice_payment_status_edge values (3, 0, 20, 'paid');
-insert into keel_invoice.invoice_payment_status_edge values (4, 0, 30, 'overpaid');
-insert into keel_invoice.invoice_payment_status_edge values (5, 10, 20, 'paid after partial payment');
-insert into keel_invoice.invoice_payment_status_edge values (6, 10, 30, 'overpaid after partial payment');
-insert into keel_invoice.invoice_payment_status_edge values (7, 20, 30, 'overpaid after payment');
-insert into keel_invoice.invoice_payment_status_edge values (8, 10, 40, 'reversed after underpayment');
-insert into keel_invoice.invoice_payment_status_edge values (9, 20, 40, 'reversed after payment');
-insert into keel_invoice.invoice_payment_status_edge values (10, 30, 40, 'reversed after overpayment');
-
+insert into keel_invoice.invoice_edge values ('invoice',  'none', 'creating', 'creating invoice');
+insert into keel_invoice.invoice_edge values ('invoice', 'creating', 'consulting', 'consulting client information');
+insert into keel_invoice.invoice_edge values ('invoice', 'consulting', 'waiting', 'waiting client information');
+insert into keel_invoice.invoice_edge values ('invoice', 'consulting', 'created', 'created after consulting client information');
+insert into keel_invoice.invoice_edge values ('invoice', 'waiting', 'created', 'created after client information was updated');
+insert into keel_invoice.invoice_edge values ('invoice', 'waiting', 'canceled', 'calceled after waiting client information');
+insert into keel_invoice.invoice_edge values ('invoice', 'created', 'canceled', 'canceled after created');
+insert into keel_invoice.invoice_edge values ('invoice', 'created', 'delivered', 'delivered after created');
+insert into keel_invoice.invoice_edge values ('invoice', 'delivered', 'saw', 'saw after delivered');
+insert into keel_invoice.invoice_edge values ('invoice', 'delivered', 'canceled', 'canceled after delivered');
+insert into keel_invoice.invoice_edge values ('invoice', 'saw', 'canceled', 'canceled after saw');
+insert into keel_invoice.invoice_edge values ('payment',  'none', 'opened', 'creating invoice');
+insert into keel_invoice.invoice_edge values ('payment', 'opened', 'underpaid', 'partially paid');
+insert into keel_invoice.invoice_edge values ('payment', 'opened', 'paid', 'paid');
+insert into keel_invoice.invoice_edge values ('payment', 'opened', 'overpaid', 'overpaid');
+insert into keel_invoice.invoice_edge values ('payment', 'underpaid', 'paid', 'paid after partial payment');
+insert into keel_invoice.invoice_edge values ('payment', 'underpaid', 'overpaid', 'overpaid after partial payment');
+insert into keel_invoice.invoice_edge values ('payment', 'paid', 'overpaid', 'overpaid after payment');
+insert into keel_invoice.invoice_edge values ('payment', 'underpaid', 'reversed', 'reversed after underpayment');
+insert into keel_invoice.invoice_edge values ('payment', 'paid', 'reversed', 'reversed after payment');
+insert into keel_invoice.invoice_edge values ('payment', 'overpaid', 'reversed', 'reversed after overpayment');
 
 CREATE TABLE keel_invoice.invoice_note(
     id VARCHAR(50) NOT NULL PRIMARY KEY,
@@ -106,24 +84,18 @@ CREATE TABLE keel_invoice.invoice_client(
 
 CREATE TABLE keel_invoice.invoice(
     id VARCHAR(50) NOT NULL PRIMARY KEY,
-    reference VARCHAR(10) NOT NULL UNIQUE,
     business_id VARCHAR(50) NOT NULL,
+    reference VARCHAR(10) NOT NULL UNIQUE,
     customer_id VARCHAR(50) NOT NULL,
     amount DECIMAL(20, 2) NOT NULL,
     date DATE NOT NULL,
     due DATE NOT NULL,
     note_id VARCHAR(50) NULL,
-    invoice_status_vertex_id INT NOT NULL,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL,
-    INDEX idx_reference (reference ASC),
-    INDEX idx_business_id (business_id ASC),
-    INDEX idx_customer_id (customer_id ASC),
-    INDEX idx_date (date ASC),
-    INDEX idx_due (due ASC),
-    INDEX idx_invoice_status_vertex_id (invoice_status_vertex_id ASC),
-    INDEX idx_note_id (note_id ASC),
-    FOREIGN KEY (invoice_status_vertex_id) REFERENCES keel_invoice.invoice_status_vertex(id),
+    invoice_vertex_class VARCHAR(50) NOT NULL,
+    invoice_vertex_id VARCHAR(50) NOT NULL,
+    FOREIGN KEY (invoice_vertex_class, invoice_vertex_id) REFERENCES keel_invoice.invoice_vertex(class, id),
     FOREIGN KEY (note_id) REFERENCES keel_invoice.invoice_note (id),
     FOREIGN KEY (business_id) REFERENCES keel_invoice.invoice_client (id),
     FOREIGN KEY (customer_id) REFERENCES keel_invoice.invoice_client (id)
@@ -162,28 +134,16 @@ create table keel_invoice.invoice_delivery(
     FOREIGN KEY (invoice_id) REFERENCES keel_invoice.invoice(id)
 );
 
-create table keel_invoice.invoice_status_log(
-    id int not null primary key,
+create table keel_invoice.invoice_edge_log(
+    id varchar(50) not null primary key,
     invoice_id varchar(50) not null,
-    invoice_status_edge_id int not null,
+    class VARCHAR(50) NOT NULL,
+    from_invoice_vertex_id VARCHAR(50) NOT NULL,
+    to_invoice_vertex_id VARCHAR(50) NOT NULL,
     created_at timestamp not null,
     author varchar(100) null,
     description varchar(500) null,
     INDEX idx_invoice_id (invoice_id ASC),
-    INDEX idx_invoice_status_edge_id (invoice_status_edge_id ASC),
     FOREIGN KEY (invoice_id) REFERENCES keel_invoice.invoice(id),
-    FOREIGN KEY (invoice_status_edge_id) REFERENCES keel_invoice.invoice_status_edge(id)
-);
-
-create table keel_invoice.invoice_payment_status_log (
-    id int not null primary key,
-    invoice_id varchar(50) not null,
-    invoice_payment_status_edge_id int not null,
-    created_at timestamp not null,
-    author varchar(100) null,
-    description varchar(500) null,
-    INDEX idx_invoice_id (invoice_id ASC),
-    INDEX idx_invoice_payment_status_edge_id (invoice_payment_status_edge_id ASC),
-    FOREIGN KEY (invoice_id) REFERENCES keel_invoice.invoice(id),
-    FOREIGN KEY (invoice_payment_status_edge_id) REFERENCES keel_invoice.invoice_payment_status_edge(id)
+    FOREIGN KEY (class, from_invoice_vertex_id, to_invoice_vertex_id) REFERENCES keel_invoice.invoice_edge(class, from_invoice_vertex_id, to_invoice_vertex_id)
 );

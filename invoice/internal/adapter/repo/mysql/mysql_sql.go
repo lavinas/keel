@@ -12,5 +12,8 @@ var (
 		"TruncateInvoiceItem":   "DELETE FROM {DB}.invoice_item;",
 		"IsDuplicatedInvoice":   "SELECT COUNT(*) count FROM {DB}.invoice WHERE reference = ?;",
 		"GetInvoiceClient":      "SELECT id, nickname, client_id, name, document, phone, email, created_at FROM {DB}.invoice_client WHERE nickname = ? and created_at >= ? order by created_at desc limit 1;",
+		"LoadInvoiceVertex":     "SELECT class, id, name, description FROM {DB}.invoice_status_vertex;",
+		"LoadInvoiceEdge":       "SELECT class, vertex_from, vertex_to, description FROM {DB}.invoice_status_edge;",
+		"LogInvoiceEdge":        "INSERT INTO {DB}.invoice_status_edge_log (vertex_from, vertex_to, description, author, created_at) VALUES (?, ?, ?, ?, ?);",
 	}
 )
