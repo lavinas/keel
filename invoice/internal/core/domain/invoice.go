@@ -22,6 +22,7 @@ var (
 // Invoice is the domain model for a invoice
 type Invoice struct {
 	repo      port.Repo
+	status    *InvoiceStatusGraph
 	id        string
 	reference string
 	business  port.InvoiceClient
@@ -39,6 +40,7 @@ type Invoice struct {
 func NewInvoice(repo port.Repo) *Invoice {
 	return &Invoice{
 		repo: repo,
+		status: NewInvoiceGraph(repo),
 	}
 }
 
