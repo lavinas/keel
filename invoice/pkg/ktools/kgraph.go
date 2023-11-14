@@ -25,7 +25,7 @@ type edgeLog struct {
 	vertexFrom  string
 	vertexTo    string
 	description string
-	author	    string
+	author      string
 	createdAt   time.Time
 }
 
@@ -69,20 +69,20 @@ func (g *KGraph) CheckEdge(class, vertexFrom, vertexTo string) bool {
 	return ok
 }
 
-func (g *KGraph) EnqueueEdge (class, vertexFrom, vertexTo, description, author string) {
+func (g *KGraph) EnqueueEdge(class, vertexFrom, vertexTo, description, author string) {
 	edgeLog := &edgeLog{
 		class:       class,
 		vertexFrom:  vertexFrom,
 		vertexTo:    vertexTo,
 		description: description,
-		author: 	author,
+		author:      author,
 		createdAt:   time.Now(),
 	}
 	g.edgeLog[class] = append(g.edgeLog[class], edgeLog)
 }
 
 // GetEdgeLog
-func (g *KGraph) DequeueEdge (class string) (bool, string, string, string, string, time.Time) {
+func (g *KGraph) DequeueEdge(class string) (bool, string, string, string, string, time.Time) {
 	if len(g.edgeLog[class]) == 0 {
 		return false, "", "", "", "", time.Time{}
 	}

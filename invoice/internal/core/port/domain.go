@@ -63,6 +63,6 @@ type InvoiceStatusGraph interface {
 	AddVertex(class, id, name, description string)
 	AddEdge(class, vertexFrom, vertexTo, description string)
 	CheckEdge(class, vertexFrom, vertexTo string) bool
-	EnqueueEdge (class, vertexFrom, vertexTo, description, author string)
-	DequeueEdge (class string) (bool, string, string, string, string, time.Time)
+	EnqueueEdge(class, vertexFrom, vertexTo, description, author string)
+	DequeueEdge(class string) (bool, string, string, string, string, time.Time)
 }

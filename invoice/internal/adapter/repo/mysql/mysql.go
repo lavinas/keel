@@ -21,8 +21,8 @@ const (
 
 // Repo is a service to interact with the database Mysql
 type RepoMysql struct {
-	db     *sql.DB
-	tx     *sql.Tx
+	db *sql.DB
+	tx *sql.Tx
 }
 
 // NewRepo creates a new Repo service
@@ -245,7 +245,7 @@ func (r *RepoMysql) LoadInvoiceEdge(graph port.InvoiceStatusGraph) error {
 // LogInvoiceEdge logs the invoice status graph edge
 func (r *RepoMysql) LogInvoiceEdge(class string, graph port.InvoiceStatusGraph) error {
 	q := querieMap["LogInvoiceEdge"]
-	for ;; {
+	for {
 		next, from, to, description, author, createdAt := graph.DequeueEdge(class)
 		if !next {
 			return nil
