@@ -70,6 +70,54 @@ func (i *InvoiceClientMock) IsNew() bool {
 	return true
 }
 
+// Invoice Status Vertex Mock
+type InvoiceStatusMock struct {
+	vertex      []string
+	edge        []string
+	dequeuCount int
+}
+
+func NewInvoiceStatusMock() *InvoiceStatusMock {
+	return &InvoiceStatusMock{
+		vertex:      make([]string, 0),
+		edge:        make([]string, 0),
+		dequeuCount: 0,
+	}
+}
+func (i *InvoiceStatusMock) AddVertex(class, id, name, description string) {
+	i.vertex = append(i.vertex, id)
+}
+func (i *InvoiceStatusMock) AddEdge(class, vertexFrom, vertexTo, description string) {
+	i.edge = append(i.edge, vertexFrom)
+}
+func (i *InvoiceStatusMock) CheckEdge(class, vertexFrom, vertexTo string) bool {
+	return true
+}
+func (i *InvoiceStatusMock) EnqueueEdge(id, class, vertexFrom, vertexTo, description, author string) {
+}
+func (i *InvoiceStatusMock) DequeueEdge(class string) (bool, string, string, string, string, string, time.Time) {
+	if i.dequeuCount >= 0 {
+		return false, "", "", "", "", "", time.Now()
+	}
+	i.dequeuCount++
+	return true, "id", "none", "getting", "description", "author", time.Now()
+}
+func (i *InvoiceStatusMock) LoadRepository() error {
+	return nil
+}
+func (i *InvoiceStatusMock) Change(class string, status string, description string, author string) error {
+	return nil
+}
+func (i *InvoiceStatusMock) Save() error {
+	return nil
+}
+func (i *InvoiceStatusMock) GetInvoiceId() string {
+	return "id"
+}
+func (i *InvoiceStatusMock) GetLastStatusId(class string) string {
+	return "none"
+}
+
 // Invoice mock
 type InvoiceMock struct {
 }

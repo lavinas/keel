@@ -20,7 +20,8 @@ type edge struct {
 	description string
 }
 
-type edgeLog struct {
+type edgeQueueItem struct {
+	id          string
 	class       string
 	vertexFrom  string
 	vertexTo    string
@@ -33,12 +34,16 @@ type edgeLog struct {
 type KGraph struct {
 	vertexMap map[string]*vertex
 	edgeMap   map[string]*edge
-	edgeLog   map[string][]*edgeLog
+	edgeQueue map[string][]*edgeQueueItem
 }
 
 // NewKGraph creates a new graph of the status of an invoice
 func NewKGraph() *KGraph {
-	return &KGraph{}
+	return &KGraph{
+		vertexMap: make(map[string]*vertex),
+		edgeMap:   make(map[string]*edge),
+		edgeQueue: make(map[string][]*edgeQueueItem),
+	}
 }
 
 // AddVertex adds a new vertex to the graph
@@ -69,8 +74,9 @@ func (g *KGraph) CheckEdge(class, vertexFrom, vertexTo string) bool {
 	return ok
 }
 
-func (g *KGraph) EnqueueEdge(class, vertexFrom, vertexTo, description, author string) {
-	edgeLog := &edgeLog{
+func (g *KGraph) EnqueueEdge(id, class, vertexFrom, vertexTo, description, author string) {
+	edgeLog := &edgeQueueItem{
+		id:          id,
 		class:       class,
 		vertexFrom:  vertexFrom,
 		vertexTo:    vertexTo,
@@ -78,15 +84,15 @@ func (g *KGraph) EnqueueEdge(class, vertexFrom, vertexTo, description, author st
 		author:      author,
 		createdAt:   time.Now(),
 	}
-	g.edgeLog[class] = append(g.edgeLog[class], edgeLog)
+	g.edgeQueue[class] = append(g.edgeQueue[class], edgeLog)
 }
 
 // GetEdgeLog
-func (g *KGraph) DequeueEdge(class string) (bool, string, string, string, string, time.Time) {
-	if len(g.edgeLog[class]) == 0 {
-		return false, "", "", "", "", time.Time{}
+func (g *KGraph) DequeueEdge(class string) (bool, string, string, string, string, string, time.Time) {
+	if len(g.edgeQueue[class]) == 0 {
+		return false, "", "", "", "", "", time.Time{}
 	}
-	edgeLog := g.edgeLog[class][0]
-	g.edgeLog[class] = g.edgeLog[class][1:]
-	return true, edgeLog.class, edgeLog.vertexFrom, edgeLog.vertexTo, edgeLog.description, edgeLog.createdAt
+	item := g.edgeQueue[class][0]
+	g.edgeQueue[class] = g.edgeQueue[class][1:]
+	return true, item.id, item.vertexFrom, item.vertexTo, item.description, item.author, item.createdAt
 }

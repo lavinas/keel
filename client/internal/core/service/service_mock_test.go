@@ -13,6 +13,7 @@ import (
 // Config Mock
 type ConfigMock struct {
 }
+
 func (c *ConfigMock) Get(param string) string {
 	return os.Getenv(param)
 }

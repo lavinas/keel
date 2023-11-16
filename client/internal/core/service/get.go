@@ -58,7 +58,7 @@ func (s *Get) load(param string, paramType string) (bool, error) {
 	if reflect.TypeOf(f) == reflect.TypeOf(s.client.LoadByDoc) {
 		iparam, err := strconv.ParseUint(param, 10, 64)
 		if err != nil {
-			s.log.Info("bad request: param should be a number - param" + param + " - paramType: " + paramType) 
+			s.log.Info("bad request: param should be a number - param" + param + " - paramType: " + paramType)
 			return false, errors.New("bad request: param should be a number")
 		}
 		return f.(func(uint64) (bool, error))(iparam)

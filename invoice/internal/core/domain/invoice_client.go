@@ -77,7 +77,12 @@ func (i *InvoiceClient) Save() error {
 
 // Update updates the invoice client on the repository
 func (i *InvoiceClient) Update() error {
-	return i.repo.UpdateInvoiceClient(i)
+	i.repo.Begin()
+	defer i.repo.Rollback()
+	if err := i.repo.UpdateInvoiceClient(i); err != nil {
+		return err
+	}
+	return i.repo.Commit()
 }
 
 // GetId returns the id of invoice client

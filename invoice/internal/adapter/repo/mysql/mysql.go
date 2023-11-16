@@ -124,8 +124,9 @@ func (r *RepoMysql) SaveInvoiceClient(client port.InvoiceClient) error {
 	return nil
 }
 
-func (r *RepoMysql) GetLastInvoiceClient(nickname string, created_after time.Time,
-	client port.InvoiceClient) (bool, error) {
+
+// GetLastInvoiceClient gets the last invoice client on the repository
+func (r *RepoMysql) GetLastInvoiceClient(nickname string, created_after time.Time, client port.InvoiceClient) (bool, error) {
 	if r.db == nil {
 		return false, errors.New("sql: database is closed")
 	}
@@ -178,8 +179,7 @@ func (r *RepoMysql) SaveInvoice(invoice port.Invoice) error {
 	q := querieMap["SaveInvoice"]
 	i := invoice
 	_, err := r.tx.Exec(q, i.GetId(), i.GetReference(), i.GetBusinessId(), i.GetCustomerId(),
-		i.GetAmount(), i.GetDate(), i.GetDue(), i.GetNoteId(), i.GetStatusId(),
-		i.GetCreatedAt(), i.GetUpdatedAt())
+		i.GetAmount(), i.GetDate(), i.GetDue(), i.GetNoteId(), i.GetCreatedAt(), i.GetUpdatedAt())
 	if err != nil {
 		return err
 	}
@@ -205,8 +205,8 @@ func (r *RepoMysql) SaveInvoiceItem(item port.InvoiceItem) error {
 }
 
 // LoadInvoiceVertex loads the invoice status graph vertex
-func (r *RepoMysql) LoadInvoiceVertex(graph port.InvoiceStatusGraph) error {
-	q := querieMap["LoadInvoiceVertex"]
+func (r *RepoMysql) GetInvoiceVertex(graph port.InvoiceStatus) error {
+	q := querieMap["GetInvoiceVertex"]
 	rows, err := r.db.Query(q)
 	if err != nil {
 		return err
@@ -224,8 +224,8 @@ func (r *RepoMysql) LoadInvoiceVertex(graph port.InvoiceStatusGraph) error {
 }
 
 // LoadInvoiceEdge loads the invoice status graph edge
-func (r *RepoMysql) LoadInvoiceEdge(graph port.InvoiceStatusGraph) error {
-	q := querieMap["LoadInvoiceEdge"]
+func (r *RepoMysql) GetInvoiceEdge(graph port.InvoiceStatus) error {
+	q := querieMap["GetInvoiceEdge"]
 	rows, err := r.db.Query(q)
 	if err != nil {
 		return err
@@ -243,18 +243,48 @@ func (r *RepoMysql) LoadInvoiceEdge(graph port.InvoiceStatusGraph) error {
 }
 
 // LogInvoiceEdge logs the invoice status graph edge
-func (r *RepoMysql) LogInvoiceEdge(class string, graph port.InvoiceStatusGraph) error {
-	q := querieMap["LogInvoiceEdge"]
+func (r *RepoMysql) CreateInvoiceStatusLog(class string, graph port.InvoiceStatus) error {
+	if r.tx == nil {
+		return errors.New("transaction not started")
+	}
+	if r.db == nil {
+		return errors.New("sql: database is closed")
+	}
+	q := querieMap["CreateInvoiceStatusLog"]
+	invoice_id := graph.GetInvoiceId()
 	for {
-		next, from, to, description, author, createdAt := graph.DequeueEdge(class)
+		next, id, from, to, description, author, createdAt := graph.DequeueEdge(class)
 		if !next {
 			return nil
 		}
-		_, err := r.tx.Exec(q, from, to, description, author, createdAt)
+		_, err := r.tx.Exec(q, id, invoice_id, class, from, to, createdAt, description, author)
 		if err != nil {
 			return err
 		}
 	}
+}
+
+// StoreInvoiceStatus stores the invoice status graph. If exists, updates. If not, creates.
+func (r *RepoMysql) StoreInvoiceStatus(class string, graph port.InvoiceStatus) error {
+	if r.tx == nil {
+		return errors.New("transaction not started")
+	}
+	if r.db == nil {
+		return errors.New("sql: database is closed")
+	}
+	q := querieMap["UpdateInvoiceStatus"]
+	count, err := r.tx.Exec(q, graph.GetLastStatusId(class), graph.GetInvoiceId(), class)
+	if err != nil {
+		return err
+	}
+	if c, _ := count.RowsAffected(); c == 0 {
+		q := querieMap["CreateInvoiceStatus"]
+		_, err := r.tx.Exec(q, graph.GetInvoiceId(), class, graph.GetLastStatusId(class))
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // Close closes the database connection
@@ -267,31 +297,30 @@ func (r *RepoMysql) Close() error {
 	return err
 }
 
-// TruncateInvoiceClient cleans the invoice client table
-func (r *RepoMysql) TruncateInvoiceItem() error {
-	return r.truncate("TruncateInvoiceItem")
-}
-
-// TruncateInvoiceClient cleans the invoice client table
-func (r *RepoMysql) TruncateInvoice() error {
-	return r.truncate("TruncateInvoice")
-}
-
-// TruncateInvoiceClient cleans the invoice client table
-func (r *RepoMysql) TruncateInvoiceClient() error {
-	return r.truncate("TruncateInvoiceClient")
-}
-
-// truncate cleans a table
-func (r *RepoMysql) truncate(querieName string) error {
-	if r.tx == nil {
-		return errors.New("transaction not started")
+// Truncate deletes the database operational data
+func (r *RepoMysql) Truncate() error {
+	tables := []string{
+		"invoice_item",
+		"invoice_status_log",
+		"invoice_status",
+		"invoice_payment",
+		"invoice_delivery",
+		"invoice",
+		"invoice_client",
+		"invoice_note",
 	}
-	if r.db == nil {
-		return errors.New("sql: database is closed")
+	if err := r.Begin(); err != nil {
+		return err
 	}
-	_, err := r.tx.Exec(querieMap[querieName])
-	if err != nil {
+	defer r.Rollback()
+	for _, table := range tables {
+		q := strings.Replace(querieMap["Truncate"], "{TABLE}", table, -1)
+		_, err := r.tx.Exec(q)
+		if err != nil {
+			return err
+		}
+	}
+	if err := r.Commit(); err != nil {
 		return err
 	}
 	return nil

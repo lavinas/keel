@@ -63,7 +63,6 @@ func (r *RepoMock) UpdateInvoiceClient(client port.InvoiceClient) error {
 	}
 	return nil
 }
-
 func (r *RepoMock) SaveInvoice(invoice port.Invoice) error {
 	if r.Status == "saveInvoiceError" {
 		return errors.New("save error")
@@ -76,21 +75,27 @@ func (r *RepoMock) SaveInvoiceItem(item port.InvoiceItem) error {
 	}
 	return nil
 }
-func (r *RepoMock) LoadInvoiceVertex(graph port.InvoiceStatusGraph) error {
+func (r *RepoMock) GetInvoiceVertex(graph port.InvoiceStatus) error {
 	if r.Status == "loadInvoiceVertexError" {
 		return errors.New("load error")
 	}
 	return nil
 }
-func (r *RepoMock) LoadInvoiceEdge(graph port.InvoiceStatusGraph) error {
+func (r *RepoMock) GetInvoiceEdge(graph port.InvoiceStatus) error {
 	if r.Status == "loadInvoiceEdgeError" {
 		return errors.New("load error")
 	}
 	return nil
 }
-func (r *RepoMock) LogInvoiceEdge(class string, graph port.InvoiceStatusGraph) error {
-	if r.Status == "logInvoiceEdgeError" {
+func (r *RepoMock) CreateInvoiceStatusLog(class string, graph port.InvoiceStatus) error {
+	if r.Status == "insertInvoiceStatusLogError" {
 		return errors.New("log error")
+	}
+	return nil
+}
+func (r *RepoMock) StoreInvoiceStatus(class string, graph port.InvoiceStatus) error {
+	if r.Status == "storeInvoiceStatusError" {
+		return errors.New("store error")
 	}
 	return nil
 }

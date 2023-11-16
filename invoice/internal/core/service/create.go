@@ -11,6 +11,7 @@ import (
 
 // Create is a service that creates a new invoice
 type Create struct {
+	repo     port.Repo
 	log      port.Log
 	consumer port.RestConsumer
 	invoice  port.Invoice
@@ -19,18 +20,19 @@ type Create struct {
 }
 
 // NewCreate is a factory that creates a new Create service
-func NewCreate(log port.Log, consumer port.RestConsumer, invoice port.Invoice, input port.CreateInputDto, output port.CreateOutputDto) *Create {
+func NewCreate(repo port.Repo, log port.Log, consumer port.RestConsumer, invoice port.Invoice) *Create {
 	return &Create{
+		repo:    repo,
 		log:      log,
 		consumer: consumer,
 		invoice:  invoice,
-		input:    input,
-		output:   output,
 	}
 }
 
 // Execute is a method that executes the service
-func (s *Create) Execute() error {
+func (s *Create) Execute(input port.CreateInputDto, output port.CreateOutputDto) error {
+	s.input = input
+	s.output = output
 	execOrder := []func() error{
 		s.formatInput,
 		s.loadDomain,

@@ -9,39 +9,32 @@ import (
 )
 
 var (
-	status_map = map[string]uint{
-		"New":       0,
-		"Open":      1,
-		"Sent":      2,
-		"Paid":      3,
-		"Cancelled": 4,
-	}
 	client_expiration_seconds = 60 * 60 * 24 * 30
 )
 
 // Invoice is the domain model for a invoice
 type Invoice struct {
 	repo      port.Repo
-	status    *InvoiceStatusGraph
+	status    *InvoiceStatus
 	id        string
 	reference string
-	business  port.InvoiceClient
-	customer  port.InvoiceClient
+	business  *InvoiceClient
+	customer  *InvoiceClient
 	amount    float64
 	date      time.Time
 	due       time.Time
-	status_id uint
-	items     []port.InvoiceItem
+	items     []*InvoiceItem
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
 
 // NewInvoice creates a new invoice
 func NewInvoice(repo port.Repo) *Invoice {
-	return &Invoice{
-		repo: repo,
-		status: NewInvoiceGraph(repo),
-	}
+	invoice := &Invoice{repo: repo}
+	status := NewInvoiceGraph(repo, invoice)
+	status.LoadRepository()
+	invoice.status = status
+	return invoice
 }
 
 // Load loads a invoice from input
@@ -55,7 +48,8 @@ func (i *Invoice) Load(input port.CreateInputDto) error {
 		i.loadItems(input.GetItems())); err != nil {
 		return err
 	}
-	i.status_id = status_map["New"]
+	i.status.Change(INVOICE_CLASS, INVOICE_GETTING_CLIENT, "", "")
+	i.status.Change(PAYMENT_CLASS, PAYMENT_OPENED, "", "")
 	i.CreatedAt = time.Now()
 	i.UpdatedAt = time.Now()
 	return nil
@@ -73,21 +67,19 @@ func (i *Invoice) SetAmount(amount float64) {
 
 // Save stores the invoice on the repository
 func (i *Invoice) Save() error {
-	if err := i.repo.Begin(); err != nil {
-		return err
+	execOrder := []func() error{
+		i.repo.Begin,
+		i.saveClients,
+		i.saveInvoice,
+		i.status.Save,
+		i.saveItems,
+		i.repo.Commit,
 	}
 	defer i.repo.Rollback()
-	if err := i.saveClients(); err != nil {
-		return err
-	}
-	if err := i.repo.SaveInvoice(i); err != nil {
-		return err
-	}
-	if err := i.saveItems(); err != nil {
-		return err
-	}
-	if err := i.repo.Commit(); err != nil {
-		return err
+	for _, exec := range execOrder {
+		if err := exec(); err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -143,7 +135,7 @@ func (i *Invoice) GetNoteId() *string {
 
 // GetStatusId returns the status id of invoice
 func (i *Invoice) GetStatusId() uint {
-	return i.status_id
+	return 1
 }
 
 // GetCreatedAt returns the created at of invoice
@@ -215,6 +207,11 @@ func (i *Invoice) loadItems(inputItems []port.CreateInputItemDto) error {
 		i.items = append(i.items, item)
 	}
 	return nil
+}
+
+// saveInvoice saves the invoice on the repository
+func (i *Invoice) saveInvoice() error {
+	return i.repo.SaveInvoice(i)
 }
 
 // saveClients saves the clients (business and customer) on the repository

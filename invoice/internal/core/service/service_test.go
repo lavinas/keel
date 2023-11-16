@@ -5,7 +5,7 @@ import (
 )
 
 func TestServiceCreate(t *testing.T) {
-	s := NewService(&LogMock{}, &RestConsumerMock{}, &DomainMock{})
+	s := NewService(&RepoMock{}, &LogMock{}, &RestConsumerMock{}, &DomainMock{})
 	t.Run("should create without errors", func(t *testing.T) {
 		i := CreateInputDtoMock{}
 		o := CreateOutputDtoMock{}

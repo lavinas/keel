@@ -14,7 +14,7 @@ const (
 
 // Find is the service used to list all clients
 type Find struct {
-	config port.Config
+	config  port.Config
 	log     port.Log
 	clients port.ClientSet
 }
@@ -22,7 +22,7 @@ type Find struct {
 // NewFind creates a new Find
 func NewFind(config port.Config, log port.Log, clients port.ClientSet) *Find {
 	return &Find{
-		config: config,
+		config:  config,
 		log:     log,
 		clients: clients,
 	}

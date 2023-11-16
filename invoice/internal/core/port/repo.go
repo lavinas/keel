@@ -14,8 +14,9 @@ type Repo interface {
 	UpdateInvoiceClient(client InvoiceClient) error
 	SaveInvoice(invoice Invoice) error
 	SaveInvoiceItem(item InvoiceItem) error
-	LoadInvoiceVertex(graph InvoiceStatusGraph) error
-	LoadInvoiceEdge(graph InvoiceStatusGraph) error
-	LogInvoiceEdge(class string, graph InvoiceStatusGraph) error
+	GetInvoiceVertex(graph InvoiceStatus) error
+	GetInvoiceEdge(graph InvoiceStatus) error
+	StoreInvoiceStatus(class string, graph InvoiceStatus) error
+	CreateInvoiceStatusLog(class string, graph InvoiceStatus) error
 	Close() error
 }

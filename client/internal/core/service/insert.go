@@ -24,7 +24,7 @@ func NewInsert(log port.Log, client port.Client) *Insert {
 
 // Execute executes the service
 func (s *Insert) Execute(input port.InsertInputDto, output port.InsertOutputDto) error {
-	execOrder := []func(port.InsertInputDto) error{	
+	execOrder := []func(port.InsertInputDto) error{
 		s.validateInput,
 		s.loadClient,
 		s.duplicity,

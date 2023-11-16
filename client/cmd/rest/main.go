@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/lavinas/keel/client/internal/adapter/hdlr/rest"
 	"github.com/lavinas/keel/client/internal/adapter/hdlr/config"
+	"github.com/lavinas/keel/client/internal/adapter/hdlr/rest"
 	"github.com/lavinas/keel/client/internal/adapter/repo/mysql"
 	"github.com/lavinas/keel/client/pkg/log"
 

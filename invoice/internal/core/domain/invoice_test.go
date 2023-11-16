@@ -37,9 +37,6 @@ func TestInvoiceLoad(t *testing.T) {
 			if invoice.due != time.Date(2023, 10, 20, 0, 0, 0, 0, time.UTC) {
 				t.Errorf("expected 2023-10-20, got %v", invoice.due)
 			}
-			if invoice.status_id != 0 {
-				t.Errorf("expected status id, got empty")
-			}
 			if invoice.items == nil {
 				t.Errorf("expected items, got nil")
 			}
@@ -349,7 +346,6 @@ func TestInvoiceGetStatusId(t *testing.T) {
 	t.Run("should return status id", func(t *testing.T) {
 		repo := new(RepoMock)
 		invoice := NewInvoice(repo)
-		invoice.status_id = 1
 		if invoice.GetStatusId() != 1 {
 			t.Errorf("expected status id, got empty")
 		}

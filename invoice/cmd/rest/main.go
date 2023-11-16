@@ -26,7 +26,7 @@ func main() {
 	defer r.Close()
 	c := restconsumer.NewRestConsumer(g)
 	d := domain.NewDomain(r)
-	s := service.NewService(l, c, d)
+	s := service.NewService(r, l, c, d)
 	h := rest.NewHandlerRest(l, s)
 	h.Run()
 }

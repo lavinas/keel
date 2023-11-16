@@ -68,7 +68,7 @@ func TestInsert(t *testing.T) {
 			t.Errorf("Invalid result: %v", w.Body.String())
 		}
 	})
-		// Test parameters error - bad request
+	// Test parameters error - bad request
 	t.Run("should return error when invalid params", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		ctx := GetTestGinContext(w)

@@ -93,7 +93,7 @@ func TestGetExecute(t *testing.T) {
 		if err == nil {
 			t.Errorf("Error should not be nil")
 		}
-		if err != nil && !strings.Contains(err.Error(), "no content")  {
+		if err != nil && !strings.Contains(err.Error(), "no content") {
 			t.Errorf("expected no content error, got %s", err.Error())
 		}
 	})

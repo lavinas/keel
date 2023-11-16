@@ -90,4 +90,3 @@ func (f *FindOutputDtoMock) Append(id, name, nick, doc, phone, email string) {
 func (f *FindOutputDtoMock) Count() int {
 	return len(f.Clients)
 }
-
