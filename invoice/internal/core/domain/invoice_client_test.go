@@ -1,16 +1,17 @@
-package domain
+package domain_test
 
 import (
 	"testing"
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/lavinas/keel/invoice/internal/core/domain"
 )
 
 func TestInvoiceClientLoad(t *testing.T) {
 	t.Run("should load invoice client", func(t *testing.T) {
 		repo := new(RepoMock)
-		client := NewInvoiceClient(repo)
+		client := domain.NewInvoiceClient(repo)
 		client.Load("", "nickname", "clientId", "name", "email", 123456789, 123456789, time.Time{})
 		_, err := uuid.Parse(client.GetId())
 		if err != nil {
@@ -40,7 +41,7 @@ func TestInvoiceClientLoad(t *testing.T) {
 	})
 	t.Run("should load id and created_at on load invoice client", func(t *testing.T) {
 		repo := new(RepoMock)
-		client := NewInvoiceClient(repo)
+		client := domain.NewInvoiceClient(repo)
 		client.Load(uuid.NewString(), "nickname", "clientId", "name", "email", 123456789, 123456789, time.Now())
 		_, err := uuid.Parse(client.GetId())
 		if err != nil {
@@ -55,7 +56,7 @@ func TestInvoiceClientLoad(t *testing.T) {
 func TestInvoiceClientSave(t *testing.T) {
 	t.Run("should save invoice client", func(t *testing.T) {
 		repo := new(RepoMock)
-		client := NewInvoiceClient(repo)
+		client := domain.NewInvoiceClient(repo)
 		client.Load("", "nickname", "clientId", "name", "email", 123456789, 123456789, time.Time{})
 		if err := client.Save(); err != nil {
 			t.Errorf("error on save")
@@ -64,7 +65,7 @@ func TestInvoiceClientSave(t *testing.T) {
 	t.Run("should return error on save", func(t *testing.T) {
 		repo := new(RepoMock)
 		repo.Status = "saveInvoiceClientError"
-		client := NewInvoiceClient(repo)
+		client := domain.NewInvoiceClient(repo)
 		client.Load("", "nickname", "clientId", "name", "email", 123456789, 123456789, time.Time{})
 		if err := client.Save(); err == nil {
 			t.Errorf("should not be nil")
@@ -76,7 +77,7 @@ func TestInvoiceClientSave(t *testing.T) {
 func TestInvoiceClientUpdate(t *testing.T) {
 	t.Run("should update invoice client", func(t *testing.T) {
 		repo := new(RepoMock)
-		client := NewInvoiceClient(repo)
+		client := domain.NewInvoiceClient(repo)
 		client.Load("", "nickname", "clientId", "name", "email", 123456789, 123456789, time.Time{})
 		if err := client.Update(); err != nil {
 			t.Errorf("error on update")
@@ -85,7 +86,7 @@ func TestInvoiceClientUpdate(t *testing.T) {
 	t.Run("should return error on update", func(t *testing.T) {
 		repo := new(RepoMock)
 		repo.Status = "updateInvoiceClientError"
-		client := NewInvoiceClient(repo)
+		client := domain.NewInvoiceClient(repo)
 		client.Load("", "nickname", "clientId", "name", "email", 123456789, 123456789, time.Time{})
 		if err := client.Update(); err == nil {
 			t.Errorf("should not be nil")
@@ -96,7 +97,7 @@ func TestInvoiceClientUpdate(t *testing.T) {
 func TestInvoiceClientLoadGetClientNicknameDto(t *testing.T) {
 	t.Run("should load get client nickname dto", func(t *testing.T) {
 		repo := new(RepoMock)
-		client := NewInvoiceClient(repo)
+		client := domain.NewInvoiceClient(repo)
 		input := new(GetClientByNicknameInputDtoMock)
 		if err := client.LoadGetClientNicknameDto(input); err != nil {
 			t.Errorf("error on load get client nickname dto")
@@ -105,7 +106,7 @@ func TestInvoiceClientLoadGetClientNicknameDto(t *testing.T) {
 	t.Run("should return document error on load get client nickname dto", func(t *testing.T) {
 		repo := new(RepoMock)
 		repo.Status = "loadGetClientNicknameDtoError"
-		client := NewInvoiceClient(repo)
+		client := domain.NewInvoiceClient(repo)
 		input := new(GetClientByNicknameInputDtoMock)
 		input.Status = "documentError"
 		if err := client.LoadGetClientNicknameDto(input); err == nil {
@@ -115,7 +116,7 @@ func TestInvoiceClientLoadGetClientNicknameDto(t *testing.T) {
 	t.Run("should return phone error on load get client nickname dto", func(t *testing.T) {
 		repo := new(RepoMock)
 		repo.Status = "loadGetClientNicknameDtoError"
-		client := NewInvoiceClient(repo)
+		client := domain.NewInvoiceClient(repo)
 		input := new(GetClientByNicknameInputDtoMock)
 		input.Status = "phoneError"
 		if err := client.LoadGetClientNicknameDto(input); err == nil {
@@ -127,7 +128,7 @@ func TestInvoiceClientLoadGetClientNicknameDto(t *testing.T) {
 func TestInvoiceClientGetLastInvoiceClient(t *testing.T) {
 	t.Run("should get last invoice client", func(t *testing.T) {
 		repo := new(RepoMock)
-		client := NewInvoiceClient(repo)
+		client := domain.NewInvoiceClient(repo)
 		client.GetLastInvoiceClient("nickname", time.Now())
 	})
 }
@@ -135,7 +136,7 @@ func TestInvoiceClientGetLastInvoiceClient(t *testing.T) {
 func TestInvoiceClientIsNew(t *testing.T) {
 	t.Run("should return true", func(t *testing.T) {
 		repo := new(RepoMock)
-		client := NewInvoiceClient(repo)
+		client := domain.NewInvoiceClient(repo)
 		client.Load("", "nickname", "clientId", "name", "email", 123456789, 123456789, time.Time{})
 		if !client.IsNew() {
 			t.Errorf("should return true")
@@ -143,7 +144,7 @@ func TestInvoiceClientIsNew(t *testing.T) {
 	})
 	t.Run("should return false", func(t *testing.T) {
 		repo := new(RepoMock)
-		client := NewInvoiceClient(repo)
+		client := domain.NewInvoiceClient(repo)
 		client.Load(uuid.NewString(), "nickname", "clientId", "name", "email", 123456789, 123456789, time.Now())
 		if client.IsNew() {
 			t.Errorf("should return false")

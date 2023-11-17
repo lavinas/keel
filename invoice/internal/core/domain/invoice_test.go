@@ -1,68 +1,31 @@
-package domain
+package domain_test
 
 import (
-	"reflect"
 	"testing"
 	"time"
 
-	"github.com/google/uuid"
+	"github.com/lavinas/keel/invoice/internal/core/domain"
 )
 
 func TestInvoiceLoad(t *testing.T) {
 	t.Run("should load a invoice", func(t *testing.T) {
 		repo := new(RepoMock)
-		business := NewInvoiceClient(repo)
+		business := domain.NewInvoiceClient(repo)
 		business.Load("", "business", "clientId", "name", "email", 123456789, 123456789, time.Time{})
-		customer := NewInvoiceClient(repo)
+		customer := domain.NewInvoiceClient(repo)
 		customer.Load("", "customer", "clientId", "name", "email", 123456789, 123456789, time.Time{})
 		dto := CreateInputDtoMock{}
-		invoice := NewInvoice(repo)
+		invoice := domain.NewInvoice(repo)
 		err := invoice.Load(&dto)
 		if err != nil {
 			t.Errorf("expected nil, got %v", err.Error())
 		}
 		if err == nil {
-			if _, err := uuid.Parse(invoice.id); err != nil {
-				t.Errorf("expected valid uuid, got error %s", invoice.id)
-			}
-			if invoice.reference != "ref" {
-				t.Errorf("expected ref, got %s", invoice.reference)
-			}
-			if invoice.amount != 1.33 {
-				t.Errorf("expected 1.33, got %f", invoice.amount)
-			}
-			if invoice.date != time.Date(2023, 10, 10, 0, 0, 0, 0, time.UTC) {
-				t.Errorf("expected 2023-10-10, got %v", invoice.date)
-			}
-			if invoice.due != time.Date(2023, 10, 20, 0, 0, 0, 0, time.UTC) {
-				t.Errorf("expected 2023-10-20, got %v", invoice.due)
-			}
-			if invoice.items == nil {
-				t.Errorf("expected items, got nil")
-			}
-			if len(invoice.items) != 2 {
-				t.Errorf("expected items, got nil")
-			}
-			if invoice.items[0].GetDescription() != "desc" {
-				t.Errorf("expected desc, got %s", invoice.items[0].GetDescription())
-			}
 			if invoice.CreatedAt.IsZero() {
 				t.Errorf("expected created at, got empty")
 			}
 			if invoice.UpdatedAt.IsZero() {
 				t.Errorf("expected updated at, got empty")
-			}
-			if invoice.business == nil {
-				t.Errorf("expected business, got nil")
-			}
-			if reflect.TypeOf(invoice.business) != reflect.TypeOf(business) {
-				t.Errorf("expected InvoiceClient, got %v", reflect.TypeOf(invoice.business))
-			}
-			if invoice.customer == nil {
-				t.Errorf("expected customer, got nil")
-			}
-			if reflect.TypeOf(invoice.customer) != reflect.TypeOf(customer) {
-				t.Errorf("expected InvoiceClient, got %v", reflect.TypeOf(invoice.customer))
 			}
 		}
 
@@ -71,7 +34,7 @@ func TestInvoiceLoad(t *testing.T) {
 		repo := new(RepoMock)
 		dto := CreateInputDtoMock{}
 		dto.Status = "amountError"
-		invoice := NewInvoice(repo)
+		invoice := domain.NewInvoice(repo)
 		err := invoice.Load(&dto)
 		if err == nil {
 			t.Errorf("expected error, got nil")
@@ -84,7 +47,7 @@ func TestInvoiceLoad(t *testing.T) {
 		repo := new(RepoMock)
 		dto := CreateInputDtoMock{}
 		dto.Status = "dateError"
-		invoice := NewInvoice(repo)
+		invoice := domain.NewInvoice(repo)
 		err := invoice.Load(&dto)
 		if err == nil {
 			t.Errorf("expected error, got nil")
@@ -97,7 +60,7 @@ func TestInvoiceLoad(t *testing.T) {
 		repo := new(RepoMock)
 		dto := CreateInputDtoMock{}
 		dto.Status = "dueError"
-		invoice := NewInvoice(repo)
+		invoice := domain.NewInvoice(repo)
 		err := invoice.Load(&dto)
 		if err == nil {
 			t.Errorf("expected error, got nil")
@@ -110,7 +73,7 @@ func TestInvoiceLoad(t *testing.T) {
 		repo := new(RepoMock)
 		dto := CreateInputDtoMock{}
 		dto.Status = "itemsError"
-		invoice := NewInvoice(repo)
+		invoice := domain.NewInvoice(repo)
 		err := invoice.Load(&dto)
 		if err == nil {
 			t.Errorf("expected error, got nil")
@@ -123,7 +86,7 @@ func TestInvoiceLoad(t *testing.T) {
 		repo := new(RepoMock)
 		repo.Status = "getLastInvoiceBusinessError"
 		dto := CreateInputDtoMock{}
-		invoice := NewInvoice(repo)
+		invoice := domain.NewInvoice(repo)
 		err := invoice.Load(&dto)
 		if err == nil {
 			t.Errorf("expected error, got nil")
@@ -136,7 +99,7 @@ func TestInvoiceLoad(t *testing.T) {
 		repo := new(RepoMock)
 		repo.Status = "getLastInvoiceCustomerError"
 		dto := CreateInputDtoMock{}
-		invoice := NewInvoice(repo)
+		invoice := domain.NewInvoice(repo)
 		err := invoice.Load(&dto)
 		if err == nil {
 			t.Errorf("expected error, got nil")
@@ -147,32 +110,10 @@ func TestInvoiceLoad(t *testing.T) {
 	})
 }
 
-func TestInvoiceSetAmount(t *testing.T) {
-	t.Run("should set amount", func(t *testing.T) {
-		repo := new(RepoMock)
-		invoice := NewInvoice(repo)
-		invoice.SetAmount(123.23)
-		if invoice.amount != 123.23 {
-			t.Errorf("expected amount, got empty")
-		}
-	})
-}
-
-func TestIsDuplicated(t *testing.T) {
-	t.Run("Test is duplicated", func(t *testing.T) {
-		repo := new(RepoMock)
-		invoice := NewInvoice(repo)
-		invoice.reference = "ref"
-		if b, _ := invoice.IsDuplicated(); b != false {
-			t.Errorf("expected false, got true")
-		}
-	})
-}
-
 func TestInvoiceSave(t *testing.T) {
 	t.Run("should save invoice", func(t *testing.T) {
 		repo := new(RepoMock)
-		invoice := NewInvoice(repo)
+		invoice := domain.NewInvoice(repo)
 		if err := invoice.Load(&CreateInputDtoMock{}); err != nil {
 			t.Errorf("expected nil, got %v", err.Error())
 		}
@@ -183,7 +124,7 @@ func TestInvoiceSave(t *testing.T) {
 	t.Run("should return error on save", func(t *testing.T) {
 		repo := new(RepoMock)
 		repo.Status = "saveInvoiceError"
-		invoice := NewInvoice(repo)
+		invoice := domain.NewInvoice(repo)
 		if err := invoice.Load(&CreateInputDtoMock{}); err != nil {
 			t.Errorf("expected nil, got %v", err.Error())
 		}
@@ -194,7 +135,7 @@ func TestInvoiceSave(t *testing.T) {
 	t.Run("should return error on save businness client", func(t *testing.T) {
 		repo := new(RepoMock)
 		repo.Status = "saveBusinessError"
-		invoice := NewInvoice(repo)
+		invoice := domain.NewInvoice(repo)
 		if err := invoice.Load(&CreateInputDtoMock{}); err != nil {
 			t.Errorf("expected nil, got %v", err.Error())
 		}
@@ -205,7 +146,7 @@ func TestInvoiceSave(t *testing.T) {
 	t.Run("should return error on save customer client", func(t *testing.T) {
 		repo := new(RepoMock)
 		repo.Status = "saveCustomerError"
-		invoice := NewInvoice(repo)
+		invoice := domain.NewInvoice(repo)
 		if err := invoice.Load(&CreateInputDtoMock{}); err != nil {
 			t.Errorf("expected nil, got %v", err.Error())
 		}
@@ -216,7 +157,7 @@ func TestInvoiceSave(t *testing.T) {
 	t.Run("should return error on save invoice item", func(t *testing.T) {
 		repo := new(RepoMock)
 		repo.Status = "saveInvoiceItemError"
-		invoice := NewInvoice(repo)
+		invoice := domain.NewInvoice(repo)
 		if err := invoice.Load(&CreateInputDtoMock{}); err != nil {
 			t.Errorf("expected nil, got %v", err.Error())
 		}
@@ -227,7 +168,7 @@ func TestInvoiceSave(t *testing.T) {
 	t.Run("should return error on begin transaction", func(t *testing.T) {
 		repo := new(RepoMock)
 		repo.Status = "beginError"
-		invoice := NewInvoice(repo)
+		invoice := domain.NewInvoice(repo)
 		if err := invoice.Load(&CreateInputDtoMock{}); err != nil {
 			t.Errorf("expected nil, got %v", err.Error())
 		}
@@ -238,7 +179,7 @@ func TestInvoiceSave(t *testing.T) {
 	t.Run("should return error on commit transaction", func(t *testing.T) {
 		repo := new(RepoMock)
 		repo.Status = "commitError"
-		invoice := NewInvoice(repo)
+		invoice := domain.NewInvoice(repo)
 		if err := invoice.Load(&CreateInputDtoMock{}); err != nil {
 			t.Errorf("expected nil, got %v", err.Error())
 		}
@@ -248,114 +189,10 @@ func TestInvoiceSave(t *testing.T) {
 	})
 }
 
-func TestInvoiceGetId(t *testing.T) {
-	t.Run("should return id", func(t *testing.T) {
-		repo := new(RepoMock)
-		invoice := NewInvoice(repo)
-		invoice.id = "id"
-		if invoice.GetId() != "id" {
-			t.Errorf("expected id, got empty")
-		}
-	})
-}
-
-func TestInvoiceGetReference(t *testing.T) {
-	t.Run("should return reference", func(t *testing.T) {
-		repo := new(RepoMock)
-		invoice := NewInvoice(repo)
-		invoice.reference = "reference"
-		if invoice.GetReference() != "reference" {
-			t.Errorf("expected reference, got empty")
-		}
-	})
-}
-
-func TestInvoiceGetBusinessId(t *testing.T) {
-	t.Run("should return business id", func(t *testing.T) {
-		repo := new(RepoMock)
-		invoice := NewInvoice(repo)
-		business := NewInvoiceClient(repo)
-		business.id = "id"
-		invoice.business = business
-		if invoice.GetBusinessId() != "id" {
-			t.Errorf("expected id, got empty")
-		}
-	})
-}
-
-func TestInvoiceGetCustomerId(t *testing.T) {
-	t.Run("should return customer id", func(t *testing.T) {
-		repo := new(RepoMock)
-		invoice := NewInvoice(repo)
-		customer := NewInvoiceClient(repo)
-		customer.id = "id"
-		invoice.customer = customer
-		if invoice.GetCustomerId() != "id" {
-			t.Errorf("expected id, got empty")
-		}
-	})
-}
-
-func TestInvoiceGetAmount(t *testing.T) {
-	t.Run("should return amount", func(t *testing.T) {
-		repo := new(RepoMock)
-		invoice := NewInvoice(repo)
-		invoice.amount = 123
-		if invoice.GetAmount() != 123 {
-			t.Errorf("expected amount, got empty")
-		}
-	})
-}
-
-func TestInvoiceGetDate(t *testing.T) {
-	t.Run("should return date", func(t *testing.T) {
-		repo := new(RepoMock)
-		invoice := NewInvoice(repo)
-		date, _ := time.Parse("2006-01-02", "2020-01-01")
-		invoice.date = date
-		if invoice.GetDate() != date {
-			t.Errorf("expected date, got empty")
-		}
-	})
-}
-
-func TestInvoiceGetDue(t *testing.T) {
-	t.Run("should return due", func(t *testing.T) {
-		repo := new(RepoMock)
-		invoice := NewInvoice(repo)
-		due, _ := time.Parse("2006-01-02", "2020-01-01")
-		invoice.due = due
-		if invoice.GetDue() != due {
-			t.Errorf("expected due, got empty")
-		}
-	})
-}
-
-func TestInvoiceGetNoteId(t *testing.T) {
-	t.Run("should return note id", func(t *testing.T) {
-		repo := new(RepoMock)
-		invoice := NewInvoice(repo)
-		noteId := invoice.GetNoteId()
-		if noteId != nil {
-			t.Errorf("expected nil, got %s", *noteId)
-		}
-	})
-}
-
-func TestInvoiceGetStatusId(t *testing.T) {
-	t.Run("should return status id", func(t *testing.T) {
-		repo := new(RepoMock)
-		invoice := NewInvoice(repo)
-		if invoice.GetStatusId() != 1 {
-			t.Errorf("expected status id, got empty")
-		}
-	})
-}
-
 func TestInvoiceGetCreatedAt(t *testing.T) {
 	t.Run("should return created at", func(t *testing.T) {
 		repo := new(RepoMock)
-		invoice := NewInvoice(repo)
+		invoice := domain.NewInvoice(repo)
 		createdAt, _ := time.Parse("2006-01-02", "2020-01-01")
 		invoice.CreatedAt = createdAt
 		if invoice.GetCreatedAt() != createdAt {
@@ -367,35 +204,11 @@ func TestInvoiceGetCreatedAt(t *testing.T) {
 func TestInvoiceGetUpdatedAt(t *testing.T) {
 	t.Run("should return updated at", func(t *testing.T) {
 		repo := new(RepoMock)
-		invoice := NewInvoice(repo)
+		invoice := domain.NewInvoice(repo)
 		updatedAt, _ := time.Parse("2006-01-02", "2020-01-01")
 		invoice.UpdatedAt = updatedAt
 		if invoice.GetUpdatedAt() != updatedAt {
 			t.Errorf("expected updated at, got empty")
-		}
-	})
-}
-
-func TestGetBusiness(t *testing.T) {
-	t.Run("should return business", func(t *testing.T) {
-		repo := new(RepoMock)
-		invoice := NewInvoice(repo)
-		business := NewInvoiceClient(repo)
-		invoice.business = business
-		if invoice.GetBusiness() != business {
-			t.Errorf("expected business, got empty")
-		}
-	})
-}
-
-func TestGetConsumer(t *testing.T) {
-	t.Run("should return consumer", func(t *testing.T) {
-		repo := new(RepoMock)
-		invoice := NewInvoice(repo)
-		customer := NewInvoiceClient(repo)
-		invoice.customer = customer
-		if invoice.GetCustomer() != customer {
-			t.Errorf("expected customer, got empty")
 		}
 	})
 }

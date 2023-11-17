@@ -105,7 +105,6 @@ func (r *RepoMock) Close() error {
 	return nil
 }
 
-
 // CreateMock is a mock of Log
 type LogMock struct {
 	Type    string

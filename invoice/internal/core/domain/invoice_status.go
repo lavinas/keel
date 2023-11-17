@@ -89,6 +89,6 @@ func (g *InvoiceStatus) Save() error {
 
 // GetLastStatusId returns the last status of the invoice class graph
 func (g *InvoiceStatus) GetLastStatusId(class string) string {
-	
+
 	return g.lastStatus[class]
 }

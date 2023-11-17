@@ -124,7 +124,6 @@ func (r *RepoMysql) SaveInvoiceClient(client port.InvoiceClient) error {
 	return nil
 }
 
-
 // GetLastInvoiceClient gets the last invoice client on the repository
 func (r *RepoMysql) GetLastInvoiceClient(nickname string, created_after time.Time, client port.InvoiceClient) (bool, error) {
 	if r.db == nil {

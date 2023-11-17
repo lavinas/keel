@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"encoding/json"
 	"time"
 
 	"github.com/google/uuid"
@@ -14,17 +15,17 @@ var (
 
 // Invoice is the domain model for a invoice
 type Invoice struct {
-	repo      port.Repo
-	status    *InvoiceStatus
-	id        string
-	reference string
-	business  *InvoiceClient
-	customer  *InvoiceClient
-	amount    float64
-	date      time.Time
-	due       time.Time
-	items     []*InvoiceItem
-	CreatedAt time.Time
+	repo      port.Repo      `json:"-"`
+	Status    *InvoiceStatus `json:"status"`
+	Id        string         `json:"id"`
+	Reference string         `json:"reference"`
+	Business  *InvoiceClient `json:"business"`
+	Customer  *InvoiceClient `json:"customer"`
+	Amount    float64        `json:"amount"`
+	Date      time.Time      `json:"date"`
+	Due       time.Time      `json:"due"`
+	Items     []*InvoiceItem `json:"items"`
+	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time
 }
 
@@ -33,14 +34,14 @@ func NewInvoice(repo port.Repo) *Invoice {
 	invoice := &Invoice{repo: repo}
 	status := NewInvoiceGraph(repo, invoice)
 	status.LoadRepository()
-	invoice.status = status
+	invoice.Status = status
 	return invoice
 }
 
 // Load loads a invoice from input
 func (i *Invoice) Load(input port.CreateInputDto) error {
-	i.id = uuid.New().String()
-	i.reference = input.GetReference()
+	i.Id = uuid.New().String()
+	i.Reference = input.GetReference()
 	if err := i.loadClients(input); err != nil {
 		return err
 	}
@@ -48,21 +49,26 @@ func (i *Invoice) Load(input port.CreateInputDto) error {
 		i.loadItems(input.GetItems())); err != nil {
 		return err
 	}
-	i.status.Change(INVOICE_CLASS, INVOICE_GETTING_CLIENT, "", "")
-	i.status.Change(PAYMENT_CLASS, PAYMENT_OPENED, "", "")
+	i.Status.Change(INVOICE_CLASS, INVOICE_GETTING_CLIENT, "", "")
+	i.Status.Change(PAYMENT_CLASS, PAYMENT_OPENED, "", "")
 	i.CreatedAt = time.Now()
 	i.UpdatedAt = time.Now()
 	return nil
 }
 
+func (i *Invoice) GetJson() ([]byte, error) {
+	return json.Marshal(i)
+}
+
+
 // IsDuplicated returns true if the invoice is duplicated
 func (i *Invoice) IsDuplicated() (bool, error) {
-	return i.repo.IsDuplicatedInvoice(i.reference)
+	return i.repo.IsDuplicatedInvoice(i.Reference)
 }
 
 // SetAmount sets the amount of invoice
 func (i *Invoice) SetAmount(amount float64) {
-	i.amount = amount
+	i.Amount = amount
 }
 
 // Save stores the invoice on the repository
@@ -71,7 +77,7 @@ func (i *Invoice) Save() error {
 		i.repo.Begin,
 		i.saveClients,
 		i.saveInvoice,
-		i.status.Save,
+		i.Status.Save,
 		i.saveItems,
 		i.repo.Commit,
 	}
@@ -86,47 +92,47 @@ func (i *Invoice) Save() error {
 
 // GetId returns the id of invoice
 func (i *Invoice) GetId() string {
-	return i.id
+	return i.Id
 }
 
 // GetReference returns the reference of invoice
 func (i *Invoice) GetReference() string {
-	return i.reference
+	return i.Reference
 }
 
 // GetBusiness returns the business of invoice
 func (i *Invoice) GetBusinessId() string {
-	return i.business.GetId()
+	return i.Business.GetId()
 }
 
 // GetBusiness returns the business client object of invoice
 func (i *Invoice) GetBusiness() port.InvoiceClient {
-	return i.business
+	return i.Business
 }
 
 // Getcustomerreturns the customerof invoice
 func (i *Invoice) GetCustomerId() string {
-	return i.customer.GetId()
+	return i.Customer.GetId()
 }
 
 // Getcustomerreturns the customerclient object of invoice
 func (i *Invoice) GetCustomer() port.InvoiceClient {
-	return i.customer
+	return i.Customer
 }
 
 // GetAmount returns the amount of invoice
 func (i *Invoice) GetAmount() float64 {
-	return i.amount
+	return i.Amount
 }
 
 // GetDate returns the date of invoice
 func (i *Invoice) GetDate() time.Time {
-	return i.date
+	return i.Date
 }
 
 // GetDue returns the due of invoice
 func (i *Invoice) GetDue() time.Time {
-	return i.due
+	return i.Due
 }
 
 func (i *Invoice) GetNoteId() *string {
@@ -150,18 +156,18 @@ func (i *Invoice) GetUpdatedAt() time.Time {
 
 // loadClients loads the clients (business and customer) from input
 func (i *Invoice) loadClients(input port.CreateInputDto) error {
-	i.business = NewInvoiceClient(i.repo)
+	i.Business = NewInvoiceClient(i.repo)
 	createdAfter := time.Now().Add(time.Duration(-client_expiration_seconds) * time.Second)
-	if b, err := i.business.GetLastInvoiceClient(input.GetBusinessNickname(), createdAfter); err != nil {
+	if b, err := i.Business.GetLastInvoiceClient(input.GetBusinessNickname(), createdAfter); err != nil {
 		return err
 	} else if !b {
-		i.business.Load("", input.GetBusinessNickname(), "", "", "", 0, 0, time.Time{})
+		i.Business.Load("", input.GetBusinessNickname(), "", "", "", 0, 0, time.Time{})
 	}
-	i.customer = NewInvoiceClient(i.repo)
-	if b, err := i.customer.GetLastInvoiceClient(input.GetCustomerNickname(), createdAfter); err != nil {
+	i.Customer = NewInvoiceClient(i.repo)
+	if b, err := i.Customer.GetLastInvoiceClient(input.GetCustomerNickname(), createdAfter); err != nil {
 		return err
 	} else if !b {
-		i.customer.Load("", input.GetCustomerNickname(), "", "", "", 0, 0, time.Time{})
+		i.Customer.Load("", input.GetCustomerNickname(), "", "", "", 0, 0, time.Time{})
 	}
 	return nil
 }
@@ -169,7 +175,7 @@ func (i *Invoice) loadClients(input port.CreateInputDto) error {
 // loadAmount loads the amount from input
 func (i *Invoice) loadAmount(input port.CreateInputDto) error {
 	var err error
-	i.amount, err = input.GetAmount()
+	i.Amount, err = input.GetAmount()
 	if err != nil {
 		return err
 	}
@@ -179,7 +185,7 @@ func (i *Invoice) loadAmount(input port.CreateInputDto) error {
 // loadDate loads the date from input
 func (i *Invoice) loadDate(input port.CreateInputDto) error {
 	var err error
-	i.date, err = input.GetDate()
+	i.Date, err = input.GetDate()
 	if err != nil {
 		return err
 	}
@@ -189,7 +195,7 @@ func (i *Invoice) loadDate(input port.CreateInputDto) error {
 // loadDue loads the due from input
 func (i *Invoice) loadDue(input port.CreateInputDto) error {
 	var err error
-	i.due, err = input.GetDue()
+	i.Due, err = input.GetDue()
 	if err != nil {
 		return err
 	}
@@ -204,7 +210,7 @@ func (i *Invoice) loadItems(inputItems []port.CreateInputItemDto) error {
 		if err != nil {
 			return err
 		}
-		i.items = append(i.items, item)
+		i.Items = append(i.Items, item)
 	}
 	return nil
 }
@@ -216,13 +222,13 @@ func (i *Invoice) saveInvoice() error {
 
 // saveClients saves the clients (business and customer) on the repository
 func (i *Invoice) saveClients() error {
-	if i.business.IsNew() {
-		if err := i.business.Save(); err != nil {
+	if i.Business.IsNew() {
+		if err := i.Business.Save(); err != nil {
 			return err
 		}
 	}
-	if i.customer.IsNew() {
-		if err := i.customer.Save(); err != nil {
+	if i.Customer.IsNew() {
+		if err := i.Customer.Save(); err != nil {
 			return err
 		}
 	}
@@ -231,7 +237,7 @@ func (i *Invoice) saveClients() error {
 
 // saveItems saves the items on the repository
 func (i *Invoice) saveItems() error {
-	for _, item := range i.items {
+	for _, item := range i.Items {
 		if err := item.Save(); err != nil {
 			return err
 		}

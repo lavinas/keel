@@ -22,7 +22,7 @@ type Create struct {
 // NewCreate is a factory that creates a new Create service
 func NewCreate(repo port.Repo, log port.Log, consumer port.RestConsumer, invoice port.Invoice) *Create {
 	return &Create{
-		repo:    repo,
+		repo:     repo,
 		log:      log,
 		consumer: consumer,
 		invoice:  invoice,
@@ -119,7 +119,7 @@ func (s *Create) updateInvoiceCustomer() error {
 
 // updateClient updates the client after consulting the external service
 func (s *Create) updateClient(client port.InvoiceClient) error {
-	
+
 	if !client.IsNew() {
 		return nil
 	}
