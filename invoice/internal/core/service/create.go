@@ -119,6 +119,7 @@ func (s *Create) updateInvoiceCustomer() error {
 
 // updateClient updates the client after consulting the external service
 func (s *Create) updateClient(client port.InvoiceClient) error {
+	
 	if !client.IsNew() {
 		return nil
 	}
@@ -129,7 +130,13 @@ func (s *Create) updateClient(client port.InvoiceClient) error {
 	if err := client.LoadGetClientNicknameDto(dto); err != nil {
 		return fmt.Errorf("internal error: %w", err)
 	}
-	if err := client.Update(); err != nil {
+	if err := s.repo.Begin(); err != nil {
+		return fmt.Errorf("internal error: %w", err)
+	}
+	if err := s.repo.UpdateInvoiceClient(client); err != nil {
+		return fmt.Errorf("internal error: %w", err)
+	}
+	if err := s.repo.Commit(); err != nil {
 		return fmt.Errorf("internal error: %w", err)
 	}
 	return nil
