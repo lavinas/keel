@@ -60,7 +60,6 @@ func (i *Invoice) GetJson() ([]byte, error) {
 	return json.Marshal(i)
 }
 
-
 // IsDuplicated returns true if the invoice is duplicated
 func (i *Invoice) IsDuplicated() (bool, error) {
 	return i.repo.IsDuplicatedInvoice(i.Reference)
