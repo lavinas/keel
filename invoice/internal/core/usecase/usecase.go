@@ -3,9 +3,9 @@ package usecase
 import (
 	"time"
 
+	"github.com/lavinas/keel/invoice/internal/core/domain"
 	"github.com/lavinas/keel/invoice/internal/core/dto"
 	"github.com/lavinas/keel/invoice/internal/core/port"
-	"github.com/lavinas/keel/invoice/internal/core/domain"
 )
 
 // Service is the usecase handler for the application
