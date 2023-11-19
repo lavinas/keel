@@ -1,5 +1,7 @@
 package dto
 
+// ValidateLoop is a function that pass a slice of validation functions and execute them in order
+
 import (
 	"errors"
 	"strings"

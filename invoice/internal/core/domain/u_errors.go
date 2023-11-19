@@ -1,5 +1,7 @@
 package domain
 
+// Common errors for all entities
+
 // Base errors
 const (
 	ErrBaseIDLength = "id must have only one word. Use underscore to separate words"

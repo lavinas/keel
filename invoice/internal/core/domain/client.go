@@ -16,10 +16,10 @@ var (
 // Client represents a client that send or receive a invoice
 type Client struct {
 	Base
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Document string `json:"document"`
-	Phone    string `json:"phone"`
+	Name     string `json:"name" gorm:"type:varchar(100)"`
+	Email    string `json:"email" gorm:"type:varchar(100)"`
+	Document string `json:"document" gorm:"type:decimal(20)"`
+	Phone    string `json:"phone" gorm:"type:varchar(20)"`
 }
 
 // Validate validates the client

@@ -1,5 +1,7 @@
 package dto
 
+// Register DTO errors
+
 // Invoice Create DTO errors
 const (
 	ErrRegisterInvoiceDtoBusinessRequired      = "invoice business is required. You must provide either a business id or a business object"

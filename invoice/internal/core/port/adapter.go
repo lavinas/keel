@@ -1,13 +1,25 @@
 package port
 
 import (
+	"os"
+
 	"github.com/lavinas/keel/invoice/internal/core/domain"
 )
 
+type Config interface {
+	Get(param string) string
+}
+
+type Logger interface {
+	GetFile() *os.File
+	GetName() string
+	Info(message string)
+	Infof(format string, a ...any)
+	Error(err error)
+	Errorf(format string, a ...any)
+	Close()
+}
+
 type Repository interface {
-	CheckInvoiceExists(invoice *domain.Invoice) (bool, error)
-	GetClientByID(id string) (*domain.Client, error)
-	GetProductByID(id string) (*domain.Product, error)
-	GetInstructionByID(id string) (*domain.Instruction, error)	
-	RegisterInvoice(invoice *domain.Invoice) error
+	AddClient(client *domain.Client) error
 }
