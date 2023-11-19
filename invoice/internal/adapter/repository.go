@@ -3,8 +3,8 @@ package adapter
 import (
 	"fmt"
 	"github.com/jinzhu/gorm"
-	"github.com/lavinas/keel/invoice/internal/core/port"
 	"github.com/lavinas/keel/invoice/internal/core/domain"
+	"github.com/lavinas/keel/invoice/internal/core/port"
 )
 
 const (
