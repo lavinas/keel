@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"net/http"
 	"io"
 
 	"github.com/gin-gonic/gin"
@@ -10,16 +9,16 @@ import (
 
 // Rest is the rest handler for the application
 type Rest struct {
-	server *http.Server
 	engine *gin.Engine
 }
 
 // NewRest creates a new rest handler
 func NewRest(logger port.Logger) *Rest {
 	engine := GetEngine(logger)
-
+	return &Rest{
+		engine: engine,
+	}
 }
-
 
 func GetEngine(logger port.Logger) *gin.Engine {
 	gin.SetMode(gin.ReleaseMode)
