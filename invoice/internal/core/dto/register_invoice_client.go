@@ -14,6 +14,7 @@ var (
 )
 
 type RegisterInvoiceClient struct {
+	ID       string `json:"id"`
 	Name     string `json:"name"`
 	Email    string `json:"email"`
 	Document string `json:"document"`
@@ -23,11 +24,26 @@ type RegisterInvoiceClient struct {
 // Validate validates the client
 func (c *RegisterInvoiceClient) Validate() error {
 	return ValidateLoop([]func() error{
+		c.ValidateID,
 		c.ValidateName,
 		c.ValidateEmail,
 		c.ValidateDocument,
 		c.ValidatePhone,
 	})
+}
+
+// ValidateID validates the id of the client
+func (c *RegisterInvoiceClient) ValidateID() error {
+	if c.ID == "" {
+		return nil
+	}
+	if len(strings.Split(c.ID, " ")) > 1 {
+		return errors.New(ErrRegisterInvoiceClientIDLength)
+	}
+	if strings.ToLower(c.ID) != c.ID {
+		return errors.New(ErrRegisterInvoiceClientIDLower)
+	}
+	return nil
 }
 
 // ValidateName validates the name of the client

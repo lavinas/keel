@@ -33,6 +33,8 @@ const (
 
 // Invoice Client Create DTO errors
 const (
+	ErrRegisterInvoiceClientIDLength          = "invoice client id must have just one world. Please use underscore to separate words"
+	ErrRegisterInvoiceClientIDLower           = "invoice client id must be lower case"
 	ErrRegisterInvoiceClientNameIsRequired    = "invoice client name is required"
 	ErrRegisterInvoiceClientNameLength        = "client name must have at least a name and surname"
 	ErrRegisterInvoiceClientEmailIsRequired   = "invoice client email is required"

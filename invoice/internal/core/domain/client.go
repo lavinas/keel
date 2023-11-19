@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/mail"
 	"strings"
+	"time"
 
 	"github.com/lavinas/keel/invoice/pkg/cpf_cnpj"
 	"github.com/lavinas/keel/invoice/pkg/phone"
@@ -20,6 +21,16 @@ type Client struct {
 	Email    string `json:"email" gorm:"type:varchar(100)"`
 	Document string `json:"document" gorm:"type:decimal(20)"`
 	Phone    string `json:"phone" gorm:"type:varchar(20)"`
+}
+
+func NewClient(id, name, email, document, phone string, created_at time.Time, updated_at time.Time) *Client {
+	return &Client{
+		Base:     NewBase(id, created_at, updated_at),
+		Name:     name,
+		Email:    email,
+		Document: document,
+		Phone:    phone,
+	}
 }
 
 // Validate validates the client

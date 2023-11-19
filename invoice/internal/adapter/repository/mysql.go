@@ -1,4 +1,4 @@
-package adapter
+package repository
 
 import (
 	"fmt"
@@ -15,27 +15,27 @@ const (
 	MYSQL_SSLMODE  = "MYSQL_SSLMODE"
 )
 
-// Repository is the repository handler for the application
-type Repository struct {
+// RepoMySql is the repository handler for the application
+type MySql struct {
 	Db *gorm.DB
 }
 
 // NewRepository creates a new repository handler
-func NewRepository(config port.Config) (*Repository, error) {
+func NewRepository(config port.Config) (*MySql, error) {
 	db, err := connectDB(config)
 	if err != nil {
 		return nil, err
 	}
-	return &Repository{Db: db}, nil
+	return &MySql{Db: db}, nil
 }
 
 // AddClient adds a new client to the database
-func (r *Repository) AddClient(client *domain.Client) error {
+func (r *MySql) AddClient(client *domain.Client) error {
 	return r.Db.Create(client).Error
 }
 
 // Close closes the database connection
-func (r *Repository) Close() {
+func (r *MySql) Close() {
 	r.Db.Close()
 }
 

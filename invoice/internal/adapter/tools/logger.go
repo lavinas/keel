@@ -1,4 +1,4 @@
-package adapter
+package tools
 
 import (
 	log "github.com/lavinas/keel/invoice/pkg/klog"

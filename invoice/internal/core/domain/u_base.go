@@ -4,6 +4,8 @@ import (
 	"errors"
 	"strings"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 // Base represents the base of the model
@@ -11,6 +13,23 @@ type Base struct {
 	ID         string    `json:"id"`
 	Created_at time.Time `json:"created_at"`
 	Updated_at time.Time `json:"updated_at"`
+}
+
+func NewBase(id string, created_at time.Time, updated_at time.Time) Base {
+	if id == "" {
+		id = uuid.New().String()
+	}
+	if created_at.IsZero() {
+		created_at = time.Now()
+	}
+	if updated_at.IsZero() {
+		updated_at = time.Now()
+	}
+	return Base{
+		ID:         uuid.New().String(),
+		Created_at: time.Now(),
+		Updated_at: time.Now(),
+	}
 }
 
 // Validate validates the base of the model
