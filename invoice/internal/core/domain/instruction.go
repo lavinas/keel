@@ -1,11 +1,7 @@
-package model
+package domain
 
 import (
 	"errors"
-)
-
-const (
-	ErrInstructionBusinessIsRequired = "instruction business is required"
 )
 
 // Instruction represents a instruction for be showed in the invoice
@@ -17,7 +13,7 @@ type Instruction struct {
 
 // Validate validates the instruction
 func (i *Instruction) Validate() error {
-	return i.ValidateLoop([]func() error{
+	return ValidateLoop([]func() error{
 		i.Base.Validate,
 		i.ValidateBusiness,
 	})

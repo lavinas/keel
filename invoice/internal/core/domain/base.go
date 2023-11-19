@@ -1,14 +1,9 @@
-package model
+package domain
 
 import (
 	"errors"
 	"strings"
 	"time"
-)
-
-const (
-	ErrBaseIDLength = "id must have only one word"
-	ErrBaseIDLower  = "id must be lower case"
 )
 
 // Base represents the base of the model
@@ -68,8 +63,8 @@ func (p *Base) ValidateUpdatedAt() error {
 	return nil
 }
 
-// Validate 
-func (p *Base) ValidateLoop(orderExec []func() error) error {
+// ValidateLoop is a function that pass a slice of validation functions and execute them in order
+func ValidateLoop(orderExec []func() error) error {
 	errMsg := ""
 	for _, val := range orderExec {
 		if err := val(); err != nil {

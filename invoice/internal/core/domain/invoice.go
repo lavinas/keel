@@ -1,35 +1,27 @@
-package model
+package domain
 
 import (
 	"errors"
 	"time"
 )
 
-const (
-	ErrInvoiceBusinessIsRequired = "invoice business is required"
-	ErrInvoiceCustomerIsRequired = "invoice customer is required"
-	ErrInvoiceDateIsRequired     = "invoice date is required"
-	ErrInvoiceDueIsRequired      = "invoice due is required"
-	ErrInvoiceAmountNotMatch     = "invoice amount not match with items values"
-)
-
 // Invoice represents an invoice - main model
 type Invoice struct {
 	Base
-	Business        *Client        `json:"business"`
-	Customer        *Client        `json:"customer"`
-	Date            time.Time      `json:"date"`
-	Due             time.Time      `json:"due"`
-	Amount          float64        `json:"amount"`
-	Items           []*InvoiceItem `json:"item"`
-	Instruction     *Instruction   `json:"instruction"`
-	InvoiceStatus   *InvoiceStatus `json:"invoice_status"`
-	PaymentStatus   *PaymentStatus `json:"payment_status"`
+	Business      *Client        `json:"business"`
+	Customer      *Client        `json:"customer"`
+	Date          time.Time      `json:"date"`
+	Due           time.Time      `json:"due"`
+	Amount        float64        `json:"amount"`
+	Items         []*InvoiceItem `json:"item"`
+	Instruction   *Instruction   `json:"instruction"`
+	InvoiceStatus *InvoiceStatus `json:"invoice_status"`
+	PaymentStatus *PaymentStatus `json:"payment_status"`
 }
 
 // Validate validates the invoice
 func (p *Invoice) Validate() error {
-	return p.ValidateLoop([]func() error{
+	return ValidateLoop([]func() error{
 		p.Base.Validate,
 		p.ValidateBusiness,
 		p.ValidateCustomer,
@@ -81,6 +73,9 @@ func (p *Invoice) ValidateAmount() error {
 	if itemAmount > 0 && p.Amount != itemAmount {
 		return errors.New(ErrInvoiceAmountNotMatch)
 	}
+	if p.Amount <= 0 {
+		return errors.New(ErrInvoiceAmountIsInvalid)
+	}
 	return nil
 }
 
@@ -92,7 +87,6 @@ func (p *Invoice) GetItemsAmount() float64 {
 	}
 	return sum
 }
-
 
 // ValidateItems validates the items of the invoice
 func (p *Invoice) ValidateItems() error {
@@ -107,7 +101,7 @@ func (p *Invoice) ValidateItems() error {
 // ValidateInstruction validates the instruction of the invoice
 func (p *Invoice) ValidateInstruction() error {
 	if p.Instruction == nil {
-		return errors.New(ErrInvoiceDueIsRequired)
+		return nil
 	}
 	return p.Instruction.Validate()
 }

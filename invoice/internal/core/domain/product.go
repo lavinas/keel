@@ -1,13 +1,7 @@
-package model
+package domain
 
 import (
 	"errors"
-)
-
-const (
-	ErrProductIDLength           = "product id must have only one word"
-	ErrProductIDLower            = "product id must be lower case"
-	ErrProductBusinessIsRequired = "product business is required"
 )
 
 // Product represents a product or service that can be invoiced
@@ -19,7 +13,7 @@ type Product struct {
 
 // Validate validates the product
 func (p *Product) Validate() error {
-	return p.ValidateLoop([]func() error{
+	return ValidateLoop([]func() error{
 		p.Base.Validate,
 		p.ValidateBusiness,
 	})

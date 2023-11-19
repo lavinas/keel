@@ -1,4 +1,4 @@
-package model
+package domain
 
 import (
 	"errors"
@@ -7,17 +7,6 @@ import (
 
 	"github.com/lavinas/keel/invoice/pkg/cpf_cnpj"
 	"github.com/lavinas/keel/invoice/pkg/phone"
-)
-
-const (
-	ErrClientIDLength          = "client id must have only one word"
-	ErrClientNameIsRequired    = "client name is required"
-	ErrClientNameLength        = "client name must have at least a name and surname"
-	ErrClientEmailIsRequired   = "client email is required"
-	ErrClientEmailIsInvalid    = "client email is invalid"
-	ErrClientDocumentIsInvalid = "client document is invalid"
-	ErrClientPhoneIsInvalid    = "client cell phone number is invalid"
-	ErrClientIDNotLower        = "client id must be lower case"
 )
 
 var (
@@ -33,9 +22,10 @@ type Client struct {
 	Phone    string `json:"phone"`
 }
 
+
 // Validate validates the client
 func (c *Client) Validate() error {
-	return c.ValidateLoop([]func() error{
+	return ValidateLoop([]func() error{
 		c.Base.Validate,
 		c.ValidateName,
 		c.ValidateEmail,
@@ -90,3 +80,4 @@ func (c *Client) ValidatePhone() error {
 	}
 	return errors.New(ErrClientPhoneIsInvalid)
 }
+

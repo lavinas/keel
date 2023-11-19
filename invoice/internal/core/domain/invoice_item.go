@@ -1,14 +1,7 @@
-package model
+package domain
 
 import (
 	"errors"
-)
-
-const (
-	ErrInvoiceItemIDLength = "invoice item id must have only one word"
-	ErrInvoiceItemIDLower  = "invoice item id must be lower case"
-	ErrInvoiceItemQuantity = "invoice item quantity must be greater than 0"
-	ErrInvoiceItemPrice    = "invoice item price must be greater than 0"
 )
 
 // InvoiceItem represents a item in the invoice
@@ -22,7 +15,7 @@ type InvoiceItem struct {
 
 // Validate validates the invoice item
 func (i *InvoiceItem) Validate() error {
-	return i.ValidateLoop([]func() error{
+	return ValidateLoop([]func() error{
 		i.Base.Validate,
 		i.ValidateProduct,
 		i.ValidateQuantity,
@@ -48,7 +41,7 @@ func (c *InvoiceItem) ValidateQuantity() error {
 
 // ValidateUnitPrice validates the unit price of the invoice item
 func (c *InvoiceItem) ValidateUnitPrice() error {
-	if c.UnitPrice <= 0 {
+	if c.UnitPrice == 0 {
 		return errors.New(ErrInvoiceItemPrice)
 	}
 	return nil
