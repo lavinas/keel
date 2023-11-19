@@ -30,7 +30,7 @@ const (
 	ErrInvoiceDateIsRequired     = "invoice date is required"
 	ErrInvoiceDueIsRequired      = "invoice due is required"
 	ErrInvoiceAmountNotMatch     = "invoice amount not match with items values"
-	ErrInvoiceAmountIsInvalid	 = "invoice amount should be greater than 0"	
+	ErrInvoiceAmountIsInvalid    = "invoice amount should be greater than 0"
 	ErrInvoiceItemIDLength       = "invoice item id must have only one word"
 	ErrInvoiceItemIDLower        = "invoice item id must be lower case"
 	ErrInvoiceItemQuantity       = "invoice item quantity must be greater than 0"

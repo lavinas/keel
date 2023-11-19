@@ -6,9 +6,9 @@ import (
 )
 
 type InvoiceItemCreate struct {
-	ProductID   string  `json:"product_id"`
-	Description string  `json:"description"`
-	Quantity    string     `json:"quantity"`
+	ProductID   string `json:"product_id"`
+	Description string `json:"description"`
+	Quantity    string `json:"quantity"`
 	UnitPrice   string `json:"unit_price"`
 }
 
@@ -72,5 +72,3 @@ func (i *InvoiceItemCreate) GetAmount() float64 {
 	}
 	return float64(quantity) * unitPrice
 }
-
-

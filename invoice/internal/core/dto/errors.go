@@ -18,10 +18,10 @@ const (
 
 // Invoice Item Create DTO errors
 const (
-	ErrInvoiceItemCreateDtoProductIDRequired      = "invoice item product id is required"
-	ErrInvoiceItemCreateDtoDescriptionRequired   =  "invoice item description is required"
-	ErrInvoiceItemCreateDtoQuantityRequired	   = "invoice item quantity is required"
-	ErrInvoiceItemCreateDtoQuantityInvalid        = "invoice item quantity is invalid"
-	ErrInvoiceItemCreateDtoUnitPriceRequired      = "invoice item unit price is required"
-	ErrInvoiceItemCreateDtoUnitPriceInvalid       = "invoice item unit price is invalid"
+	ErrInvoiceItemCreateDtoProductIDRequired   = "invoice item product id is required"
+	ErrInvoiceItemCreateDtoDescriptionRequired = "invoice item description is required"
+	ErrInvoiceItemCreateDtoQuantityRequired    = "invoice item quantity is required"
+	ErrInvoiceItemCreateDtoQuantityInvalid     = "invoice item quantity is invalid"
+	ErrInvoiceItemCreateDtoUnitPriceRequired   = "invoice item unit price is required"
+	ErrInvoiceItemCreateDtoUnitPriceInvalid    = "invoice item unit price is invalid"
 )

@@ -7,17 +7,16 @@ import (
 	"time"
 )
 
-
 // InvoiceCreate is the DTO for creating an invoice.
 type InvoiceCreate struct {
-	BusinessID    string        `json:"business_id"`
-	CustomerID    string        `json:"customer_id"`
-	Number        string        `json:"number"`
-	Date          string        `json:"date"`
-	Due           string        `json:"due"`
-	Amount        string        `json:"amount"`
+	BusinessID    string               `json:"business_id"`
+	CustomerID    string               `json:"customer_id"`
+	Number        string               `json:"number"`
+	Date          string               `json:"date"`
+	Due           string               `json:"due"`
+	Amount        string               `json:"amount"`
 	Items         []*InvoiceItemCreate `json:"items"`
-	InstructionID string        `json:"instruction_id"`
+	InstructionID string               `json:"instruction_id"`
 }
 
 // Validate validates the invoice create DTO

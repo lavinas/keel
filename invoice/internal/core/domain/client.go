@@ -22,7 +22,6 @@ type Client struct {
 	Phone    string `json:"phone"`
 }
 
-
 // Validate validates the client
 func (c *Client) Validate() error {
 	return ValidateLoop([]func() error{
@@ -80,4 +79,3 @@ func (c *Client) ValidatePhone() error {
 	}
 	return errors.New(ErrClientPhoneIsInvalid)
 }
-
