@@ -12,7 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//  Logger is the logger interface for the rest handler
+// Logger is the logger interface for the rest handler
 type Logger interface {
 	GetFile() *os.File
 	Info(string)
@@ -24,7 +24,7 @@ type Logger interface {
 // First key is the http method (GET, POST, PUT, DELETE)
 // Second key is the path
 // Value is the handler function
-type HandlerMap  map[string]map[string]gin.HandlerFunc
+type HandlerMap map[string]map[string]gin.HandlerFunc
 
 // Rest is the rest handler for the application
 type Krest struct {
@@ -62,10 +62,14 @@ func (g *Krest) registerRoutes(r *gin.Engine, logger Logger, handlers HandlerMap
 		for p, f := range h {
 			logger.Infof("registering %s route %s", t, p)
 			switch t {
-			case "GET": r.GET(p, f)
-			case "POST": r.POST(p, f)
-			case "PUT": r.PUT(p, f)
-			case "DELETE": r.DELETE(p, f)
+			case "GET":
+				r.GET(p, f)
+			case "POST":
+				r.POST(p, f)
+			case "PUT":
+				r.PUT(p, f)
+			case "DELETE":
+				r.DELETE(p, f)
 			}
 		}
 	}
@@ -97,4 +101,3 @@ func (g *Krest) shutServer(srv *http.Server, logger Logger) {
 	<-ctx.Done()
 	logger.Info("closing service at 127.0.0.1:8081")
 }
-

@@ -2,11 +2,10 @@ package main
 
 import (
 	"github.com/lavinas/keel/invoice/internal/adapter/handler"
-	"github.com/lavinas/keel/invoice/internal/core/usecase"
 	"github.com/lavinas/keel/invoice/internal/adapter/repository"
 	"github.com/lavinas/keel/invoice/internal/adapter/tools"
+	"github.com/lavinas/keel/invoice/internal/core/usecase"
 )
-
 
 func main() {
 	config := tools.NewConfig()
@@ -24,4 +23,3 @@ func main() {
 	handler := handler.NewRest(logger, usercase)
 	handler.Run()
 }
-
