@@ -32,6 +32,11 @@ func (c *RegisterInvoiceClient) Validate() error {
 	})
 }
 
+// Get returns the client ID, Name, Email, Document and Phone
+func (c *RegisterInvoiceClient) Get() (string, string, string, string, string) {
+	return c.ID, c.Name, c.Email, c.Document, c.Phone
+}
+
 // ValidateID validates the id of the client
 func (c *RegisterInvoiceClient) ValidateID() error {
 	if c.ID == "" {

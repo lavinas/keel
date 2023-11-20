@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	log_path = "KEEL_INVOICE_LOG_PATH"
+	log_path = "LOG_PATH"
 )
 
 // logFile is a struct that wraps the methods to interact with the log file
