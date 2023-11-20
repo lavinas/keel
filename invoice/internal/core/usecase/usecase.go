@@ -24,7 +24,7 @@ func NewUseCase(repo port.Repository, logger port.Logger, config port.Config) *U
 }
 
 // RegisterClient registers a new client
-func (s *UseCase) RegisterClient(dto port.RegisterInvoiceClient) error {
+func (s *UseCase) RegisterClient(dto port.RegisterClient) error {
 	if err := dto.Validate(); err != nil {
 		return err
 	}

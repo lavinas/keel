@@ -10,9 +10,9 @@ import (
 // RegisterInvoice is the DTO for creating an invoice.
 type RegisterInvoice struct {
 	BusinessID             string                 `json:"business_id"`
-	Business               *RegisterInvoiceClient `json:"business"`
+	Business               *RegisterClient        `json:"business"`
 	CustomerID             string                 `json:"customer_id"`
-	Customer               *RegisterInvoiceClient `json:"customer"`
+	Customer               *RegisterClient        `json:"customer"`
 	Number                 string                 `json:"number"`
 	Date                   string                 `json:"date"`
 	Due                    string                 `json:"due"`

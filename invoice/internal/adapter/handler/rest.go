@@ -4,15 +4,15 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/lavinas/keel/invoice/internal/core/port"
 	"github.com/lavinas/keel/invoice/internal/core/dto"
+	"github.com/lavinas/keel/invoice/internal/core/port"
 	"github.com/lavinas/keel/invoice/pkg/krest"
 )
 
 // Rest is the rest handler for the application
 type Rest struct {
-	logger    port.Logger
-	usercase  port.UseCase
+	logger   port.Logger
+	usercase port.UseCase
 	krest    *krest.Krest
 }
 
@@ -24,7 +24,7 @@ func NewRest(logger port.Logger, usercase port.UseCase) *Rest {
 // Run runs the rest handler
 func (h *Rest) Run() {
 	handlers := krest.HandlerMap{
-		"GET": {"/invoice/ping": h.ping},
+		"GET":  {"/invoice/ping": h.ping},
 		"POST": {"/invoice/client": h.registerClient},
 	}
 	h.krest.Run(h.logger, handlers)
@@ -36,7 +36,7 @@ func (h *Rest) ping(c *gin.Context) {
 }
 
 func (h *Rest) registerClient(c *gin.Context) {
-	var input dto.RegisterInvoiceClient
+	var input dto.RegisterClient
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
