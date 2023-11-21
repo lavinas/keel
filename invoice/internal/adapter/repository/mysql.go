@@ -1,17 +1,17 @@
 package repository
 
 import (
-	
-	"github.com/jinzhu/gorm"
+	"strings"
+
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/jinzhu/gorm"
 	"github.com/lavinas/keel/invoice/internal/core/domain"
 	"github.com/lavinas/keel/invoice/internal/core/port"
-
 )
 
 const (
-	DB_TYPE        = "DB_TYPE"
-	DB_DNS         = "DB_DNS"
+	DB_TYPE = "DB_TYPE"
+	DB_DNS  = "DB_DNS"
 )
 
 // RepoMySql is the repository handler for the application
@@ -25,6 +25,8 @@ func NewRepository(config port.Config) (*MySql, error) {
 	if err != nil {
 		return nil, err
 	}
+	db.LogMode(false)
+	db.AutoMigrate(&domain.Client{})
 	return &MySql{Db: db}, nil
 }
 
@@ -38,3 +40,6 @@ func (r *MySql) AddClient(client *domain.Client) error {
 	return r.Db.Create(client).Error
 }
 
+func (r *MySql) IsDuplicatedError(err error) bool {
+	return strings.Contains(err.Error(), "Error 1062")
+}

@@ -3,6 +3,7 @@ package domain
 import (
 	"errors"
 	"net/mail"
+	"strconv"
 	"strings"
 	"time"
 
@@ -19,11 +20,11 @@ type Client struct {
 	Base
 	Name     string `json:"name" gorm:"type:varchar(100)"`
 	Email    string `json:"email" gorm:"type:varchar(100)"`
-	Document string `json:"document" gorm:"type:decimal(20)"`
-	Phone    string `json:"phone" gorm:"type:varchar(20)"`
+	Document uint64 `json:"document" gorm:"type:decimal(20)"`
+	Phone    uint64 `json:"phone" gorm:"type:varchar(20)"`
 }
 
-func NewClient(id, name, email, document, phone string, created_at time.Time, updated_at time.Time) *Client {
+func NewClient(id, name, email string, document, phone uint64, created_at time.Time, updated_at time.Time) *Client {
 	return &Client{
 		Base:     NewBase(id, created_at, updated_at),
 		Name:     name,
@@ -68,10 +69,11 @@ func (c *Client) ValidateEmail() error {
 
 // ValidateDocument validates the document of the client
 func (c *Client) ValidateDocument() error {
-	if c.Document == "" {
+	if c.Document == 0 {
 		return nil
 	}
-	if !cpf_cnpj.ValidateCPFOrCNPJ(c.Document) {
+	doc := strconv.Itoa(int(c.Document))
+	if !cpf_cnpj.ValidateCPFOrCNPJ(doc) {
 		return errors.New(ErrClientDocumentIsInvalid)
 	}
 	return nil
@@ -79,11 +81,12 @@ func (c *Client) ValidateDocument() error {
 
 // ValidatePhone validates the phone of the client
 func (c *Client) ValidatePhone() error {
-	if c.Phone == "" {
+	if c.Phone == 0 {
 		return nil
 	}
+	pho := strconv.Itoa(int(c.Phone))
 	for _, cr := range countries {
-		r := phone.Parse(c.Phone, cr)
+		r := phone.Parse(pho, cr)
 		if r != "" {
 			return nil
 		}

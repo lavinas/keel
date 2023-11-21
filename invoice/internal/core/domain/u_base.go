@@ -26,9 +26,9 @@ func NewBase(id string, created_at time.Time, updated_at time.Time) Base {
 		updated_at = time.Now()
 	}
 	return Base{
-		ID:         uuid.New().String(),
-		Created_at: time.Now(),
-		Updated_at: time.Now(),
+		ID:         id,
+		Created_at: created_at,
+		Updated_at: updated_at,
 	}
 }
 

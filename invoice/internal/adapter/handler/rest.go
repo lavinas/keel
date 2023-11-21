@@ -41,9 +41,7 @@ func (h *Rest) registerClient(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	if err := h.usercase.RegisterClient(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{"message": "ok"})
+	var result dto.DefaultResult
+	h.usercase.RegisterClient(&input, &result)
+	c.JSON(result.Code, result)
 }

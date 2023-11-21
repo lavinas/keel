@@ -23,4 +23,5 @@ type Logger interface {
 
 type Repository interface {
 	AddClient(client *domain.Client) error
+	IsDuplicatedError(err error) bool
 }
