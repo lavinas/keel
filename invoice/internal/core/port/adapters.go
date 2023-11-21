@@ -16,6 +16,7 @@ type Logger interface {
 	Info(message string)
 	Infof(format string, a ...any)
 	Error(err error)
+	Fatal(err error)
 	Errorf(format string, a ...any)
 	Close()
 }

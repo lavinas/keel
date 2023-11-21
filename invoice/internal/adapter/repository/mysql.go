@@ -1,6 +1,7 @@
 package repository
 
 import (
+	
 	"github.com/jinzhu/gorm"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/lavinas/keel/invoice/internal/core/domain"
@@ -9,7 +10,7 @@ import (
 )
 
 const (
-	DB_TYPE        = "DB_HOST"
+	DB_TYPE        = "DB_TYPE"
 	DB_DNS         = "DB_DNS"
 )
 

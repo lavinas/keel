@@ -15,7 +15,7 @@ type UseCase struct {
 }
 
 // NewService creates a new usecase service
-func NewUseCase(repo port.Repository, logger port.Logger, config port.Config) *UseCase {
+func NewUseCase(config port.Config, logger port.Logger, repo port.Repository) *UseCase {
 	return &UseCase{
 		repo:   repo,
 		logger: logger,

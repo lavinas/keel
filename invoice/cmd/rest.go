@@ -16,10 +16,10 @@ func main() {
 	defer logger.Close()
 	repo, err := repository.NewRepository(config)
 	if err != nil {
-		panic(err)
+		logger.Fatal(err)
 	}
 	defer repo.Close()
-	usercase := usecase.NewUseCase(repo, logger, config)
-	handler := handler.NewRest(logger, usercase)
+	usercase := usecase.NewUseCase(config, logger, repo)
+	handler := handler.NewRest(config, logger, usercase)
 	handler.Run()
 }

@@ -60,6 +60,12 @@ func (l *Klog) Error(err error) {
 	l.write(err.Error())
 }
 
+// Fatal writes a error message to the log file and exits the application
+func (l *Klog) Fatal(err error) {
+	l.write(err.Error())
+	os.Exit(1)
+}
+
 // Errorf writes a error message to the log file attaching a input struct
 func (l *Klog) Errorf(format string, a ...any) {
 	l.write(fmt.Sprintf(format, a...))

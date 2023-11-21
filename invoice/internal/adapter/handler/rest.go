@@ -17,8 +17,8 @@ type Rest struct {
 }
 
 // NewRest creates a new rest handler
-func NewRest(logger port.Logger, usercase port.UseCase) *Rest {
-	return &Rest{logger: logger, usercase: usercase, krest: krest.NewKrest()}
+func NewRest(config port.Config, logger port.Logger, usercase port.UseCase) *Rest {
+	return &Rest{logger: logger, usercase: usercase, krest: krest.NewKrest(config, logger)}
 }
 
 // Run runs the rest handler
@@ -27,7 +27,7 @@ func (h *Rest) Run() {
 		"GET":  {"/invoice/ping": h.ping},
 		"POST": {"/invoice/client": h.registerClient},
 	}
-	h.krest.Run(h.logger, handlers)
+	h.krest.Run(handlers)
 }
 
 // ping is the ping handler
