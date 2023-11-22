@@ -1,7 +1,6 @@
 package usecase
 
 import (
-	"encoding/json"
 	"github.com/lavinas/keel/invoice/internal/core/port"
 )
 
@@ -22,16 +21,5 @@ func NewUseCase(config port.Config, logger port.Logger, repo port.Repository) *U
 		repo:   repo,
 		logger: logger,
 		config: config,
-	}
-}
-
-// logInfoObj logs an info message with an object
-func (s *UseCase) logObj(logType string, prefix string, message string, obj any) {
-	dto_log, _ := json.Marshal(obj)
-	dto_str := string(dto_log)
-	if logType == "info" {
-		s.logger.Infof("%s | %s | %s", prefix, message, dto_str)
-	} else if logType == "error" {
-		s.logger.Errorf("%s: %s", message, dto_str)
 	}
 }

@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -62,4 +63,15 @@ func (s *UseCase) registerClientAddClient(dto port.Register, obj interface{}, re
 		return false
 	}
 	return true
+}
+
+// logInfoObj logs an info message with an object
+func (s *UseCase) logObj(logType string, prefix string, message string, obj any) {
+	dto_log, _ := json.Marshal(obj)
+	dto_str := string(dto_log)
+	if logType == "info" {
+		s.logger.Infof("%s | %s | %s", prefix, message, dto_str)
+	} else if logType == "error" {
+		s.logger.Errorf("%s: %s", message, dto_str)
+	}
 }
