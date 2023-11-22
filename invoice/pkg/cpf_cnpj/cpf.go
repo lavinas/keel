@@ -53,8 +53,10 @@ func (c *CPF) String() string {
 // ValidateCPF validates a CPF document
 // You should use without punctuation
 func ValidateCPF(cpf string) bool {
-	if len(cpf) != 11 {
+	if len(cpf) > 11 {
 		return false
+	} else if len(cpf) < 11 {
+		cpf = fmt.Sprintf("%011s", cpf)
 	}
 
 	firstPart := cpf[0:9]

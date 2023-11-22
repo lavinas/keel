@@ -26,7 +26,7 @@ func NewRepository(config port.Config) (*MySql, error) {
 		return nil, err
 	}
 	db.LogMode(false)
-	db.AutoMigrate(&domain.Client{})
+	db.AutoMigrate(&domain.Client{}, &domain.Instruction{}, &domain.Product{})
 	return &MySql{Db: db}, nil
 }
 
@@ -35,9 +35,9 @@ func (r *MySql) Close() {
 	r.Db.Close()
 }
 
-// AddClient adds a new client to the database
-func (r *MySql) AddClient(client *domain.Client) error {
-	return r.Db.Create(client).Error
+// Add adds a object to the database
+func (r *MySql) Add(obj interface{}) error {
+	return r.Db.Create(obj).Error
 }
 
 func (r *MySql) IsDuplicatedError(err error) bool {

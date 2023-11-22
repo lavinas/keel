@@ -2,8 +2,6 @@ package port
 
 import (
 	"os"
-
-	"github.com/lavinas/keel/invoice/internal/core/domain"
 )
 
 type Config interface {
@@ -22,6 +20,6 @@ type Logger interface {
 }
 
 type Repository interface {
-	AddClient(client *domain.Client) error
+	Add(obj interface{}) error
 	IsDuplicatedError(err error) bool
 }

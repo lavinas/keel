@@ -6,7 +6,8 @@ import (
 
 // InvoiceItem represents a item in the invoice
 type InvoiceItem struct {
-	Base
+	ID          string   `json:"id" gorm:"type:varchar(50)"`
+	InvoiceID   string   `json:"invoice_id" gorm:"type:varchar(50)"`
 	Product     *Product `json:"service"`
 	Description string   `json:"description"`
 	Quantity    int      `json:"quantity"`
@@ -16,7 +17,6 @@ type InvoiceItem struct {
 // Validate validates the invoice item
 func (i *InvoiceItem) Validate() error {
 	return ValidateLoop([]func() error{
-		i.Base.Validate,
 		i.ValidateProduct,
 		i.ValidateQuantity,
 		i.ValidateUnitPrice,
@@ -26,7 +26,7 @@ func (i *InvoiceItem) Validate() error {
 // ValidateProduct validates the product of the invoice item
 func (c *InvoiceItem) ValidateProduct() error {
 	if c.Product == nil {
-		return errors.New(ErrProductBusinessIsRequired)
+		return errors.New("err")
 	}
 	return c.Product.Validate()
 }

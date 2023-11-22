@@ -3,6 +3,7 @@ package domain
 import (
 	"errors"
 	"net/mail"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -18,15 +19,15 @@ var (
 // Client represents a client that send or receive a invoice
 type Client struct {
 	Base
-	Name     string `json:"name" gorm:"type:varchar(100)"`
-	Email    string `json:"email" gorm:"type:varchar(100)"`
+	Name     string `json:"name"     gorm:"type:varchar(100)"`
+	Email    string `json:"email"    gorm:"type:varchar(100)"`
 	Document uint64 `json:"document" gorm:"type:decimal(20)"`
-	Phone    uint64 `json:"phone" gorm:"type:varchar(20)"`
+	Phone    uint64 `json:"phone"    gorm:"type:varchar(20)"`
 }
 
-func NewClient(id, name, email string, document, phone uint64, created_at time.Time, updated_at time.Time) *Client {
+func NewClient(businnes_id, id, name, email string, document, phone uint64, created_at time.Time, updated_at time.Time) *Client {
 	return &Client{
-		Base:     NewBase(id, created_at, updated_at),
+		Base:     NewBase(businnes_id, id, created_at, updated_at),
 		Name:     name,
 		Email:    email,
 		Document: document,
@@ -92,4 +93,12 @@ func (c *Client) ValidatePhone() error {
 		}
 	}
 	return errors.New(ErrClientPhoneIsInvalid)
+}
+
+// strToUint64 converts a string to uint64
+func (s *Client) strToUint64(str string) uint64 {
+	re := regexp.MustCompile(`[^0-9]`)
+	str = re.ReplaceAllString(str, "")
+	i, _ := strconv.ParseUint(str, 10, 64)
+	return i
 }

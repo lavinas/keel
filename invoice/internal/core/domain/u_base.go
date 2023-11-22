@@ -10,12 +10,13 @@ import (
 
 // Base represents the base of the model
 type Base struct {
-	ID         string    `json:"id"`
-	Created_at time.Time `json:"created_at"`
-	Updated_at time.Time `json:"updated_at"`
+	BusinnessID string    `json:"businness_id" gorm:"primary_key;type:varchar(50)"`
+	ID          string    `json:"id"           gorm:"primary_key;type:varchar(50)"`
+	Created_at  time.Time `json:"created_at"   gorm:"type:timestamp"`
+	Updated_at  time.Time `json:"updated_at"   gorm:"type:timestamp"`
 }
 
-func NewBase(id string, created_at time.Time, updated_at time.Time) Base {
+func NewBase(businness_id, id string, created_at time.Time, updated_at time.Time) Base {
 	if id == "" {
 		id = uuid.New().String()
 	}
@@ -26,9 +27,10 @@ func NewBase(id string, created_at time.Time, updated_at time.Time) Base {
 		updated_at = time.Now()
 	}
 	return Base{
-		ID:         id,
-		Created_at: created_at,
-		Updated_at: updated_at,
+		BusinnessID: businness_id,
+		ID:          id,
+		Created_at:  created_at,
+		Updated_at:  updated_at,
 	}
 }
 

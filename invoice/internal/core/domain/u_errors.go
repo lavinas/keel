@@ -10,7 +10,6 @@ const (
 
 // Client errors
 const (
-	ErrClientIDLength          = "client id must have only one word"
 	ErrClientNameIsRequired    = "client name is required"
 	ErrClientNameLength        = "client name must have at least a name and surname"
 	ErrClientEmailIsRequired   = "client email is required"
@@ -20,9 +19,14 @@ const (
 	ErrClientIDNotLower        = "client id must be lower case"
 )
 
-// Instruction errors
+// Instruction Status errors
 const (
-	ErrInstructionBusinessIsRequired = "instruction business is required"
+	ErrInstructionDescriptionIsRequired = "instruction description is required"
+)
+
+// Product errors
+const (
+	ErrProductDescriptionIsRequired = "product description is required"
 )
 
 // Invoice errors
@@ -37,13 +41,6 @@ const (
 	ErrInvoiceItemIDLower        = "invoice item id must be lower case"
 	ErrInvoiceItemQuantity       = "invoice item quantity must be greater than 0"
 	ErrInvoiceItemPrice          = "invoice item price must be not equal to 0"
-)
-
-// Product errors
-const (
-	ErrProductIDLength           = "product id must have only one word"
-	ErrProductIDLower            = "product id must be lower case"
-	ErrProductBusinessIsRequired = "product business is required"
 )
 
 // Invoice Status errors

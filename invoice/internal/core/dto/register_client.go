@@ -3,8 +3,13 @@ package dto
 import (
 	"errors"
 	"net/mail"
+	"regexp"
+	"strconv"
 	"strings"
+	"time"
 
+	"github.com/lavinas/keel/invoice/internal/core/domain"
+	"github.com/lavinas/keel/invoice/internal/core/port"
 	"github.com/lavinas/keel/invoice/pkg/cpf_cnpj"
 	"github.com/lavinas/keel/invoice/pkg/phone"
 )
@@ -15,7 +20,7 @@ var (
 
 // RegisterClient is the dto for registering a new client
 type RegisterClient struct {
-	ID       string `json:"id"`
+	RegisterBase
 	Name     string `json:"name"`
 	Email    string `json:"email"`
 	Document string `json:"document"`
@@ -25,7 +30,7 @@ type RegisterClient struct {
 // Validate validates the client
 func (c *RegisterClient) Validate() error {
 	return ValidateLoop([]func() error{
-		c.ValidateID,
+		c.ValidateBase,
 		c.ValidateName,
 		c.ValidateEmail,
 		c.ValidateDocument,
@@ -33,23 +38,14 @@ func (c *RegisterClient) Validate() error {
 	})
 }
 
+// GetDomain returns the domain of the client
+func (c *RegisterClient) GetDomain(businnes_id string) port.Domain {
+	return domain.NewClient(businnes_id, c.ID, c.Name, c.Email, c.strToUint64(c.Document), c.strToUint64(c.Phone), time.Time{}, time.Time{})
+}
+
 // Get returns the client ID, Name, Email, Document and Phone
 func (c *RegisterClient) Get() (string, string, string, string, string) {
 	return c.ID, c.Name, c.Email, c.Document, c.Phone
-}
-
-// ValidateID validates the id of the client
-func (c *RegisterClient) ValidateID() error {
-	if c.ID == "" {
-		return nil
-	}
-	if len(strings.Split(c.ID, " ")) > 1 {
-		return errors.New(ErrRegisterClientIDLength)
-	}
-	if strings.ToLower(c.ID) != c.ID {
-		return errors.New(ErrRegisterClientIDLower)
-	}
-	return nil
 }
 
 // ValidateName validates the name of the client
@@ -97,4 +93,12 @@ func (c *RegisterClient) ValidatePhone() error {
 		}
 	}
 	return errors.New(ErrRegisterClientPhoneIsInvalid)
+}
+
+// strToUint64 converts a string to uint64
+func (s *RegisterClient) strToUint64(str string) uint64 {
+	re := regexp.MustCompile(`[^0-9]`)
+	str = re.ReplaceAllString(str, "")
+	i, _ := strconv.ParseUint(str, 10, 64)
+	return i
 }

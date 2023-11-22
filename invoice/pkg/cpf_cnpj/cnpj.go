@@ -53,8 +53,10 @@ func (c *CNPJ) String() string {
 // You should use without punctuation
 func ValidateCNPJ(cnpj string) bool {
 
-	if len(cnpj) != 14 {
+	if len(cnpj) > 14 {
 		return false
+	} else if len(cnpj) < 14 {
+		cnpj = fmt.Sprintf("%014s", cnpj)
 	}
 
 	firstPart := cnpj[:12]

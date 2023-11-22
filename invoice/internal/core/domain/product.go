@@ -2,27 +2,35 @@ package domain
 
 import (
 	"errors"
+	"time"
 )
 
 // Product represents a product or service that can be invoiced
 type Product struct {
 	Base
-	Business    *Client `json:"business"`
-	Description string  `json:"description"`
+	Description string `json:"description"`
+}
+
+// NewProduct creates a new product
+func NewProduct(businness_id, id, description string, created_at time.Time, updated_at time.Time) *Product {
+	return &Product{
+		Base:        NewBase(businness_id, id, created_at, updated_at),
+		Description: description,
+	}
 }
 
 // Validate validates the product
 func (p *Product) Validate() error {
 	return ValidateLoop([]func() error{
 		p.Base.Validate,
-		p.ValidateBusiness,
+		p.ValidateDescription,
 	})
 }
 
-// ValidateBusiness validates the business of the product
-func (p *Product) ValidateBusiness() error {
-	if p.Business == nil {
-		return errors.New(ErrProductBusinessIsRequired)
+// Validate Description validates the description of the product
+func (p *Product) ValidateDescription() error {
+	if p.Description == "" {
+		return errors.New(ErrProductDescriptionIsRequired)
 	}
-	return p.Business.Validate()
+	return nil
 }
