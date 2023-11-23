@@ -53,6 +53,8 @@ func (h *Rest) Register(c *gin.Context) {
 	c.JSON(result.Code, result)
 }
 
+
+// registerFactory returns the dto for the register
 func (h *Rest) registerFactory(c *gin.Context) port.Register {
 	switch c.Request.URL.Path {
 	case "/invoice/client":

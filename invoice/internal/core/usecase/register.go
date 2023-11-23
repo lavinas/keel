@@ -1,77 +1,32 @@
 package usecase
 
 import (
-	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/lavinas/keel/invoice/internal/core/port"
 )
 
-// RegisterClient registers a new client
+// Register registers a input dto
 func (s *UseCase) Register(dto port.Register, result port.DefaultResult) {
-	if !s.registerValidateDto(dto, result) {
-		return
-	}
-	ok, client := s.registerCreateDomain(dto, result)
-	if !ok {
-		return
-	}
-	if !s.registerClientAddClient(dto, client, result) {
-		return
-	}
-	s.logObj("info", "register client - success", "client registered", dto)
-	result.Set(http.StatusCreated, "client registered")
-}
-
-// registerClientValidateDto validates the dto of register client usecase
-func (s *UseCase) registerValidateDto(dto port.Register, result port.DefaultResult) bool {
 	if err := dto.Validate(); err != nil {
-		message := fmt.Sprintf("bad request: %s", err.Error())
-		s.logObj("info", "register client - validate dto", message, dto)
+		s.logger.Info("register client - validate dto")
 		result.Set(http.StatusBadRequest, err.Error())
-		return false
+		return
 	}
-	return true
-}
-
-// registerClientCreateDomain creates the domain of register client usecase
-func (s *UseCase) registerCreateDomain(dto port.Register, result port.DefaultResult) (bool, interface{}) {
-	businness_id := s.config.Get(BUSINNESS_ID)
-	client := dto.GetDomain(businness_id)
-	if err := client.Validate(); err != nil {
-		message := fmt.Sprintf("internal error on validate: %s", err.Error())
-		s.logObj("error", "register client - create domain", message, dto)
+	domain := dto.GetDomain(s.config.Get(BUSINNESS_ID))
+	if err := domain.Validate(); err != nil {
+		s.logger.Info("register client - create domain")
 		result.Set(http.StatusInternalServerError, "internal error")
-		return false, nil
+		return
 	}
-	return true, client
-}
-
-// registerClientAddClient adds the client of register client usecase
-func (s *UseCase) registerClientAddClient(dto port.Register, obj interface{}, result port.DefaultResult) bool {
-	if err := s.repo.Add(obj); err != nil {
+	if err := s.repo.Add(domain); err != nil {
 		if s.repo.IsDuplicatedError(err) {
-			message := fmt.Sprintf("conflict: %s", err.Error())
-			s.logObj("info", "register client - add client", message, dto)
+			s.logger.Info("register client - add client")
 			result.Set(http.StatusConflict, "client id already exists")
-			return false
+			return
 		}
-		message := fmt.Sprintf("internal error on add client: %s", err.Error())
-		s.logObj("error", "register client - add client", message, dto)
+		s.logger.Info("register client - add client")
 		result.Set(http.StatusInternalServerError, "internal error")
-		return false
-	}
-	return true
-}
-
-// logInfoObj logs an info message with an object
-func (s *UseCase) logObj(logType string, prefix string, message string, obj any) {
-	dto_log, _ := json.Marshal(obj)
-	dto_str := string(dto_log)
-	if logType == "info" {
-		s.logger.Infof("%s | %s | %s", prefix, message, dto_str)
-	} else if logType == "error" {
-		s.logger.Errorf("%s: %s", message, dto_str)
+		return
 	}
 }
