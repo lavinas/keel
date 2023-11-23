@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/lavinas/keel/invoice/internal/core/domain"
 	"github.com/lavinas/keel/invoice/internal/core/dto"
-	"github.com/lavinas/keel/invoice/internal/core/dto/register"
 	"github.com/lavinas/keel/invoice/internal/core/port"
 	"github.com/lavinas/keel/invoice/pkg/krest"
 )
@@ -42,27 +42,24 @@ func (h *Rest) ping(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "pong"})
 }
 
-// registerClient is the register client handler
+// Register is the register handler
 func (h *Rest) Register(c *gin.Context) {
-	input := h.registerFactory(c)
-	if err := c.ShouldBindJSON(&input); err != nil {
+	obj := h.domainFactory(c)
+	if err := c.ShouldBindJSON(obj); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"code": 409, "message": "invalid json structure"})
 		return
 	}
 	var result dto.DefaultResult
-	h.usercase.Register(input, &result)
+	h.usercase.Register(obj, &result)
 	c.JSON(result.Code, result)
 }
 
-// registerFactory returns the dto for the register
-func (h *Rest) registerFactory(c *gin.Context) port.Register {
-	switch c.Request.URL.Path {
-	case "/invoice/client":
-		return &register.RegisterClient{}
-	case "/invoice/instruction":
-		return &register.RegisterInstruction{}
-	case "/invoice/product":
-		return &register.RegisterProduct{}
+// domainFactory creates a new domain object
+func (h *Rest) domainFactory(c *gin.Context) port.Domain {
+	domainMap := map[string]port.Domain{
+		"/invoice/product":     &domain.Product{},
+		"/invoice/instruction": &domain.Instruction{},
+		"/invoice/client":      &domain.Client{},
 	}
-	return nil
+	return domainMap[c.Request.URL.Path]
 }

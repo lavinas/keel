@@ -54,10 +54,14 @@ func (b *Base) Validate() error {
 	return nil
 }
 
+func (b *Base) SetBusinessID(businness_id string) {
+	b.BusinnessID = businness_id
+}
+
 // ValidateID validates the id of the model
 func (p *Base) ValidateID() error {
 	if p.ID == "" {
-		return nil
+		return errors.New(ErrBaseIDIsRequired)
 	}
 	if len(strings.Split(p.ID, " ")) > 1 {
 		return errors.New(ErrBaseIDLength)
