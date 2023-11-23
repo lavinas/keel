@@ -28,9 +28,9 @@ func (h *Rest) Run() {
 			"/invoice/ping": h.ping,
 		},
 		"POST": {
-			"/invoice/client":      h.registerClient,
-			"/invoice/instruction": h.registerInstruction,
-			"/invoice/product":     h.registerProduct,
+			"/invoice/client":      h.Register,
+			"/invoice/instruction": h.Register,
+			"/invoice/product":     h.Register,
 		},
 	}
 	h.krest.Run(handlers)
@@ -42,43 +42,25 @@ func (h *Rest) ping(c *gin.Context) {
 }
 
 // registerClient is the register client handler
-func (h *Rest) registerClient(c *gin.Context) {
-	var input dto.RegisterClient
-	if !h.bindInput(c, &input) {
-		return
-	}
-	var result dto.DefaultResult
-	h.usercase.Register(&input, &result)
-	c.JSON(result.Code, result)
-}
-
-// registerInstruction is the register instruction handler
-func (h *Rest) registerInstruction(c *gin.Context) {
-	var input dto.RegisterInstruction
-	if !h.bindInput(c, &input) {
-		return
-	}
-	var result dto.DefaultResult
-	h.usercase.Register(&input, &result)
-	c.JSON(result.Code, result)
-}
-
-// registerProduct is the register product handler
-func (h *Rest) registerProduct(c *gin.Context) {
-	var input dto.RegisterProduct
-	if !h.bindInput(c, &input) {
-		return
-	}
-	var result dto.DefaultResult
-	h.usercase.Register(&input, &result)
-	c.JSON(result.Code, result)
-}
-
-// bindInput binds the input
-func (h *Rest) bindInput(c *gin.Context, input interface{}) bool {
+func (h *Rest) Register(c *gin.Context) {
+	input := h.registerFactory(c)
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"code": 409, "message": "invalid json structure"})
-		return false
+		return
 	}
-	return true
+	var result dto.DefaultResult
+	h.usercase.Register(input, &result)
+	c.JSON(result.Code, result)
+}
+
+func (h *Rest) registerFactory(c *gin.Context) port.Register {
+	switch c.Request.URL.Path {
+	case "/invoice/client":
+		return &dto.RegisterClient{}
+	case "/invoice/instruction":
+		return &dto.RegisterInstruction{}
+	case "/invoice/product":
+		return &dto.RegisterProduct{}
+	}
+	return nil
 }
