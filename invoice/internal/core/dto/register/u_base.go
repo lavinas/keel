@@ -1,4 +1,4 @@
-package dto
+package register
 
 // ValidateLoop is a function that pass a slice of validation functions and execute them in order
 

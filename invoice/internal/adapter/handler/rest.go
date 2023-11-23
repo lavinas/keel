@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/lavinas/keel/invoice/internal/core/dto"
+	"github.com/lavinas/keel/invoice/internal/core/dto/register"
 	"github.com/lavinas/keel/invoice/internal/core/port"
 	"github.com/lavinas/keel/invoice/pkg/krest"
 )
@@ -53,16 +54,15 @@ func (h *Rest) Register(c *gin.Context) {
 	c.JSON(result.Code, result)
 }
 
-
 // registerFactory returns the dto for the register
 func (h *Rest) registerFactory(c *gin.Context) port.Register {
 	switch c.Request.URL.Path {
 	case "/invoice/client":
-		return &dto.RegisterClient{}
+		return &register.RegisterClient{}
 	case "/invoice/instruction":
-		return &dto.RegisterInstruction{}
+		return &register.RegisterInstruction{}
 	case "/invoice/product":
-		return &dto.RegisterProduct{}
+		return &register.RegisterProduct{}
 	}
 	return nil
 }

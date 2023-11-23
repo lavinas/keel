@@ -1,4 +1,4 @@
-package dto
+package register
 
 import (
 	"errors"

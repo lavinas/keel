@@ -1,4 +1,4 @@
-package dto
+package register
 
 // Register DTO errors
 
