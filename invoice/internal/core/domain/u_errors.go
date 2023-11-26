@@ -32,14 +32,15 @@ const (
 
 // Invoice errors
 const (
-	ErrInvoiceClientIsRequired = "invoice client is required"
-
+	ErrInvoiceClientIsRequired   = "invoice client is required"
 	ErrInvoiceBusinessIsRequired = "invoice business is required"
 	ErrInvoiceCustomerIsRequired = "invoice customer is required"
 	ErrInvoiceDateIsRequired     = "invoice date is required"
+	ErrInvoiceDateIsInvalid      = "invoice date is invalid. It must be in the format YYYY-MM-DD"
 	ErrInvoiceDueIsRequired      = "invoice due is required"
-	ErrInvoiceAmountNotMatch     = "invoice amount not match with items values"
-	ErrInvoiceAmountIsInvalid    = "invoice amount should be greater than 0"
+	ErrInvoiceDueIsInvalid       = "invoice due is invalid. It must be in the format YYYY-MM-DD"
+	ErrInvoiceAmountIsRequired   = "invoice amount is required"
+	ErrInvoiceAmountIsInvalid    = "invoice amount is invalid. It must be a number  (ex: 100.00)"
 	ErrInvoiceItemIDLength       = "invoice item id must have only one word"
 	ErrInvoiceItemIDLower        = "invoice item id must be lower case"
 	ErrInvoiceItemQuantity       = "invoice item quantity must be greater than 0"

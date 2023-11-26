@@ -36,13 +36,14 @@ func (c *Client) Validate() error {
 }
 
 // Marshal marshals the client
-func (c *Client) Marshal() {
-	c.DocumentNum = cpf_cnpj.ParseUint(c.DocumentStr)
-	for _, cr := range countries {
-		if c.PhoneNum = phone.ParseUint(c.PhoneStr, cr); c.PhoneNum != 0 {
-			break
-		}
+func (c *Client) Marshal() error {
+	if err := c.MarshalDocument(); err != nil {
+		return err
 	}
+	if err := c.MarshalPhone(); err != nil {
+		return err
+	}
+	return nil
 }
 
 // ValidateName validates the name of the client
@@ -78,6 +79,16 @@ func (c *Client) ValidateDocument() error {
 	return nil
 }
 
+// MarshalDocument marshals the document of the client
+func (c *Client) MarshalDocument() error {
+	var err error
+	c.DocumentNum, err = cpf_cnpj.ParseUint(c.DocumentStr)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // ValidatePhone validates the phone of the client
 func (c *Client) ValidatePhone() error {
 	if c.PhoneStr == "" {
@@ -90,4 +101,22 @@ func (c *Client) ValidatePhone() error {
 		}
 	}
 	return errors.New(ErrClientPhoneIsInvalid)
+}
+
+// MarshalPhone marshals the phone of the client
+func (c *Client) MarshalPhone() error {
+	var err error
+	found := false
+	for _, cr := range countries {
+		if c.PhoneNum, err = phone.ParseUint(c.PhoneStr, cr); err != nil {
+			return err
+		} else if c.PhoneNum != 0 {
+			found = true
+			break
+		}
+	}
+	if !found {
+		return errors.New(ErrClientPhoneIsInvalid)
+	}
+	return nil
 }

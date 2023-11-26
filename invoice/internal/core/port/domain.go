@@ -3,5 +3,5 @@ package port
 type Domain interface {
 	Validate() error
 	SetBusinessID(string)
-	Marshal()
+	Marshal() error
 }

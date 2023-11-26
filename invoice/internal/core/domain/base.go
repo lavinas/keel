@@ -58,7 +58,8 @@ func (b *Base) SetBusinessID(businness_id string) {
 }
 
 // Marshal marshals the base of the model
-func (b *Base) Marshal() {
+func (b *Base) Marshal() error {
+	return nil
 }
 
 // ValidateID validates the id of the model

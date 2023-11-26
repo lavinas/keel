@@ -26,7 +26,10 @@ func NewRepository(config port.Config) (*MySql, error) {
 		return nil, err
 	}
 	db.LogMode(false)
-	db.AutoMigrate(&domain.Client{}, &domain.Instruction{}, &domain.Product{})
+	db.AutoMigrate(&domain.Client{},
+		&domain.Instruction{},
+		&domain.Product{},
+		&domain.Invoice{})
 	return &MySql{Db: db}, nil
 }
 

@@ -20,15 +20,15 @@ func Parse(number string, country string) string {
 }
 
 // ParseUint mobile number by country and return uint64
-func ParseUint(number string, country string) uint64 {
+func ParseUint(number string, country string) (uint64, error) {
 	r := regexp.MustCompile(`[^0-9]`)
 	number = r.ReplaceAllString(number, "")
 	number = parseInternal(number, country, false)
 	i, err := strconv.ParseUint(number, 10, 64)
 	if err != nil {
-		return 0
+		return 0, err
 	}
-	return i
+	return i, nil
 }
 
 // ParseWithLandLine is Parse mobile and landline number by country
