@@ -10,13 +10,14 @@ import (
 // Invoice represents an invoice - main model
 type Invoice struct {
 	Base
-	Client      string       `json:"client" gorm:"type:varchar(100)"`
-	DateStr     string       `json:"date" gorm:"-"`
-	Date        time.Time    `json:"-" gorm:"type:date"`
-	DueStr      string       `json:"due" gorm:"-"`
-	Due         time.Time    `json:"-"  gorm:"type:date"`
-	AmountStr   string       `json:"amount" gorm:"-"`
-	Amount      float64      `json:"-" gorm:"type:decimal(20, 2)"`
+	ClientID    string       `json:"client_id"   gorm:"type:varchar(50); not null"`
+	Client      *Client      `json:"-"           gorm:"ForeignKey:BusinnessID,ClientID;References:BusinnessID,ID"`
+	DateStr     string       `json:"date"        gorm:"-"`
+	Date        time.Time    `json:"-"           gorm:"type:date; not null"`
+	DueStr      string       `json:"due"         gorm:"-"`
+	Due         time.Time    `json:"-"           gorm:"type:date; not null"`
+	AmountStr   string       `json:"amount"      gorm:"-"`
+	Amount      float64      `json:"-"           gorm:"type:decimal(20, 2); not null"`
 	Instruction *Instruction `json:"instruction" gorm:"type:varchar(100)"`
 }
 
@@ -47,13 +48,13 @@ func (p *Invoice) Marshal() error {
 
 // ValidateClient validates the client of the invoice
 func (p *Invoice) ValidateClient() error {
-	if p.Client == "" {
+	if p.ClientID == "" {
 		return errors.New(ErrInvoiceClientIsRequired)
 	}
-	if len(strings.Split(p.Client, " ")) < 2 {
+	if len(strings.Split(p.ClientID, " ")) < 2 {
 		return errors.New(ErrClientNameLength)
 	}
-	if p.Client != strings.ToLower(p.Client) {
+	if p.ClientID != strings.ToLower(p.ClientID) {
 		return errors.New(ErrClientIDNotLower)
 	}
 	return nil
@@ -86,6 +87,9 @@ func (p *Invoice) ValidateDue() error {
 	}
 	if _, err := time.Parse("2006-01-02", p.DueStr); err != nil {
 		return errors.New(ErrInvoiceDateIsInvalid)
+	}
+	if p.Due.Before(p.Date) {
+		return errors.New(ErrInvoiceDueBeforeDate)
 	}
 	return nil
 }

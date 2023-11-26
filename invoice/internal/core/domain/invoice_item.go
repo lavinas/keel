@@ -6,7 +6,7 @@ import (
 
 // InvoiceItem represents a item in the invoice
 type InvoiceItem struct {
-	ID          string   `json:"id" gorm:"type:varchar(50)"`
+	ID          string   `json:"id"         gorm:"type:varchar(50)"`
 	InvoiceID   string   `json:"invoice_id" gorm:"type:varchar(50)"`
 	Product     *Product `json:"service"`
 	Description string   `json:"description"`

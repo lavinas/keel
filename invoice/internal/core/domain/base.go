@@ -10,10 +10,10 @@ import (
 
 // Base represents the base of the model
 type Base struct {
-	BusinnessID string    `json:"businness_id" gorm:"primary_key;type:varchar(50)"`
-	ID          string    `json:"id"           gorm:"primary_key;type:varchar(50)"`
-	Created_at  time.Time `json:"created_at"   gorm:"type:timestamp"`
-	Updated_at  time.Time `json:"updated_at"   gorm:"type:timestamp"`
+	BusinnessID string    `json:"-"            gorm:"primaryKey;type:varchar(50); not null"`
+	ID          string    `json:"id"           gorm:"primaryKey;type:varchar(50); not null"`
+	Created_at  time.Time `json:"created_at"   gorm:"type:timestamp; not null"`
+	Updated_at  time.Time `json:"updated_at"   gorm:"type:timestamp; not null"`
 }
 
 func NewBase(businness_id, id string, created_at time.Time, updated_at time.Time) Base {
