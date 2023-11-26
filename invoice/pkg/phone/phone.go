@@ -2,6 +2,7 @@ package phone
 
 import (
 	"regexp"
+	"strconv"
 	"strings"
 	"sync"
 )
@@ -16,6 +17,18 @@ var (
 // Parse mobile number by country
 func Parse(number string, country string) string {
 	return parseInternal(number, country, false)
+}
+
+// ParseUint mobile number by country and return uint64
+func ParseUint(number string, country string) uint64 {
+	r := regexp.MustCompile(`[^0-9]`)
+	number = r.ReplaceAllString(number, "")
+	number = parseInternal(number, country, false)
+	i, err := strconv.ParseUint(number, 10, 64)
+	if err != nil {
+		return 0
+	}
+	return i
 }
 
 // ParseWithLandLine is Parse mobile and landline number by country

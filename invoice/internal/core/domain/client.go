@@ -3,10 +3,7 @@ package domain
 import (
 	"errors"
 	"net/mail"
-	"regexp"
-	"strconv"
 	"strings"
-	"time"
 
 	"github.com/lavinas/keel/invoice/pkg/cpf_cnpj"
 	"github.com/lavinas/keel/invoice/pkg/phone"
@@ -19,20 +16,12 @@ var (
 // Client represents a client that send or receive a invoice
 type Client struct {
 	Base
-	Name     string `json:"name"     gorm:"type:varchar(100)"`
-	Email    string `json:"email"    gorm:"type:varchar(100)"`
-	Document uint64 `json:"document" gorm:"type:decimal(20)"`
-	Phone    uint64 `json:"phone"    gorm:"type:varchar(20)"`
-}
-
-func NewClient(businnes_id, id, name, email string, document, phone uint64, created_at time.Time, updated_at time.Time) *Client {
-	return &Client{
-		Base:     NewBase(businnes_id, id, created_at, updated_at),
-		Name:     name,
-		Email:    email,
-		Document: document,
-		Phone:    phone,
-	}
+	Name        string `json:"name"     gorm:"type:varchar(100)"`
+	Email       string `json:"email"    gorm:"type:varchar(100)"`
+	DocumentStr string `json:"document" gorm:"-"`
+	DocumentNum uint64 `json:"-"        gorm:"type:numeric(20)"`
+	PhoneStr    string `json:"phone"    gorm:"-"`
+	PhoneNum    uint64 `json:"-"        gorm:"type:numeric(20)"`
 }
 
 // Validate validates the client
@@ -44,6 +33,16 @@ func (c *Client) Validate() error {
 		c.ValidateDocument,
 		c.ValidatePhone,
 	})
+}
+
+// Marshal marshals the client
+func (c *Client) Marshal() {
+	c.DocumentNum = cpf_cnpj.ParseUint(c.DocumentStr)
+	for _, cr := range countries {
+		if c.PhoneNum = phone.ParseUint(c.PhoneStr, cr); c.PhoneNum != 0 {
+			break
+		}
+	}
 }
 
 // ValidateName validates the name of the client
@@ -70,11 +69,10 @@ func (c *Client) ValidateEmail() error {
 
 // ValidateDocument validates the document of the client
 func (c *Client) ValidateDocument() error {
-	if c.Document == 0 {
+	if c.DocumentStr == "" {
 		return nil
 	}
-	doc := strconv.Itoa(int(c.Document))
-	if !cpf_cnpj.ValidateCPFOrCNPJ(doc) {
+	if !cpf_cnpj.ValidateCPFOrCNPJ(c.DocumentStr) {
 		return errors.New(ErrClientDocumentIsInvalid)
 	}
 	return nil
@@ -82,23 +80,14 @@ func (c *Client) ValidateDocument() error {
 
 // ValidatePhone validates the phone of the client
 func (c *Client) ValidatePhone() error {
-	if c.Phone == 0 {
+	if c.PhoneStr == "" {
 		return nil
 	}
-	pho := strconv.Itoa(int(c.Phone))
 	for _, cr := range countries {
-		r := phone.Parse(pho, cr)
+		r := phone.Parse(c.PhoneStr, cr)
 		if r != "" {
 			return nil
 		}
 	}
 	return errors.New(ErrClientPhoneIsInvalid)
-}
-
-// strToUint64 converts a string to uint64
-func (s *Client) strToUint64(str string) uint64 {
-	re := regexp.MustCompile(`[^0-9]`)
-	str = re.ReplaceAllString(str, "")
-	i, _ := strconv.ParseUint(str, 10, 64)
-	return i
 }

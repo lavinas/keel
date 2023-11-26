@@ -32,6 +32,8 @@ const (
 
 // Invoice errors
 const (
+	ErrInvoiceClientIsRequired = "invoice client is required"
+
 	ErrInvoiceBusinessIsRequired = "invoice business is required"
 	ErrInvoiceCustomerIsRequired = "invoice customer is required"
 	ErrInvoiceDateIsRequired     = "invoice date is required"

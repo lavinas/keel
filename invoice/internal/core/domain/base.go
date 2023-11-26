@@ -38,8 +38,6 @@ func NewBase(businness_id, id string, created_at time.Time, updated_at time.Time
 func (b *Base) Validate() error {
 	valOrder := []func() error{
 		b.ValidateID,
-		b.ValidateCreatedAt,
-		b.ValidateUpdatedAt,
 	}
 	errMsg := ""
 	for _, val := range valOrder {
@@ -54,8 +52,13 @@ func (b *Base) Validate() error {
 	return nil
 }
 
+// SetBusinessID sets the business id of the model
 func (b *Base) SetBusinessID(businness_id string) {
 	b.BusinnessID = businness_id
+}
+
+// Marshal marshals the base of the model
+func (b *Base) Marshal() {
 }
 
 // ValidateID validates the id of the model
@@ -68,22 +71,6 @@ func (p *Base) ValidateID() error {
 	}
 	if strings.ToLower(p.ID) != p.ID {
 		return errors.New(ErrBaseIDLower)
-	}
-	return nil
-}
-
-// ValidateCreatedAt validates the created at of the model
-func (p *Base) ValidateCreatedAt() error {
-	if p.Created_at.IsZero() {
-		return nil
-	}
-	return nil
-}
-
-// ValidateUpdatedAt validates the updated at of the model
-func (p *Base) ValidateUpdatedAt() error {
-	if p.Updated_at.IsZero() {
-		return nil
 	}
 	return nil
 }

@@ -32,6 +32,7 @@ func (h *Rest) Run() {
 			"/invoice/client":      h.Register,
 			"/invoice/instruction": h.Register,
 			"/invoice/product":     h.Register,
+			"invoice":              h.Register,
 		},
 	}
 	h.krest.Run(handlers)
@@ -60,6 +61,7 @@ func (h *Rest) domainFactory(c *gin.Context) port.Domain {
 		"/invoice/product":     &domain.Product{},
 		"/invoice/instruction": &domain.Instruction{},
 		"/invoice/client":      &domain.Client{},
+		"/invoice":             &domain.Invoice{},
 	}
 	return domainMap[c.Request.URL.Path]
 }

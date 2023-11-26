@@ -2,53 +2,43 @@ package domain
 
 import (
 	"errors"
+	"strings"
 	"time"
 )
 
 // Invoice represents an invoice - main model
 type Invoice struct {
 	Base
-	Business      *Client        `json:"business"`
-	Customer      *Client        `json:"customer"`
-	Date          time.Time      `json:"date"`
-	Due           time.Time      `json:"due"`
-	Amount        float64        `json:"amount"`
-	Items         []*InvoiceItem `json:"item"`
-	Instruction   *Instruction   `json:"instruction"`
-	InvoiceStatus *InvoiceStatus `json:"invoice_status"`
-	PaymentStatus *PaymentStatus `json:"payment_status"`
+	Client      string       `json:"client" gorm:"type:varchar(100)"`
+	Date        time.Time    `json:"date" gorm:"type:date"`
+	Due         time.Time    `json:"due"  gorm:"type:date"`
+	Amount      float64      `json:"amount" gorm:"type:decimal(20, 2)"`
+	Instruction *Instruction `json:"instruction" gorm:"type:varchar(100)"`
 }
 
 // Validate validates the invoice
 func (p *Invoice) Validate() error {
 	return ValidateLoop([]func() error{
 		p.Base.Validate,
-		p.ValidateBusiness,
-		p.ValidateCustomer,
 		p.ValidateDate,
 		p.ValidateDue,
 		p.ValidateAmount,
-		p.ValidateItems,
 		p.ValidateInstruction,
-		p.ValidateInvoiceStatus,
-		p.ValidatePaymentStatus,
 	})
 }
 
-// ValidateBusiness validates the business of the invoice
-func (p *Invoice) ValidateBusiness() error {
-	if p.Business == nil {
-		return errors.New(ErrInvoiceBusinessIsRequired)
+// ValidateClient validates the client of the invoice
+func (p *Invoice) ValidateClient() error {
+	if p.Client == "" {
+		return errors.New(ErrInvoiceClientIsRequired)
 	}
-	return p.Business.Validate()
-}
-
-// ValidateCustomer validates the custumer of the invoice
-func (p *Invoice) ValidateCustomer() error {
-	if p.Customer == nil {
-		return errors.New(ErrInvoiceCustomerIsRequired)
+	if len(strings.Split(p.Client, " ")) < 2 {
+		return errors.New(ErrClientNameLength)
 	}
-	return p.Customer.Validate()
+	if p.Client != strings.ToLower(p.Client) {
+		return errors.New(ErrClientIDNotLower)
+	}
+	return nil
 }
 
 // ValidateDate validates the Date of the invoice
@@ -69,31 +59,8 @@ func (p *Invoice) ValidateDue() error {
 
 // ValidateAmount validates the amount of the invoice
 func (p *Invoice) ValidateAmount() error {
-	itemAmount := p.GetItemsAmount()
-	if itemAmount > 0 && p.Amount != itemAmount {
-		return errors.New(ErrInvoiceAmountNotMatch)
-	}
 	if p.Amount <= 0 {
 		return errors.New(ErrInvoiceAmountIsInvalid)
-	}
-	return nil
-}
-
-// Validate validates the invoice
-func (p *Invoice) GetItemsAmount() float64 {
-	sum := float64(0)
-	for _, item := range p.Items {
-		sum += item.GetAmount()
-	}
-	return sum
-}
-
-// ValidateItems validates the items of the invoice
-func (p *Invoice) ValidateItems() error {
-	for _, item := range p.Items {
-		if err := item.Validate(); err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -104,20 +71,4 @@ func (p *Invoice) ValidateInstruction() error {
 		return nil
 	}
 	return p.Instruction.Validate()
-}
-
-// ValidateInvoiceStatus validates the invoice
-func (p *Invoice) ValidateInvoiceStatus() error {
-	if p.InvoiceStatus == nil {
-		return errors.New(ErrInvoiceDueIsRequired)
-	}
-	return p.InvoiceStatus.Validate()
-}
-
-// ValidatePaymentStatus validates the invoice
-func (p *Invoice) ValidatePaymentStatus() error {
-	if p.PaymentStatus == nil {
-		return errors.New(ErrInvoiceDueIsRequired)
-	}
-	return p.PaymentStatus.Validate()
 }
