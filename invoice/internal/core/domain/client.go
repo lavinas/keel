@@ -5,6 +5,7 @@ import (
 	"net/mail"
 	"strings"
 
+	"github.com/lavinas/keel/invoice/internal/core/port"
 	"github.com/lavinas/keel/invoice/pkg/cpf_cnpj"
 	"github.com/lavinas/keel/invoice/pkg/phone"
 )
@@ -25,15 +26,15 @@ type Client struct {
 }
 
 // Validate validates the client
-func (c *Client) Validate(p interface{}) error {
-	execOrder := []func(interface{})error{
+func (c *Client) Validate(repo port.Repository) error {
+	execOrder := []func(repo port.Repository) error{
 		c.Base.Validate,
 		c.ValidateName,
 		c.ValidateEmail,
 		c.ValidateDocument,
 		c.ValidatePhone,
 	}
-	return ValidateLoop(execOrder, p)
+	return ValidateLoop(execOrder, repo)
 }
 
 // Marshal marshals the client
@@ -48,7 +49,7 @@ func (c *Client) Marshal() error {
 }
 
 // ValidateName validates the name of the client
-func (c *Client) ValidateName(p interface{}) error {
+func (c *Client) ValidateName(repo port.Repository) error {
 	if c.Name == "" {
 		return errors.New(ErrClientNameIsRequired)
 	}
@@ -59,7 +60,7 @@ func (c *Client) ValidateName(p interface{}) error {
 }
 
 // ValidateEmail validates the email of the client
-func (c *Client) ValidateEmail(p interface{}) error {
+func (c *Client) ValidateEmail(repo port.Repository) error {
 	if c.Email == "" {
 		return errors.New(ErrClientEmailIsRequired)
 	}
@@ -70,7 +71,7 @@ func (c *Client) ValidateEmail(p interface{}) error {
 }
 
 // ValidateDocument validates the document of the client
-func (c *Client) ValidateDocument(p interface{}) error {
+func (c *Client) ValidateDocument(repo port.Repository) error {
 	if c.DocumentStr == "" {
 		return nil
 	}
@@ -91,7 +92,7 @@ func (c *Client) MarshalDocument() error {
 }
 
 // ValidatePhone validates the phone of the client
-func (c *Client) ValidatePhone(p interface{}) error {
+func (c *Client) ValidatePhone(repo port.Repository) error {
 	if c.PhoneStr == "" {
 		return nil
 	}

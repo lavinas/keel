@@ -22,7 +22,7 @@ const (
 	ErrClientDocumentIsInvalid = "client document is invalid"
 	ErrClientPhoneIsInvalid    = "client cell phone number is invalid"
 	ErrClientIDNotLower        = "client id must be lower case"
-	ErrDuplicatedID 		   = "id already exists"
+	ErrDuplicatedID            = "id already exists"
 )
 
 // Instruction Status errors
@@ -37,7 +37,8 @@ const (
 
 // Invoice errors
 const (
-	ErrInvoiceClientIsRequired   = "invoice client is required"
+	ErrInvoiceClientIsRequired   = "client id is required"
+	ErrInvoiceClientNotFound     = "client id not found"
 	ErrInvoiceBusinessIsRequired = "invoice business is required"
 	ErrInvoiceCustomerIsRequired = "invoice customer is required"
 	ErrInvoiceDateIsRequired     = "invoice date is required"

@@ -17,14 +17,13 @@ type Base struct {
 }
 
 // Validate validates the base of the model
-func (b *Base) Validate(p interface{}) error {
-	valOrder := []func(interface{}) error{
+func (b *Base) Validate(repo port.Repository) error {
+	valOrder := []func(repo port.Repository) error{
 		b.ValidateID,
 		b.ValidateBusinessID,
 		b.ValidateCreated_at,
 		b.ValidateUpdated_at,
 	}
-	repo := p.(port.Repository)
 	return ValidateLoop(valOrder, repo)
 }
 
@@ -48,8 +47,13 @@ func (b *Base) Marshal() error {
 	return nil
 }
 
+// GetBusinessID gets the business id of the model
+func (b *Base) GetID() string {
+	return b.ID
+}
+
 // ValidateBusinessID validates the business id of the model
-func (b *Base) ValidateBusinessID(p interface{}) error {
+func (b *Base) ValidateBusinessID(repo port.Repository) error {
 	if b.BusinessID == "" {
 		return errors.New(ErrBaseBusinessIDIsRequired)
 	}
@@ -63,7 +67,7 @@ func (b *Base) ValidateBusinessID(p interface{}) error {
 }
 
 // ValidateID validates the id of the model
-func (b *Base) ValidateID(p interface{}) error {
+func (b *Base) ValidateID(repo port.Repository) error {
 	if b.ID == "" {
 		return errors.New(ErrBaseIDIsRequired)
 	}
@@ -77,7 +81,7 @@ func (b *Base) ValidateID(p interface{}) error {
 }
 
 // Validate Created_at validates the created_at of the model
-func (b *Base) ValidateCreated_at(p interface{}) error {
+func (b *Base) ValidateCreated_at(repo port.Repository) error {
 	if b.Created_at.IsZero() {
 		return errors.New(ErrBaseCreatedAtIsRequired)
 	}
@@ -85,30 +89,18 @@ func (b *Base) ValidateCreated_at(p interface{}) error {
 }
 
 // Validate Updated_at validates the updated_at of the model
-func (b *Base) ValidateUpdated_at(p interface{}) error {
+func (b *Base) ValidateUpdated_at(repo port.Repository) error {
 	if b.Updated_at.IsZero() {
 		return errors.New(ErrBaseCreatedAtIsRequired)
 	}
 	return nil
 }
 
-// ValidateDuplicity validates the duplicity of the client
-func (b *Base) ValidateDuplicity(p interface{}) error {
-	if b.ID == "" {
-		return nil
-	}
-	repo := p.(port.Repository)
-	if repo.FindByID(b, b.ID) {
-		return errors.New(ErrDuplicatedID)
-	}
-	return nil
-}
-
 // ValidateLoopP is a function that pass a slice of validation functions and execute them in order
-func ValidateLoop(orderExec []func(interface{}) error, p interface{}) error {
+func ValidateLoop(orderExec []func(repo port.Repository) error, repo port.Repository) error {
 	errMsg := ""
 	for _, val := range orderExec {
-		if err := val(p); err != nil {
+		if err := val(repo); err != nil {
 			errMsg += err.Error() + " | "
 		}
 	}

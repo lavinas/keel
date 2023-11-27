@@ -3,8 +3,9 @@ package domain
 import (
 	"errors"
 	"strconv"
-	"strings"
 	"time"
+
+	"github.com/lavinas/keel/invoice/internal/core/port"
 )
 
 // Invoice represents an invoice - main model
@@ -22,14 +23,15 @@ type Invoice struct {
 }
 
 // Validate validates the invoice
-func (i *Invoice) Validate(p interface{}) error {
-	return ValidateLoop([]func(interface{}) error{
+func (i *Invoice) Validate(repo port.Repository) error {
+	return ValidateLoop([]func(repo port.Repository) error{
 		i.Base.Validate,
+		i.ValidateClient,
 		i.ValidateDate,
 		i.ValidateDue,
 		i.ValidateAmount,
 		i.ValidateInstruction,
-	}, p)
+	}, repo)
 }
 
 // Marshal marshals the invoice
@@ -47,21 +49,23 @@ func (i *Invoice) Marshal() error {
 }
 
 // ValidateClient validates the client of the invoice
-func (i *Invoice) ValidateClient(p interface{}) error {
+func (i *Invoice) ValidateClient(repo port.Repository) error {
 	if i.ClientID == "" {
 		return errors.New(ErrInvoiceClientIsRequired)
 	}
-	if len(strings.Split(i.ClientID, " ")) < 2 {
-		return errors.New(ErrClientNameLength)
+	var client Client
+	client.ID = i.ClientID
+	if err := client.ValidateID(repo); err != nil {
+		return errors.New("client " + err.Error())
 	}
-	if i.ClientID != strings.ToLower(i.ClientID) {
-		return errors.New(ErrClientIDNotLower)
+	if !repo.Exists(&client, i.ClientID) {
+		return errors.New(ErrInvoiceClientNotFound)
 	}
 	return nil
 }
 
 // ValidateDate validates the Date of the invoice
-func (i *Invoice) ValidateDate(p interface{}) error {
+func (i *Invoice) ValidateDate(repo port.Repository) error {
 	if i.DateStr == "" {
 		return errors.New(ErrInvoiceDateIsRequired)
 	}
@@ -81,7 +85,7 @@ func (i *Invoice) MarshalDate() error {
 }
 
 // ValidateDue validates the Due Date of the invoice
-func (i *Invoice) ValidateDue(p interface{}) error {
+func (i *Invoice) ValidateDue(repo port.Repository) error {
 	if i.DueStr == "" {
 		return errors.New(ErrInvoiceDueIsRequired)
 	}
@@ -104,7 +108,7 @@ func (i *Invoice) MarshalDue() error {
 }
 
 // ValidateAmount validates the amount of the invoice
-func (i *Invoice) ValidateAmount(p interface{}) error {
+func (i *Invoice) ValidateAmount(repo port.Repository) error {
 	if i.AmountStr == "" {
 		return errors.New(ErrInvoiceAmountIsRequired)
 	}
@@ -126,9 +130,9 @@ func (i *Invoice) MarshalAmount() error {
 }
 
 // ValidateInstruction validates the instruction of the invoice
-func (i *Invoice) ValidateInstruction(p interface{}) error {
+func (i *Invoice) ValidateInstruction(repo port.Repository) error {
 	if i.Instruction == nil {
 		return nil
 	}
-	return i.Instruction.Validate(p)
+	return i.Instruction.Validate(repo)
 }

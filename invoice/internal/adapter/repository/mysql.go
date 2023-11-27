@@ -1,9 +1,7 @@
 package repository
 
 import (
-	"strings"
 	"errors"
-
 
 	"github.com/lavinas/keel/invoice/internal/core/domain"
 	"github.com/lavinas/keel/invoice/internal/core/port"
@@ -49,15 +47,7 @@ func (r *MySql) Add(obj interface{}) error {
 }
 
 // FindByID finds a object by id
-func (r *MySql) FindByID(obj interface{}, id string) bool {
+func (r *MySql) Exists(obj interface{}, id string) bool {
 	tx := r.Db.First(obj, "ID = ?", id)
-	if errors.Is(tx.Error, gorm.ErrRecordNotFound) {
-		return false
-	}
-	return true
-}
-
-// IsDuplicatedError checks if the error is a duplicated error
-func (r *MySql) IsDuplicatedError(err error) bool {
-	return strings.Contains(err.Error(), "Error 1062")
+	return !errors.Is(tx.Error, gorm.ErrRecordNotFound)
 }

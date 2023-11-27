@@ -2,6 +2,8 @@ package domain
 
 import (
 	"errors"
+
+	"github.com/lavinas/keel/invoice/internal/core/port"
 )
 
 // InvoiceItem represents a item in the invoice
@@ -15,24 +17,24 @@ type InvoiceItem struct {
 }
 
 // Validate validates the invoice item
-func (i *InvoiceItem) Validate(p interface{}) error {
-	return ValidateLoop([]func(interface{}) error{
+func (i *InvoiceItem) Validate(repo port.Repository) error {
+	return ValidateLoop([]func(repo port.Repository) error{
 		i.ValidateProduct,
 		i.ValidateQuantity,
 		i.ValidateUnitPrice,
-	}, p)
+	}, repo)
 }
 
 // ValidateProduct validates the product of the invoice item
-func (c *InvoiceItem) ValidateProduct(p interface{}) error {
+func (c *InvoiceItem) ValidateProduct(repo port.Repository) error {
 	if c.Product == nil {
 		return errors.New("err")
 	}
-	return c.Product.Validate(p)
+	return c.Product.Validate(repo)
 }
 
 // ValidateQuantity validates the quantity of the invoice item
-func (c *InvoiceItem) ValidateQuantity(p interface{}) error {
+func (c *InvoiceItem) ValidateQuantity(repo port.Repository) error {
 	if c.Quantity <= 0 {
 		return errors.New(ErrInvoiceItemQuantity)
 	}
@@ -40,7 +42,7 @@ func (c *InvoiceItem) ValidateQuantity(p interface{}) error {
 }
 
 // ValidateUnitPrice validates the unit price of the invoice item
-func (c *InvoiceItem) ValidateUnitPrice(p interface{}) error {
+func (c *InvoiceItem) ValidateUnitPrice(repo port.Repository) error {
 	if c.UnitPrice == 0 {
 		return errors.New(ErrInvoiceItemPrice)
 	}

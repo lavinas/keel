@@ -2,6 +2,8 @@ package domain
 
 import (
 	"errors"
+
+	"github.com/lavinas/keel/invoice/internal/core/port"
 )
 
 // Product represents a product or service that can be invoiced
@@ -11,15 +13,15 @@ type Product struct {
 }
 
 // Validate validates the product
-func (i *Product) Validate(p interface{}) error {
-	return ValidateLoop([]func(p interface{}) error{
+func (i *Product) Validate(repo port.Repository) error {
+	return ValidateLoop([]func(repo port.Repository) error{
 		i.Base.Validate,
 		i.ValidateDescription,
-	}, p)
+	}, repo)
 }
 
 // Validate Description validates the description of the product
-func (i *Product) ValidateDescription(p interface{}) error {
+func (i *Product) ValidateDescription(repo port.Repository) error {
 	if i.Description == "" {
 		return errors.New(ErrProductDescriptionIsRequired)
 	}
