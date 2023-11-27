@@ -11,14 +11,14 @@ type Instruction struct {
 }
 
 // Validate validates the instruction
-func (i *Instruction) Validate() error {
-	return ValidateLoop([]func() error{
+func (i *Instruction) Validate(p interface{}) error {
+	return ValidateLoop([]func(interface{}) error{
 		i.Base.Validate,
 		i.ValidateDescription,
-	})
+	}, p)
 }
 
-func (i *Instruction) ValidateDescription() error {
+func (i *Instruction) ValidateDescription(p interface{}) error {
 	if i.Description == "" {
 		return errors.New(ErrInstructionDescriptionIsRequired)
 	}

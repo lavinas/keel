@@ -22,93 +22,93 @@ type Invoice struct {
 }
 
 // Validate validates the invoice
-func (p *Invoice) Validate() error {
-	return ValidateLoop([]func() error{
-		p.Base.Validate,
-		p.ValidateDate,
-		p.ValidateDue,
-		p.ValidateAmount,
-		p.ValidateInstruction,
-	})
+func (i *Invoice) Validate(p interface{}) error {
+	return ValidateLoop([]func(interface{}) error{
+		i.Base.Validate,
+		i.ValidateDate,
+		i.ValidateDue,
+		i.ValidateAmount,
+		i.ValidateInstruction,
+	}, p)
 }
 
 // Marshal marshals the invoice
-func (p *Invoice) Marshal() error {
-	if err := p.MarshalDate(); err != nil {
+func (i *Invoice) Marshal() error {
+	if err := i.MarshalDate(); err != nil {
 		return err
 	}
-	if err := p.MarshalDue(); err != nil {
+	if err := i.MarshalDue(); err != nil {
 		return err
 	}
-	if err := p.MarshalAmount(); err != nil {
+	if err := i.MarshalAmount(); err != nil {
 		return err
 	}
 	return nil
 }
 
 // ValidateClient validates the client of the invoice
-func (p *Invoice) ValidateClient() error {
-	if p.ClientID == "" {
+func (i *Invoice) ValidateClient(p interface{}) error {
+	if i.ClientID == "" {
 		return errors.New(ErrInvoiceClientIsRequired)
 	}
-	if len(strings.Split(p.ClientID, " ")) < 2 {
+	if len(strings.Split(i.ClientID, " ")) < 2 {
 		return errors.New(ErrClientNameLength)
 	}
-	if p.ClientID != strings.ToLower(p.ClientID) {
+	if i.ClientID != strings.ToLower(i.ClientID) {
 		return errors.New(ErrClientIDNotLower)
 	}
 	return nil
 }
 
 // ValidateDate validates the Date of the invoice
-func (p *Invoice) ValidateDate() error {
-	if p.DateStr == "" {
+func (i *Invoice) ValidateDate(p interface{}) error {
+	if i.DateStr == "" {
 		return errors.New(ErrInvoiceDateIsRequired)
 	}
-	if _, err := time.Parse("2006-01-02", p.DateStr); err != nil {
+	if _, err := time.Parse("2006-01-02", i.DateStr); err != nil {
 		return errors.New(ErrInvoiceDateIsInvalid)
 	}
 	return nil
 }
 
 // MarshalDate marshals the Date of the invoice
-func (p *Invoice) MarshalDate() error {
+func (i *Invoice) MarshalDate() error {
 	var err error
-	if p.Date, err = time.Parse("2006-01-02", p.DateStr); err != nil {
+	if i.Date, err = time.Parse("2006-01-02", i.DateStr); err != nil {
 		return err
 	}
 	return nil
 }
 
 // ValidateDue validates the Due Date of the invoice
-func (p *Invoice) ValidateDue() error {
-	if p.DueStr == "" {
+func (i *Invoice) ValidateDue(p interface{}) error {
+	if i.DueStr == "" {
 		return errors.New(ErrInvoiceDueIsRequired)
 	}
-	if _, err := time.Parse("2006-01-02", p.DueStr); err != nil {
+	if _, err := time.Parse("2006-01-02", i.DueStr); err != nil {
 		return errors.New(ErrInvoiceDateIsInvalid)
 	}
-	if p.Due.Before(p.Date) {
+	if i.Due.Before(i.Date) {
 		return errors.New(ErrInvoiceDueBeforeDate)
 	}
 	return nil
 }
 
 // MarshalDue marshals the Due Date of the invoice
-func (p *Invoice) MarshalDue() error {
+func (i *Invoice) MarshalDue() error {
 	var err error
-	if p.Due, err = time.Parse("2006-01-02", p.DueStr); err != nil {
+	if i.Due, err = time.Parse("2006-01-02", i.DueStr); err != nil {
 		return errors.New(ErrInvoiceDueIsInvalid)
 	}
 	return nil
 }
 
 // ValidateAmount validates the amount of the invoice
-func (p *Invoice) ValidateAmount() error {
-	if p.AmountStr == "" {
+func (i *Invoice) ValidateAmount(p interface{}) error {
+	if i.AmountStr == "" {
 		return errors.New(ErrInvoiceAmountIsRequired)
 	}
-	if v, err := strconv.ParseFloat(p.AmountStr, 64); err != nil {
+	if v, err := strconv.ParseFloat(i.AmountStr, 64); err != nil {
 		return errors.New(ErrInvoiceAmountIsInvalid)
 	} else if v <= 0 {
 		return errors.New(ErrInvoiceAmountIsInvalid)
@@ -117,18 +117,18 @@ func (p *Invoice) ValidateAmount() error {
 }
 
 // MarshalAmount marshals the amount of the invoice
-func (p *Invoice) MarshalAmount() error {
+func (i *Invoice) MarshalAmount() error {
 	var err error
-	if p.Amount, err = strconv.ParseFloat(p.AmountStr, 64); err != nil {
+	if i.Amount, err = strconv.ParseFloat(i.AmountStr, 64); err != nil {
 		return errors.New(ErrInvoiceAmountIsInvalid)
 	}
 	return nil
 }
 
 // ValidateInstruction validates the instruction of the invoice
-func (p *Invoice) ValidateInstruction() error {
-	if p.Instruction == nil {
+func (i *Invoice) ValidateInstruction(p interface{}) error {
+	if i.Instruction == nil {
 		return nil
 	}
-	return p.Instruction.Validate()
+	return i.Instruction.Validate(p)
 }

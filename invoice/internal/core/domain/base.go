@@ -4,6 +4,8 @@ import (
 	"errors"
 	"strings"
 	"time"
+
+	"github.com/lavinas/keel/invoice/internal/core/port"
 )
 
 // Base represents the base of the model
@@ -15,14 +17,15 @@ type Base struct {
 }
 
 // Validate validates the base of the model
-func (b *Base) Validate() error {
-	valOrder := []func() error{
+func (b *Base) Validate(p interface{}) error {
+	valOrder := []func(interface{}) error{
 		b.ValidateID,
 		b.ValidateBusinessID,
 		b.ValidateCreated_at,
 		b.ValidateUpdated_at,
 	}
-	return ValidateLoop(valOrder)
+	repo := p.(port.Repository)
+	return ValidateLoop(valOrder, repo)
 }
 
 // SetBusinessID sets the business id of the model
@@ -46,7 +49,7 @@ func (b *Base) Marshal() error {
 }
 
 // ValidateBusinessID validates the business id of the model
-func (b *Base) ValidateBusinessID() error {
+func (b *Base) ValidateBusinessID(p interface{}) error {
 	if b.BusinessID == "" {
 		return errors.New(ErrBaseBusinessIDIsRequired)
 	}
@@ -60,40 +63,52 @@ func (b *Base) ValidateBusinessID() error {
 }
 
 // ValidateID validates the id of the model
-func (p *Base) ValidateID() error {
-	if p.ID == "" {
+func (b *Base) ValidateID(p interface{}) error {
+	if b.ID == "" {
 		return errors.New(ErrBaseIDIsRequired)
 	}
-	if len(strings.Split(p.ID, " ")) > 1 {
+	if len(strings.Split(b.ID, " ")) > 1 {
 		return errors.New(ErrBaseIDLength)
 	}
-	if strings.ToLower(p.ID) != p.ID {
+	if strings.ToLower(b.ID) != b.ID {
 		return errors.New(ErrBaseIDLower)
 	}
 	return nil
 }
 
 // Validate Created_at validates the created_at of the model
-func (p *Base) ValidateCreated_at() error {
-	if p.Created_at.IsZero() {
+func (b *Base) ValidateCreated_at(p interface{}) error {
+	if b.Created_at.IsZero() {
 		return errors.New(ErrBaseCreatedAtIsRequired)
 	}
 	return nil
 }
 
 // Validate Updated_at validates the updated_at of the model
-func (p *Base) ValidateUpdated_at() error {
-	if p.Updated_at.IsZero() {
+func (b *Base) ValidateUpdated_at(p interface{}) error {
+	if b.Updated_at.IsZero() {
 		return errors.New(ErrBaseCreatedAtIsRequired)
 	}
 	return nil
 }
 
-// ValidateLoop is a function that pass a slice of validation functions and execute them in order
-func ValidateLoop(orderExec []func() error) error {
+// ValidateDuplicity validates the duplicity of the client
+func (b *Base) ValidateDuplicity(p interface{}) error {
+	if b.ID == "" {
+		return nil
+	}
+	repo := p.(port.Repository)
+	if repo.FindByID(b, b.ID) {
+		return errors.New(ErrDuplicatedID)
+	}
+	return nil
+}
+
+// ValidateLoopP is a function that pass a slice of validation functions and execute them in order
+func ValidateLoop(orderExec []func(interface{}) error, p interface{}) error {
 	errMsg := ""
 	for _, val := range orderExec {
-		if err := val(); err != nil {
+		if err := val(p); err != nil {
 			errMsg += err.Error() + " | "
 		}
 	}

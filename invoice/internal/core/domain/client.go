@@ -5,7 +5,6 @@ import (
 	"net/mail"
 	"strings"
 
-	"github.com/lavinas/keel/invoice/internal/core/port"
 	"github.com/lavinas/keel/invoice/pkg/cpf_cnpj"
 	"github.com/lavinas/keel/invoice/pkg/phone"
 )
@@ -26,14 +25,15 @@ type Client struct {
 }
 
 // Validate validates the client
-func (c *Client) Validate(repo port.Repository) error {
-	return ValidateLoop([]func() error{
+func (c *Client) Validate(p interface{}) error {
+	execOrder := []func(interface{})error{
 		c.Base.Validate,
 		c.ValidateName,
 		c.ValidateEmail,
 		c.ValidateDocument,
 		c.ValidatePhone,
-	})
+	}
+	return ValidateLoop(execOrder, p)
 }
 
 // Marshal marshals the client
@@ -48,7 +48,7 @@ func (c *Client) Marshal() error {
 }
 
 // ValidateName validates the name of the client
-func (c *Client) ValidateName() error {
+func (c *Client) ValidateName(p interface{}) error {
 	if c.Name == "" {
 		return errors.New(ErrClientNameIsRequired)
 	}
@@ -59,7 +59,7 @@ func (c *Client) ValidateName() error {
 }
 
 // ValidateEmail validates the email of the client
-func (c *Client) ValidateEmail() error {
+func (c *Client) ValidateEmail(p interface{}) error {
 	if c.Email == "" {
 		return errors.New(ErrClientEmailIsRequired)
 	}
@@ -70,23 +70,12 @@ func (c *Client) ValidateEmail() error {
 }
 
 // ValidateDocument validates the document of the client
-func (c *Client) ValidateDocument() error {
+func (c *Client) ValidateDocument(p interface{}) error {
 	if c.DocumentStr == "" {
 		return nil
 	}
 	if !cpf_cnpj.ValidateCPFOrCNPJ(c.DocumentStr) {
 		return errors.New(ErrClientDocumentIsInvalid)
-	}
-	return nil
-}
-
-// ValidateDuplicity validates the duplicity of the client
-func (c *Client) ValidateDuplicity(repo port.Repository) error {
-	if c.ID == "" {
-		return nil
-	}
-	if repo.FindByID(c, c.ID) {
-		return errors.New(ErrDuplicatedID)
 	}
 	return nil
 }
@@ -102,7 +91,7 @@ func (c *Client) MarshalDocument() error {
 }
 
 // ValidatePhone validates the phone of the client
-func (c *Client) ValidatePhone() error {
+func (c *Client) ValidatePhone(p interface{}) error {
 	if c.PhoneStr == "" {
 		return nil
 	}

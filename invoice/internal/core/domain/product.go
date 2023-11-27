@@ -11,16 +11,16 @@ type Product struct {
 }
 
 // Validate validates the product
-func (p *Product) Validate() error {
-	return ValidateLoop([]func() error{
-		p.Base.Validate,
-		p.ValidateDescription,
-	})
+func (i *Product) Validate(p interface{}) error {
+	return ValidateLoop([]func(p interface{}) error{
+		i.Base.Validate,
+		i.ValidateDescription,
+	}, p)
 }
 
 // Validate Description validates the description of the product
-func (p *Product) ValidateDescription() error {
-	if p.Description == "" {
+func (i *Product) ValidateDescription(p interface{}) error {
+	if i.Description == "" {
 		return errors.New(ErrProductDescriptionIsRequired)
 	}
 	return nil

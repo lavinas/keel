@@ -5,7 +5,7 @@ import (
 )
 
 type Domain interface {
-	Validate() error
+	Validate(p interface{}) error
 	SetBusinessID(string)
 	SetCreatedAt(date time.Time)
 	SetUpdatedAt(date time.Time)

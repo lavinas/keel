@@ -35,7 +35,7 @@ func (s *UseCase) Register(domain port.Domain, result port.DefaultResult) {
 	domain.SetCreatedAt(now)
 	domain.SetUpdatedAt(now)
 	// Validate
-	if err := domain.Validate(); err != nil {
+	if err := domain.Validate(s.repo); err != nil {
 		s.logger.Infof("%s - %s", name, err.Error())
 		result.Set(http.StatusBadRequest, err.Error())
 		return

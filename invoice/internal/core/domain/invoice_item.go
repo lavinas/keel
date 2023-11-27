@@ -15,24 +15,24 @@ type InvoiceItem struct {
 }
 
 // Validate validates the invoice item
-func (i *InvoiceItem) Validate() error {
-	return ValidateLoop([]func() error{
+func (i *InvoiceItem) Validate(p interface{}) error {
+	return ValidateLoop([]func(interface{}) error{
 		i.ValidateProduct,
 		i.ValidateQuantity,
 		i.ValidateUnitPrice,
-	})
+	}, p)
 }
 
 // ValidateProduct validates the product of the invoice item
-func (c *InvoiceItem) ValidateProduct() error {
+func (c *InvoiceItem) ValidateProduct(p interface{}) error {
 	if c.Product == nil {
 		return errors.New("err")
 	}
-	return c.Product.Validate()
+	return c.Product.Validate(p)
 }
 
 // ValidateQuantity validates the quantity of the invoice item
-func (c *InvoiceItem) ValidateQuantity() error {
+func (c *InvoiceItem) ValidateQuantity(p interface{}) error {
 	if c.Quantity <= 0 {
 		return errors.New(ErrInvoiceItemQuantity)
 	}
@@ -40,7 +40,7 @@ func (c *InvoiceItem) ValidateQuantity() error {
 }
 
 // ValidateUnitPrice validates the unit price of the invoice item
-func (c *InvoiceItem) ValidateUnitPrice() error {
+func (c *InvoiceItem) ValidateUnitPrice(p interface{}) error {
 	if c.UnitPrice == 0 {
 		return errors.New(ErrInvoiceItemPrice)
 	}
