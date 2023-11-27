@@ -22,4 +22,5 @@ type Logger interface {
 type Repository interface {
 	Add(obj interface{}) error
 	IsDuplicatedError(err error) bool
+	FindByID(obj interface{}, id string) bool
 }

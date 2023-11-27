@@ -22,6 +22,7 @@ const (
 	ErrClientDocumentIsInvalid = "client document is invalid"
 	ErrClientPhoneIsInvalid    = "client cell phone number is invalid"
 	ErrClientIDNotLower        = "client id must be lower case"
+	ErrDuplicatedID 		   = "id already exists"
 )
 
 // Instruction Status errors

@@ -5,6 +5,7 @@ import (
 	"net/mail"
 	"strings"
 
+	"github.com/lavinas/keel/invoice/internal/core/port"
 	"github.com/lavinas/keel/invoice/pkg/cpf_cnpj"
 	"github.com/lavinas/keel/invoice/pkg/phone"
 )
@@ -25,7 +26,7 @@ type Client struct {
 }
 
 // Validate validates the client
-func (c *Client) Validate() error {
+func (c *Client) Validate(repo port.Repository) error {
 	return ValidateLoop([]func() error{
 		c.Base.Validate,
 		c.ValidateName,
@@ -75,6 +76,17 @@ func (c *Client) ValidateDocument() error {
 	}
 	if !cpf_cnpj.ValidateCPFOrCNPJ(c.DocumentStr) {
 		return errors.New(ErrClientDocumentIsInvalid)
+	}
+	return nil
+}
+
+// ValidateDuplicity validates the duplicity of the client
+func (c *Client) ValidateDuplicity(repo port.Repository) error {
+	if c.ID == "" {
+		return nil
+	}
+	if repo.FindByID(c, c.ID) {
+		return errors.New(ErrDuplicatedID)
 	}
 	return nil
 }
