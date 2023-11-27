@@ -87,7 +87,7 @@ func (l *Klog) write(message string) {
 
 // initFile creates a new log file
 func (l *Klog) initFile(path string, component string) error {
-	l.date = time.Now().Format("2006-01-02")
+	l.date = time.Now().In(time.Local).Format("2006-01-02")
 	l.name = path + "/" + l.date + "-" + component + ".log"
 	var err error
 	l.file, err = os.OpenFile(l.name, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0755)

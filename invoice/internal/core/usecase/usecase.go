@@ -3,6 +3,7 @@ package usecase
 import (
 	"net/http"
 	"reflect"
+	"time"
 
 	"github.com/lavinas/keel/invoice/internal/core/port"
 )
@@ -30,6 +31,9 @@ func NewUseCase(config port.Config, logger port.Logger, repo port.Repository) *U
 func (s *UseCase) Register(domain port.Domain, result port.DefaultResult) {
 	name := "Register " + reflect.TypeOf(domain).String()
 	domain.SetBusinessID(s.config.Get(BUSINNESS_ID))
+	now := time.Now().In(time.Local)
+	domain.SetCreatedAt(now)
+	domain.SetUpdatedAt(now)
 	// Validate
 	if err := domain.Validate(); err != nil {
 		s.logger.Infof("%s - %s", name, err.Error())

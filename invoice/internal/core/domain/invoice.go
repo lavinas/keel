@@ -11,7 +11,7 @@ import (
 type Invoice struct {
 	Base
 	ClientID    string       `json:"client_id"   gorm:"type:varchar(50); not null"`
-	Client      *Client      `json:"-"           gorm:"ForeignKey:BusinnessID,ClientID;References:BusinnessID,ID"`
+	Client      Client       `json:"-"           gorm:"foreignKey:BusinessID,ClientID;associationForeignKey:BusinessID,ID"`
 	DateStr     string       `json:"date"        gorm:"-"`
 	Date        time.Time    `json:"-"           gorm:"type:date; not null"`
 	DueStr      string       `json:"due"         gorm:"-"`

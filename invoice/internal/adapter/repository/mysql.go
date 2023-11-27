@@ -3,10 +3,10 @@ package repository
 import (
 	"strings"
 
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/jinzhu/gorm"
 	"github.com/lavinas/keel/invoice/internal/core/domain"
 	"github.com/lavinas/keel/invoice/internal/core/port"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 const (
@@ -21,21 +21,21 @@ type MySql struct {
 
 // NewRepository creates a new repository handler
 func NewRepository(config port.Config) (*MySql, error) {
-	db, err := gorm.Open(config.Get(DB_TYPE), config.Get(DB_DNS))
+	db, err := gorm.Open(mysql.Open(config.Get(DB_DNS)), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
-	db.LogMode(false)
-	db.AutoMigrate(&domain.Client{},
-		&domain.Instruction{},
+	db.AutoMigrate(
 		&domain.Product{},
-		&domain.Invoice{})
+		&domain.Instruction{},
+		&domain.Client{},
+		&domain.Invoice{},
+	)
 	return &MySql{Db: db}, nil
 }
 
 // Close closes the database connection
 func (r *MySql) Close() {
-	r.Db.Close()
 }
 
 // Add adds a object to the database

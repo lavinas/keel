@@ -4,9 +4,13 @@ package domain
 
 // Base errors
 const (
-	ErrBaseIDIsRequired = "id is required"
-	ErrBaseIDLength     = "id must have only one word. Use underscore to separate words"
-	ErrBaseIDLower      = "id must be lower case"
+	ErrBaseBusinessIDIsRequired = "business id is required"
+	ErrBaseBusinessIDLength     = "business id must have only one word. Use underscore to separate words"
+	ErrBaseBusinessIDLower      = "business id must be lower case"
+	ErrBaseIDIsRequired         = "id is required"
+	ErrBaseIDLength             = "id must have only one word. Use underscore to separate words"
+	ErrBaseIDLower              = "id must be lower case"
+	ErrBaseCreatedAtIsRequired  = "created_at is required"
 )
 
 // Client errors

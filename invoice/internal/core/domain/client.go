@@ -19,9 +19,9 @@ type Client struct {
 	Name        string `json:"name"     gorm:"type:varchar(100); not null"`
 	Email       string `json:"email"    gorm:"type:varchar(100); not null"`
 	DocumentStr string `json:"document" gorm:"-"`
-	DocumentNum uint64 `json:"-"        gorm:"type:numeric(20)"`
+	Document    uint64 `json:"-"        gorm:"type:numeric(20)"`
 	PhoneStr    string `json:"phone"    gorm:"-"`
-	PhoneNum    uint64 `json:"-"        gorm:"type:numeric(20)"`
+	Phone       uint64 `json:"-"        gorm:"type:numeric(20)"`
 }
 
 // Validate validates the client
@@ -82,7 +82,7 @@ func (c *Client) ValidateDocument() error {
 // MarshalDocument marshals the document of the client
 func (c *Client) MarshalDocument() error {
 	var err error
-	c.DocumentNum, err = cpf_cnpj.ParseUint(c.DocumentStr)
+	c.Document, err = cpf_cnpj.ParseUint(c.DocumentStr)
 	if err != nil {
 		return err
 	}
@@ -108,9 +108,9 @@ func (c *Client) MarshalPhone() error {
 	var err error
 	found := false
 	for _, cr := range countries {
-		if c.PhoneNum, err = phone.ParseUint(c.PhoneStr, cr); err != nil {
+		if c.Phone, err = phone.ParseUint(c.PhoneStr, cr); err != nil {
 			return err
-		} else if c.PhoneNum != 0 {
+		} else if c.Phone != 0 {
 			found = true
 			break
 		}

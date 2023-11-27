@@ -23,3 +23,4 @@ func main() {
 	handler := handler.NewRest(config, logger, usercase)
 	handler.Run()
 }
+

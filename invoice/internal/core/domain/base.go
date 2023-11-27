@@ -4,61 +4,58 @@ import (
 	"errors"
 	"strings"
 	"time"
-
-	"github.com/google/uuid"
 )
 
 // Base represents the base of the model
 type Base struct {
-	BusinnessID string    `json:"-"            gorm:"primaryKey;type:varchar(50); not null"`
-	ID          string    `json:"id"           gorm:"primaryKey;type:varchar(50); not null"`
-	Created_at  time.Time `json:"created_at"   gorm:"type:timestamp; not null"`
-	Updated_at  time.Time `json:"updated_at"   gorm:"type:timestamp; not null"`
-}
-
-func NewBase(businness_id, id string, created_at time.Time, updated_at time.Time) Base {
-	if id == "" {
-		id = uuid.New().String()
-	}
-	if created_at.IsZero() {
-		created_at = time.Now()
-	}
-	if updated_at.IsZero() {
-		updated_at = time.Now()
-	}
-	return Base{
-		BusinnessID: businness_id,
-		ID:          id,
-		Created_at:  created_at,
-		Updated_at:  updated_at,
-	}
+	BusinessID string    `json:"-"            gorm:"primaryKey;type:varchar(50); not null"`
+	ID         string    `json:"id"           gorm:"primaryKey;type:varchar(50); not null"`
+	Created_at time.Time `json:"created_at"   gorm:"type:timestamp; not null"`
+	Updated_at time.Time `json:"updated_at"   gorm:"type:timestamp; not null"`
 }
 
 // Validate validates the base of the model
 func (b *Base) Validate() error {
 	valOrder := []func() error{
 		b.ValidateID,
+		b.ValidateBusinessID,
+		b.ValidateCreated_at,
+		b.ValidateUpdated_at,
 	}
-	errMsg := ""
-	for _, val := range valOrder {
-		if err := val(); err != nil {
-			errMsg += err.Error() + " | "
-		}
-	}
-	if errMsg != "" {
-		errMsg = strings.TrimSuffix(errMsg, " | ")
-		return errors.New(errMsg)
-	}
-	return nil
+	return ValidateLoop(valOrder)
 }
 
 // SetBusinessID sets the business id of the model
-func (b *Base) SetBusinessID(businness_id string) {
-	b.BusinnessID = businness_id
+func (b *Base) SetBusinessID(business_id string) {
+	b.BusinessID = business_id
+}
+
+// SetID sets the id of the model
+func (b *Base) SetCreatedAt(date time.Time) {
+	b.Created_at = date
+}
+
+// SetID sets the id of the model
+func (b *Base) SetUpdatedAt(date time.Time) {
+	b.Updated_at = date
 }
 
 // Marshal marshals the base of the model
 func (b *Base) Marshal() error {
+	return nil
+}
+
+// ValidateBusinessID validates the business id of the model
+func (b *Base) ValidateBusinessID() error {
+	if b.BusinessID == "" {
+		return errors.New(ErrBaseBusinessIDIsRequired)
+	}
+	if len(strings.Split(b.BusinessID, " ")) > 1 {
+		return errors.New(ErrBaseBusinessIDLength)
+	}
+	if strings.ToLower(b.BusinessID) != b.BusinessID {
+		return errors.New(ErrBaseBusinessIDLower)
+	}
 	return nil
 }
 
@@ -72,6 +69,22 @@ func (p *Base) ValidateID() error {
 	}
 	if strings.ToLower(p.ID) != p.ID {
 		return errors.New(ErrBaseIDLower)
+	}
+	return nil
+}
+
+// Validate Created_at validates the created_at of the model
+func (p *Base) ValidateCreated_at() error {
+	if p.Created_at.IsZero() {
+		return errors.New(ErrBaseCreatedAtIsRequired)
+	}
+	return nil
+}
+
+// Validate Updated_at validates the updated_at of the model
+func (p *Base) ValidateUpdated_at() error {
+	if p.Updated_at.IsZero() {
+		return errors.New(ErrBaseCreatedAtIsRequired)
 	}
 	return nil
 }
