@@ -2,7 +2,6 @@ package port
 
 import (
 	"time"
-
 )
 
 type Domain interface {

@@ -33,6 +33,7 @@ func NewRepository(config port.Config) (*MySql, error) {
 		&domain.Instruction{},
 		&domain.Client{},
 		&domain.Invoice{},
+		&domain.InvoiceItem{},
 	)
 	return &MySql{Db: db}, nil
 }

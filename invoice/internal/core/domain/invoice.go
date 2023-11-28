@@ -2,6 +2,7 @@ package domain
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 	"time"
 
@@ -11,15 +12,17 @@ import (
 // Invoice represents an invoice - main model
 type Invoice struct {
 	Base
-	ClientID    string       `json:"client_id"   gorm:"type:varchar(50); not null"`
-	Client      Client       `json:"-"           gorm:"foreignKey:BusinessID,ClientID;associationForeignKey:BusinessID,ID"`
-	DateStr     string       `json:"date"        gorm:"-"`
-	Date        time.Time    `json:"-"           gorm:"type:date; not null"`
-	DueStr      string       `json:"due"         gorm:"-"`
-	Due         time.Time    `json:"-"           gorm:"type:date; not null"`
-	AmountStr   string       `json:"amount"      gorm:"-"`
-	Amount      float64      `json:"-"           gorm:"type:decimal(20, 2); not null"`
-	Instruction *Instruction `json:"instruction" gorm:"type:varchar(100)"`
+	ClientID      string         `json:"client_id"      gorm:"type:varchar(50); not null"`
+	Client        *Client        `json:"-"              gorm:"foreignKey:BusinessID,ClientID;associationForeignKey:BusinessID,ID"`
+	DateStr       string         `json:"date"           gorm:"-"`
+	Date          time.Time      `json:"-"              gorm:"type:date; not null"`
+	DueStr        string         `json:"due"            gorm:"-"`
+	Due           time.Time      `json:"-"              gorm:"type:date; not null"`
+	AmountStr     string         `json:"amount"         gorm:"-"`
+	Amount        float64        `json:"-"              gorm:"type:decimal(20, 2); not null"`
+	InstructionID string         `json:"instruction_id" gorm:"type:varchar(50)"`
+	Instruction   *Instruction   `json:"-"              gorm:"foreignKey:BusinessID,InstructionID;associationForeignKey:BusinessID,ID"`
+	Items         []*InvoiceItem `json:"items"          gorm:"foreignKey:InvoiceID;associationForeignKey:ID"`
 }
 
 // Validate validates the invoice
@@ -36,20 +39,35 @@ func (i *Invoice) Validate(repo port.Repository) error {
 
 // Marshal marshals the invoice
 func (i *Invoice) Marshal() error {
-	if err := i.MarshalDate(); err != nil {
-		return err
-	}
-	if err := i.MarshalDue(); err != nil {
-		return err
-	}
-	if err := i.MarshalAmount(); err != nil {
-		return err
+	for _, f := range []func() error{
+		i.MarshalDate,
+		i.MarshalDue,
+		i.MarshalAmount,
+		i.MarshalInvoiceItem,
+	} {
+		if err := f(); err != nil {
+			return err
+		}
 	}
 	return nil
 }
 
 // ValidateClient validates the client of the invoice
 func (i *Invoice) ValidateClient(repo port.Repository) error {
+	if i.ClientID == "" && i.Client == nil {
+		return errors.New(ErrInvoiceClientIsRequired)
+	} else if i.ClientID != "" && i.Client != nil {
+		return errors.New(ErrInvoiceClientInformedTwice)
+	} else if i.ClientID != "" {
+		return i.ValidateClientID(repo)
+	} else if err := i.Client.Validate(repo); err != nil {
+		return errors.New("client " + err.Error())
+	}
+	return nil
+}
+
+// ValidateClientID validates the client id of the invoice
+func (i *Invoice) ValidateClientID(repo port.Repository) error {
 	if i.ClientID == "" {
 		return errors.New(ErrInvoiceClientIsRequired)
 	}
@@ -131,8 +149,49 @@ func (i *Invoice) MarshalAmount() error {
 
 // ValidateInstruction validates the instruction of the invoice
 func (i *Invoice) ValidateInstruction(repo port.Repository) error {
-	if i.Instruction == nil {
+	if i.InstructionID == "" {
+		return errors.New(ErrInvoiceInstructionIDIsRequired)
+	}
+	var instruction Instruction
+	instruction.ID = i.InstructionID
+	if err := instruction.ValidateID(repo); err != nil {
+		return errors.New("instruction " + err.Error())
+	}
+	if !repo.Exists(&instruction, i.InstructionID) {
+		return errors.New(ErrInvoiceInstructionNotFound)
+	}
+	return nil
+}
+
+// validateInvoiceItem validates the invoice item
+func (i *Invoice) ValidateInvoiceItem(repo port.Repository) error {
+	if len(i.Items) == 0 {
 		return nil
 	}
-	return i.Instruction.Validate(repo)
+	count := 0
+	sum := 0.0
+	for _, item := range i.Items {
+		count++
+		if err := item.Validate(repo); err != nil {
+			return fmt.Errorf("item %d: %s", count, err.Error())
+		}
+		sum += item.GetAmount()
+	}
+	if sum != i.Amount {
+		return errors.New(ErrInvoiceAmountUnmatch)
+	}
+	return nil
+}
+
+// MarshalInvoiceItem marshals the invoice item
+func (i *Invoice) MarshalInvoiceItem() error {
+	if i.Items == nil {
+		return nil
+	}
+	for _, item := range i.Items {
+		if err := item.Marshal(); err != nil {
+			return err
+		}
+	}
+	return nil
 }

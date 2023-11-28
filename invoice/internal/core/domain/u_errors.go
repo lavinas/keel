@@ -37,21 +37,35 @@ const (
 
 // Invoice errors
 const (
-	ErrInvoiceClientIsRequired   = "client id is required"
-	ErrInvoiceClientNotFound     = "client id not found"
-	ErrInvoiceBusinessIsRequired = "invoice business is required"
-	ErrInvoiceCustomerIsRequired = "invoice customer is required"
-	ErrInvoiceDateIsRequired     = "invoice date is required"
-	ErrInvoiceDateIsInvalid      = "invoice date is invalid. It must be in the format YYYY-MM-DD"
-	ErrInvoiceDueIsRequired      = "invoice due is required"
-	ErrInvoiceDueIsInvalid       = "invoice due is invalid. It must be in the format YYYY-MM-DD"
-	ErrInvoiceDueBeforeDate      = "invoice due date should not be before invoice date"
-	ErrInvoiceAmountIsRequired   = "invoice amount is required"
-	ErrInvoiceAmountIsInvalid    = "invoice amount is invalid. It must be a number (ex: 100.00)"
-	ErrInvoiceItemIDLength       = "invoice item id must have only one word"
-	ErrInvoiceItemIDLower        = "invoice item id must be lower case"
-	ErrInvoiceItemQuantity       = "invoice item quantity must be greater than 0"
-	ErrInvoiceItemPrice          = "invoice item price must be not equal to 0"
+	ErrInvoiceClientIsRequired        = "client id is required"
+	ErrInvoiceClientInformedTwice     = "client id and client are informed. Choose only one"
+	ErrInvoiceClientNotFound          = "client id not found"
+	ErrInvoiceBusinessIsRequired      = "invoice business is required"
+	ErrInvoiceCustomerIsRequired      = "invoice customer is required"
+	ErrInvoiceDateIsRequired          = "invoice date is required"
+	ErrInvoiceDateIsInvalid           = "invoice date is invalid. It must be in the format YYYY-MM-DD"
+	ErrInvoiceDueIsRequired           = "invoice due is required"
+	ErrInvoiceDueIsInvalid            = "invoice due is invalid. It must be in the format YYYY-MM-DD"
+	ErrInvoiceDueBeforeDate           = "invoice due date should not be before invoice date"
+	ErrInvoiceAmountIsRequired        = "invoice amount is required"
+	ErrInvoiceAmountIsInvalid         = "invoice amount is invalid. It must be a number (ex: 100.00)"
+	ErrInvoiceInstructionIDIsRequired = "instruction id is required"
+	ErrInvoiceInstructionNotFound     = "instruction id not found"
+	ErrInvoiceItemIDLength            = "invoice item id must have only one word"
+	ErrInvoiceItemIDLower             = "invoice item id must be lower case"
+	ErrInvoiceItemQuantity            = "invoice item quantity must be greater than 0"
+	ErrInvoiceItemPrice               = "invoice item price must be not equal to 0"
+	ErrInvoiceAmountUnmatch           = "invoice amount does not match with the sum of the items"
+)
+
+// Invoice Item errors
+const (
+	ErrInvoiceItemQuantityRequired        = "invoice item quantity is required"
+	ErrInvoiceItemQuantityInvalid         = "invoice item quantity is invalid"
+	ErrInvoiceItemQuantityLessOrEqualZero = "invoice item quantity must be greater than 0"
+	ErrInvoiceItemPriceRequired           = "invoice item price is required"
+	ErrInvoiceItemPriceInvalid            = "invoice item price is invalid"
+	ErrInvoiceItemPriceLessOrEqualZero    = "invoice item price must be greater than 0"
 )
 
 // Invoice Status errors
