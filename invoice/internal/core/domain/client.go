@@ -37,15 +37,17 @@ func (c *Client) Validate(repo port.Repository) error {
 	return ValidateLoop(execOrder, repo)
 }
 
-// Marshal marshals the client
-func (c *Client) Marshal() error {
-	if err := c.MarshalDocument(); err != nil {
-		return err
+// Fit fits the client information received
+func (c *Client) Fit() {
+	c.Base.Fit()
+	c.Name = strings.TrimSpace(c.Name)
+	c.Email = strings.TrimSpace(c.Email)
+	c.Document, _ = cpf_cnpj.ParseUint(c.DocumentStr)
+	for _, cr := range countries {
+		if c.PhoneStr = phone.Parse(c.PhoneStr, cr); c.PhoneStr != "" {
+			break
+		}
 	}
-	if err := c.MarshalPhone(); err != nil {
-		return err
-	}
-	return nil
 }
 
 // ValidateName validates the name of the client
@@ -81,16 +83,6 @@ func (c *Client) ValidateDocument(repo port.Repository) error {
 	return nil
 }
 
-// MarshalDocument marshals the document of the client
-func (c *Client) MarshalDocument() error {
-	var err error
-	c.Document, err = cpf_cnpj.ParseUint(c.DocumentStr)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 // ValidatePhone validates the phone of the client
 func (c *Client) ValidatePhone(repo port.Repository) error {
 	if c.PhoneStr == "" {
@@ -103,22 +95,4 @@ func (c *Client) ValidatePhone(repo port.Repository) error {
 		}
 	}
 	return errors.New(ErrClientPhoneIsInvalid)
-}
-
-// MarshalPhone marshals the phone of the client
-func (c *Client) MarshalPhone() error {
-	var err error
-	found := false
-	for _, cr := range countries {
-		if c.Phone, err = phone.ParseUint(c.PhoneStr, cr); err != nil {
-			return err
-		} else if c.Phone != 0 {
-			found = true
-			break
-		}
-	}
-	if !found {
-		return errors.New(ErrClientPhoneIsInvalid)
-	}
-	return nil
 }

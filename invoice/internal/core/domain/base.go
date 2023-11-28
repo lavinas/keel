@@ -42,9 +42,10 @@ func (b *Base) SetUpdatedAt(date time.Time) {
 	b.Updated_at = date
 }
 
-// Marshal marshals the base of the model
-func (b *Base) Marshal() error {
-	return nil
+// Fit fits the base of the model
+func (b *Base) Fit() {
+	b.ID = strings.TrimSpace(b.ID)
+	b.BusinessID = strings.TrimSpace(b.BusinessID)
 }
 
 // GetBusinessID gets the business id of the model
@@ -109,4 +110,15 @@ func ValidateLoop(orderExec []func(repo port.Repository) error, repo port.Reposi
 		return errors.New(errMsg)
 	}
 	return nil
+}
+
+// GetBase returns a new base object
+func GetDomain() []interface{} {
+	return []interface{}{
+		&Client{},
+		&Instruction{},
+		&Product{},
+		&Invoice{},
+		&Item{},
+	}
 }

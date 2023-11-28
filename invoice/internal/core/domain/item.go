@@ -3,14 +3,15 @@ package domain
 import (
 	"errors"
 	"strconv"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/lavinas/keel/invoice/internal/core/port"
 )
 
-// InvoiceItem represents a item in the invoice
-type InvoiceItem struct {
-	ID           string  `json:"id"          gorm:"type:varchar(50);primaryKey;not null"`
+// Item represents a item in the invoice
+type Item struct {
+	Base
 	InvoiceID    string  `json:"invoice_id"  gorm:"type:varchar(50); not null"`
 	Description  string  `json:"description" gorm:"type:varchar(255)"`
 	QuantityStr  string  `json:"quantity"    gorm:"-"`
@@ -20,53 +21,50 @@ type InvoiceItem struct {
 }
 
 // Validate validates the invoice item
-func (i *InvoiceItem) Validate(repo port.Repository) error {
+func (i *Item) Validate(repo port.Repository) error {
 	return ValidateLoop([]func(repo port.Repository) error{
+		i.Base.Validate,
 		i.ValidateQuantity,
 		i.ValidateUnitPrice,
 	}, repo)
 }
 
-// Marshal marshals the invoice item
-func (i *InvoiceItem) Marshal() error {
-	i.ID = uuid.New().String()
-	var err error
-	i.Quantity, err = strconv.Atoi(i.QuantityStr)
-	if err != nil {
-		return err
+// Fit fits the invoice item information received
+func (i *Item) Fit() {
+	i.Base.Fit()
+	if i.Base.ID == "" {
+		i.Base.ID = uuid.New().String()
 	}
-	i.UnitPrice, err = strconv.ParseFloat(i.UnitPriceStr, 64)
-	if err != nil {
-		return err
-	}
-	return nil
+	i.Description = strings.TrimSpace(i.Description)
+	i.Quantity, _ = strconv.Atoi(i.QuantityStr)
+	i.UnitPrice, _ = strconv.ParseFloat(i.UnitPriceStr, 64)
 }
 
 // ValidateQuantity validates the quantity of the invoice item
-func (c *InvoiceItem) ValidateQuantity(repo port.Repository) error {
+func (c *Item) ValidateQuantity(repo port.Repository) error {
 	if c.QuantityStr == "" {
-		return errors.New(ErrInvoiceItemQuantityRequired)
+		return errors.New(ErrItemQuantityRequired)
 	} else if q, err := strconv.Atoi(c.QuantityStr); err != nil {
-		return errors.New(ErrInvoiceItemQuantityInvalid)
+		return errors.New(ErrItemQuantityInvalid)
 	} else if q <= 0 {
-		return errors.New(ErrInvoiceItemQuantityLessOrEqualZero)
+		return errors.New(ErrItemQuantityLessOrEqualZero)
 	}
 	return nil
 }
 
 // ValidateUnitPrice validates the unit price of the invoice item
-func (c *InvoiceItem) ValidateUnitPrice(repo port.Repository) error {
+func (c *Item) ValidateUnitPrice(repo port.Repository) error {
 	if c.UnitPriceStr == "" {
-		return errors.New(ErrInvoiceItemPriceRequired)
+		return errors.New(ErrItemPriceRequired)
 	} else if p, err := strconv.ParseFloat(c.UnitPriceStr, 64); err != nil {
-		return errors.New(ErrInvoiceItemPriceInvalid)
+		return errors.New(ErrItemPriceInvalid)
 	} else if p <= 0 {
-		return errors.New(ErrInvoiceItemPriceLessOrEqualZero)
+		return errors.New(ErrItemPriceLessOrEqualZero)
 	}
 	return nil
 }
 
 // GetAmount returns the amount of the invoice item
-func (c *InvoiceItem) GetAmount() float64 {
+func (c *Item) GetAmount() float64 {
 	return float64(c.Quantity) * c.UnitPrice
 }

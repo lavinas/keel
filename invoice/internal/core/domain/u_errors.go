@@ -51,21 +51,21 @@ const (
 	ErrInvoiceAmountIsInvalid         = "invoice amount is invalid. It must be a number (ex: 100.00)"
 	ErrInvoiceInstructionIDIsRequired = "instruction id is required"
 	ErrInvoiceInstructionNotFound     = "instruction id not found"
-	ErrInvoiceItemIDLength            = "invoice item id must have only one word"
-	ErrInvoiceItemIDLower             = "invoice item id must be lower case"
-	ErrInvoiceItemQuantity            = "invoice item quantity must be greater than 0"
-	ErrInvoiceItemPrice               = "invoice item price must be not equal to 0"
+	ErrItemIDLength                   = "invoice item id must have only one word"
+	ErrItemIDLower                    = "invoice item id must be lower case"
+	ErrItemQuantity                   = "invoice item quantity must be greater than 0"
+	ErrItemPrice                      = "invoice item price must be not equal to 0"
 	ErrInvoiceAmountUnmatch           = "invoice amount does not match with the sum of the items"
 )
 
 // Invoice Item errors
 const (
-	ErrInvoiceItemQuantityRequired        = "invoice item quantity is required"
-	ErrInvoiceItemQuantityInvalid         = "invoice item quantity is invalid"
-	ErrInvoiceItemQuantityLessOrEqualZero = "invoice item quantity must be greater than 0"
-	ErrInvoiceItemPriceRequired           = "invoice item price is required"
-	ErrInvoiceItemPriceInvalid            = "invoice item price is invalid"
-	ErrInvoiceItemPriceLessOrEqualZero    = "invoice item price must be greater than 0"
+	ErrItemQuantityRequired        = "invoice item quantity is required"
+	ErrItemQuantityInvalid         = "invoice item quantity is invalid"
+	ErrItemQuantityLessOrEqualZero = "invoice item quantity must be greater than 0"
+	ErrItemPriceRequired           = "invoice item price is required"
+	ErrItemPriceInvalid            = "invoice item price is invalid"
+	ErrItemPriceLessOrEqualZero    = "invoice item price must be greater than 0"
 )
 
 // Invoice Status errors

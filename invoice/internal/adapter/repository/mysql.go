@@ -22,20 +22,35 @@ type MySql struct {
 
 // NewRepository creates a new repository handler
 func NewRepository(config port.Config) (*MySql, error) {
-	db, err := gorm.Open(mysql.Open(config.Get(DB_DNS)), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Silent),
-	})
+	// Open
+	db, err := Open(config)
 	if err != nil {
 		return nil, err
 	}
-	db.AutoMigrate(
-		&domain.Product{},
-		&domain.Instruction{},
-		&domain.Client{},
-		&domain.Invoice{},
-		&domain.InvoiceItem{},
-	)
-	return &MySql{Db: db}, nil
+	// Migrate
+	m := &MySql{Db: db}
+	if err := m.Migrate(); err != nil {
+		return nil, err
+	}
+	// Return
+	return m, nil
+}
+
+// Open opens the database connection
+func Open(config port.Config) (*gorm.DB, error) {
+	return gorm.Open(mysql.Open(config.Get(DB_DNS)), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Silent),
+	})
+}
+
+// Migrate migrates the database
+func (r *MySql) Migrate() error {
+	for _, domain := range domain.GetDomain() {
+		if err := r.Db.AutoMigrate(domain); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // Close closes the database connection

@@ -47,6 +47,7 @@ func (h *Rest) ping(c *gin.Context) {
 func (h *Rest) Register(c *gin.Context) {
 	obj := h.domainFactory(c)
 	if err := c.ShouldBindJSON(obj); err != nil {
+		h.logger.Error(err)
 		c.JSON(http.StatusBadRequest, gin.H{"code": 409, "message": "invalid json structure"})
 		return
 	}

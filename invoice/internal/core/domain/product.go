@@ -2,6 +2,7 @@ package domain
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/lavinas/keel/invoice/internal/core/port"
 )
@@ -18,6 +19,12 @@ func (i *Product) Validate(repo port.Repository) error {
 		i.Base.Validate,
 		i.ValidateDescription,
 	}, repo)
+}
+
+// Fit fits the product information received
+func (i *Product) Fit() {
+	i.Base.Fit()
+	i.Description = strings.TrimSpace(i.Description)
 }
 
 // Validate Description validates the description of the product

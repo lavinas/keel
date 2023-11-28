@@ -9,6 +9,6 @@ type Domain interface {
 	SetBusinessID(string)
 	SetCreatedAt(date time.Time)
 	SetUpdatedAt(date time.Time)
-	Marshal() error
+	Fit()
 	GetID() string
 }

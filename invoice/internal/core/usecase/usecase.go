@@ -30,11 +30,13 @@ func NewUseCase(config port.Config, logger port.Logger, repo port.Repository) *U
 
 // Register registers a domain
 func (s *UseCase) Register(domain port.Domain, result port.DefaultResult) {
+	// Prepare domain
 	name := "Register " + reflect.TypeOf(domain).String()
 	domain.SetBusinessID(s.config.Get(BUSINNESS_ID))
 	now := time.Now().In(time.Local)
 	domain.SetCreatedAt(now)
 	domain.SetUpdatedAt(now)
+	domain.Fit()
 	// Validate
 	if err := domain.Validate(s.repo); err != nil {
 		s.logger.Infof("%s - %s", name, err.Error())
@@ -45,12 +47,6 @@ func (s *UseCase) Register(domain port.Domain, result port.DefaultResult) {
 	if s.repo.Exists(domain, domain.GetID()) {
 		s.logger.Infof("%s - %s", name, "id already exists")
 		result.Set(http.StatusConflict, "id already exists")
-		return
-	}
-	// Marshal
-	if err := domain.Marshal(); err != nil {
-		s.logger.Infof("%s - %s", name, err.Error())
-		result.Set(http.StatusInternalServerError, "internal error")
 		return
 	}
 	// Add to repository
