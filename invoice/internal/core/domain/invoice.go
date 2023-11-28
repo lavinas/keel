@@ -148,7 +148,8 @@ func (i *Invoice) ValidateItem(repo port.Repository) error {
 	if len(i.Item) == 0 {
 		return nil
 	}
-	count := 0; sum := 0.0
+	count := 0
+	sum := 0.0
 	for _, item := range i.Item {
 		count++
 		if err := item.Validate(repo); err != nil {

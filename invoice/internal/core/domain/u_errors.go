@@ -60,6 +60,10 @@ const (
 
 // Invoice Item errors
 const (
+	ErrItemProductRequired         = "invoice item product is required"
+	ErrItemProductConflict         = "invoice item product and product id are informed. Choose only one"
+	ErrItemProductInvalid          = "invoice item product is invalid"
+	ErrItemProductNotFound         = "invoice item product not found"
 	ErrItemQuantityRequired        = "invoice item quantity is required"
 	ErrItemQuantityInvalid         = "invoice item quantity is invalid"
 	ErrItemQuantityLessOrEqualZero = "invoice item quantity must be greater than 0"
