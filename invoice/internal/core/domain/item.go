@@ -13,7 +13,7 @@ import (
 type Item struct {
 	Base
 	InvoiceID    string   `json:"invoice_id"  gorm:"type:varchar(50); not null"`
-	ProductID    string   `json:"product_id"  gorm:"-"`
+	ProductID    string   `json:"product_id"  gorm:"type:varchar(50); not null"`
 	Product      *Product `json:"-"           gorm:"foreignKey:BusinessID,ProductID;associationForeignKey:BusinessID,ID"`
 	Description  string   `json:"description" gorm:"type:varchar(255)"`
 	QuantityStr  string   `json:"quantity"    gorm:"-"`
@@ -28,6 +28,7 @@ func (i *Item) Validate(repo port.Repository) error {
 		i.Base.Validate,
 		i.ValidateQuantity,
 		i.ValidateUnitPrice,
+		i.ValidateProduct,
 	}, repo)
 }
 
@@ -42,7 +43,7 @@ func (i *Item) Fit() {
 	i.UnitPrice, _ = strconv.ParseFloat(i.UnitPriceStr, 64)
 }
 
-// ValidateProduct 
+// ValidateProduct validates the product of the invoice item
 func (c *Item) ValidateProduct(repo port.Repository) error {
 	if c.ProductID == "" && c.Product == nil {
 		return errors.New(ErrItemProductRequired)
@@ -66,7 +67,7 @@ func (c *Item) ValidateProductID(repo port.Repository) error {
 	if err := product.ValidateID(repo); err != nil {
 		return errors.New(ErrItemProductInvalid)
 	}
-	if !repo.Exists(&product, product.GetID()) {
+	if !repo.Exists(&product, c.ProductID) {
 		return errors.New(ErrItemProductNotFound)
 	}
 	return nil
