@@ -122,3 +122,15 @@ func GetDomain() []interface{} {
 		&Item{},
 	}
 }
+
+// ValidateDuplicity validates the duplicity of the model
+func (b *Base) ValidateDuplicity(base interface{}, repo port.Repository) error {
+	exists, err := repo.Exists(base, b.BusinessID, b.ID)
+	if err != nil {
+		return err
+	}
+	if exists {
+		return errors.New(ErrBaseIDAlreadyExists)
+	}
+	return nil
+}

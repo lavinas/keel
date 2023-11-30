@@ -21,5 +21,5 @@ type Logger interface {
 
 type Repository interface {
 	Add(obj interface{}) error
-	Exists(obj interface{}, id string) bool
+	Exists(obj interface{}, business_id string, id string) (bool, error)
 }

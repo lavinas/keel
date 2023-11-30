@@ -29,6 +29,7 @@ func (i *Item) Validate(repo port.Repository) error {
 		i.ValidateQuantity,
 		i.ValidateUnitPrice,
 		i.ValidateProduct,
+		i.ValidateDuplicity,
 	}, repo)
 }
 
@@ -67,7 +68,9 @@ func (c *Item) ValidateProductID(repo port.Repository) error {
 	if err := product.ValidateID(repo); err != nil {
 		return errors.New(ErrItemProductInvalid)
 	}
-	if !repo.Exists(&product, c.ProductID) {
+	if exists, err := repo.Exists(&product, c.BusinessID, c.ProductID); err != nil {
+		return errors.New(ErrItemProductInvalid)
+	} else if !exists {
 		return errors.New(ErrItemProductNotFound)
 	}
 	return nil
@@ -100,4 +103,9 @@ func (c *Item) ValidateUnitPrice(repo port.Repository) error {
 // GetAmount returns the amount of the invoice item
 func (c *Item) GetAmount() float64 {
 	return float64(c.Quantity) * c.UnitPrice
+}
+
+// ValidateDuplicity validates the duplicity of the invoice item
+func (c *Item) ValidateDuplicity(repo port.Repository) error {
+	return c.Base.ValidateDuplicity(c, repo)
 }

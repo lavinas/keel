@@ -18,6 +18,7 @@ func (i *Product) Validate(repo port.Repository) error {
 	return ValidateLoop([]func(repo port.Repository) error{
 		i.Base.Validate,
 		i.ValidateDescription,
+		i.ValidateDuplicity,
 	}, repo)
 }
 
@@ -33,4 +34,9 @@ func (i *Product) ValidateDescription(repo port.Repository) error {
 		return errors.New(ErrProductDescriptionIsRequired)
 	}
 	return nil
+}
+
+// ValidateDuplicity validates the duplicity of the model
+func (b *Product) ValidateDuplicity(repo port.Repository) error {
+	return b.Base.ValidateDuplicity(b, repo)
 }

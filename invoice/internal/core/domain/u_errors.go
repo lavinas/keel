@@ -11,6 +11,8 @@ const (
 	ErrBaseIDLength             = "id must have only one word. Use underscore to separate words"
 	ErrBaseIDLower              = "id must be lower case"
 	ErrBaseCreatedAtIsRequired  = "created_at is required"
+	ErrBaseIDAlreadyExists 	    = "id already exists"
+	
 )
 
 // Client errors
@@ -50,6 +52,8 @@ const (
 	ErrInvoiceAmountIsRequired        = "invoice amount is required"
 	ErrInvoiceAmountIsInvalid         = "invoice amount is invalid. It must be a number (ex: 100.00)"
 	ErrInvoiceInstructionIDIsRequired = "instruction id is required"
+	ErrInvoiceInstructionInformedTwice = "instruction id and instruction are informed. Choose only one"
+
 	ErrInvoiceInstructionNotFound     = "instruction id not found"
 	ErrItemIDLength                   = "invoice item id must have only one word"
 	ErrItemIDLower                    = "invoice item id must be lower case"

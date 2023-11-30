@@ -63,7 +63,13 @@ func (r *MySql) Add(obj interface{}) error {
 }
 
 // FindByID finds a object by id
-func (r *MySql) Exists(obj interface{}, id string) bool {
-	tx := r.Db.First(obj, "ID = ?", id)
-	return !errors.Is(tx.Error, gorm.ErrRecordNotFound)
+func (r *MySql) Exists(obj interface{}, business_id string, id string) (bool, error) {
+	tx := r.Db.First(obj, "business_id = ? and ID = ?", business_id, id)
+	if tx.Error == nil {
+		return true, nil
+	}
+	if errors.Is(tx.Error, gorm.ErrRecordNotFound) {
+		return false, nil
+	}
+	return false, tx.Error
 }

@@ -43,12 +43,6 @@ func (s *UseCase) Register(domain port.Domain, result port.DefaultResult) {
 		result.Set(http.StatusBadRequest, err.Error())
 		return
 	}
-	// Check conflict
-	if s.repo.Exists(domain, domain.GetID()) {
-		s.logger.Infof("%s - %s", name, "id already exists")
-		result.Set(http.StatusConflict, "id already exists")
-		return
-	}
 	// Add to repository
 	if err := s.repo.Add(domain); err != nil {
 		s.logger.Infof("%s - %s", name, err.Error())

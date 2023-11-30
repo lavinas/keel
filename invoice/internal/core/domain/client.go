@@ -33,6 +33,7 @@ func (c *Client) Validate(repo port.Repository) error {
 		c.ValidateEmail,
 		c.ValidateDocument,
 		c.ValidatePhone,
+		c.ValidateDuplicity,
 	}
 	return ValidateLoop(execOrder, repo)
 }
@@ -95,4 +96,9 @@ func (c *Client) ValidatePhone(repo port.Repository) error {
 		}
 	}
 	return errors.New(ErrClientPhoneIsInvalid)
+}
+
+// ValidateDuplicity validates the duplicity of the model
+func (b *Client) ValidateDuplicity(repo port.Repository) error {
+	return b.Base.ValidateDuplicity(b, repo)
 }
