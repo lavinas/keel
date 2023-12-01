@@ -11,8 +11,7 @@ const (
 	ErrBaseIDLength             = "id must have only one word. Use underscore to separate words"
 	ErrBaseIDLower              = "id must be lower case"
 	ErrBaseCreatedAtIsRequired  = "created_at is required"
-	ErrBaseIDAlreadyExists 	    = "id already exists"
-	
+	ErrBaseIDAlreadyExists      = "id already exists"
 )
 
 // Client errors
@@ -39,27 +38,27 @@ const (
 
 // Invoice errors
 const (
-	ErrInvoiceClientIsRequired        = "client id is required"
-	ErrInvoiceClientInformedTwice     = "client id and client are informed. Choose only one"
-	ErrInvoiceClientNotFound          = "client id not found"
-	ErrInvoiceBusinessIsRequired      = "invoice business is required"
-	ErrInvoiceCustomerIsRequired      = "invoice customer is required"
-	ErrInvoiceDateIsRequired          = "invoice date is required"
-	ErrInvoiceDateIsInvalid           = "invoice date is invalid. It must be in the format YYYY-MM-DD"
-	ErrInvoiceDueIsRequired           = "invoice due is required"
-	ErrInvoiceDueIsInvalid            = "invoice due is invalid. It must be in the format YYYY-MM-DD"
-	ErrInvoiceDueBeforeDate           = "invoice due date should not be before invoice date"
-	ErrInvoiceAmountIsRequired        = "invoice amount is required"
-	ErrInvoiceAmountIsInvalid         = "invoice amount is invalid. It must be a number (ex: 100.00)"
-	ErrInvoiceInstructionIDIsRequired = "instruction id is required"
+	ErrInvoiceClientIsRequired         = "client id is required"
+	ErrInvoiceClientInformedTwice      = "client id and client are informed. Choose only one"
+	ErrInvoiceClientNotFound           = "client id not found"
+	ErrInvoiceBusinessIsRequired       = "invoice business is required"
+	ErrInvoiceCustomerIsRequired       = "invoice customer is required"
+	ErrInvoiceDateIsRequired           = "invoice date is required"
+	ErrInvoiceDateIsInvalid            = "invoice date is invalid. It must be in the format YYYY-MM-DD"
+	ErrInvoiceDueIsRequired            = "invoice due is required"
+	ErrInvoiceDueIsInvalid             = "invoice due is invalid. It must be in the format YYYY-MM-DD"
+	ErrInvoiceDueBeforeDate            = "invoice due date should not be before invoice date"
+	ErrInvoiceAmountIsRequired         = "invoice amount is required"
+	ErrInvoiceAmountIsInvalid          = "invoice amount is invalid. It must be a number (ex: 100.00)"
+	ErrInvoiceInstructionIDIsRequired  = "instruction id is required"
 	ErrInvoiceInstructionInformedTwice = "instruction id and instruction are informed. Choose only one"
 
-	ErrInvoiceInstructionNotFound     = "instruction id not found"
-	ErrItemIDLength                   = "invoice item id must have only one word"
-	ErrItemIDLower                    = "invoice item id must be lower case"
-	ErrItemQuantity                   = "invoice item quantity must be greater than 0"
-	ErrItemPrice                      = "invoice item price must be not equal to 0"
-	ErrInvoiceAmountUnmatch           = "invoice amount does not match with the sum of the items"
+	ErrInvoiceInstructionNotFound = "instruction id not found"
+	ErrItemIDLength               = "invoice item id must have only one word"
+	ErrItemIDLower                = "invoice item id must be lower case"
+	ErrItemQuantity               = "invoice item quantity must be greater than 0"
+	ErrItemPrice                  = "invoice item price must be not equal to 0"
+	ErrInvoiceAmountUnmatch       = "invoice amount does not match with the sum of the items"
 )
 
 // Invoice Item errors
