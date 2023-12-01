@@ -1,12 +1,12 @@
 package domain
 
 import (
-	"errors"
 	"strconv"
 	"strings"
 
 	"github.com/google/uuid"
 	"github.com/lavinas/keel/invoice/internal/core/port"
+	"github.com/lavinas/keel/invoice/pkg/kerror"
 )
 
 // Item represents a item in the invoice
@@ -23,8 +23,8 @@ type Item struct {
 }
 
 // Validate validates the invoice item
-func (i *Item) Validate(repo port.Repository) error {
-	return ValidateLoop([]func(repo port.Repository) error{
+func (i *Item) Validate(repo port.Repository) *kerror.KError {
+	return ValidateLoop([]func(repo port.Repository) *kerror.KError{
 		i.Base.Validate,
 		i.ValidateQuantity,
 		i.ValidateUnitPrice,
@@ -45,57 +45,57 @@ func (i *Item) Fit() {
 }
 
 // ValidateProduct validates the product of the invoice item
-func (c *Item) ValidateProduct(repo port.Repository) error {
+func (c *Item) ValidateProduct(repo port.Repository) *kerror.KError {
 	if c.ProductID == "" && c.Product == nil {
-		return errors.New(ErrItemProductRequired)
+		return kerror.NewKError(kerror.BadRequest, ErrItemProductRequired)
 	} else if c.ProductID != "" && c.Product != nil {
-		return errors.New(ErrItemProductConflict)
+		return kerror.NewKError(kerror.BadRequest, ErrItemProductConflict)
 	} else if c.ProductID != "" {
 		return c.ValidateProductID(repo)
 	} else if c.Product.Validate(repo) != nil {
-		return errors.New(ErrItemProductInvalid)
+		return kerror.NewKError(kerror.BadRequest, ErrItemProductInvalid)
 	}
 	return nil
 }
 
 // ValidateProductID validates the product id of the invoice item
-func (c *Item) ValidateProductID(repo port.Repository) error {
+func (c *Item) ValidateProductID(repo port.Repository) *kerror.KError {
 	if c.ProductID == "" {
-		return errors.New(ErrItemProductRequired)
+		return kerror.NewKError(kerror.BadRequest, ErrItemProductRequired)
 	}
 	var product Product
 	product.ID = c.ProductID
 	if err := product.ValidateID(repo); err != nil {
-		return errors.New(ErrItemProductInvalid)
+		return kerror.NewKError(kerror.BadRequest, ErrItemProductInvalid)
 	}
 	if exists, err := repo.Exists(&product, c.BusinessID, c.ProductID); err != nil {
-		return errors.New(ErrItemProductInvalid)
+		return kerror.NewKError(kerror.Internal, ErrItemProductInvalid)
 	} else if !exists {
-		return errors.New(ErrItemProductNotFound)
+		return kerror.NewKError(kerror.BadRequest, ErrItemProductNotFound)
 	}
 	return nil
 }
 
 // ValidateQuantity validates the quantity of the invoice item
-func (c *Item) ValidateQuantity(repo port.Repository) error {
+func (c *Item) ValidateQuantity(repo port.Repository) *kerror.KError {
 	if c.QuantityStr == "" {
-		return errors.New(ErrItemQuantityRequired)
+		return kerror.NewKError(kerror.BadRequest, ErrItemQuantityRequired)
 	} else if q, err := strconv.Atoi(c.QuantityStr); err != nil {
-		return errors.New(ErrItemQuantityInvalid)
+		return kerror.NewKError(kerror.BadRequest, ErrItemQuantityInvalid)
 	} else if q <= 0 {
-		return errors.New(ErrItemQuantityLessOrEqualZero)
+		return kerror.NewKError(kerror.BadRequest, ErrItemQuantityLessOrEqualZero)
 	}
 	return nil
 }
 
 // ValidateUnitPrice validates the unit price of the invoice item
-func (c *Item) ValidateUnitPrice(repo port.Repository) error {
+func (c *Item) ValidateUnitPrice(repo port.Repository) *kerror.KError {
 	if c.UnitPriceStr == "" {
-		return errors.New(ErrItemPriceRequired)
+		return kerror.NewKError(kerror.BadRequest, ErrItemPriceRequired)
 	} else if p, err := strconv.ParseFloat(c.UnitPriceStr, 64); err != nil {
-		return errors.New(ErrItemPriceInvalid)
+		return kerror.NewKError(kerror.BadRequest, ErrItemPriceInvalid)
 	} else if p <= 0 {
-		return errors.New(ErrItemPriceLessOrEqualZero)
+		return kerror.NewKError(kerror.BadRequest, ErrItemPriceLessOrEqualZero)
 	}
 	return nil
 }
@@ -106,6 +106,6 @@ func (c *Item) GetAmount() float64 {
 }
 
 // ValidateDuplicity validates the duplicity of the invoice item
-func (c *Item) ValidateDuplicity(repo port.Repository) error {
+func (c *Item) ValidateDuplicity(repo port.Repository) *kerror.KError {
 	return c.Base.ValidateDuplicity(c, repo)
 }

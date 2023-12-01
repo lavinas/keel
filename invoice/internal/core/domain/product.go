@@ -1,10 +1,10 @@
 package domain
 
 import (
-	"errors"
 	"strings"
 
 	"github.com/lavinas/keel/invoice/internal/core/port"
+	"github.com/lavinas/keel/invoice/pkg/kerror"
 )
 
 // Product represents a product or service that can be invoiced
@@ -14,8 +14,8 @@ type Product struct {
 }
 
 // Validate validates the product
-func (i *Product) Validate(repo port.Repository) error {
-	return ValidateLoop([]func(repo port.Repository) error{
+func (i *Product) Validate(repo port.Repository) *kerror.KError {
+	return ValidateLoop([]func(repo port.Repository) *kerror.KError{
 		i.Base.Validate,
 		i.ValidateDescription,
 		i.ValidateDuplicity,
@@ -29,14 +29,14 @@ func (i *Product) Fit() {
 }
 
 // Validate Description validates the description of the product
-func (i *Product) ValidateDescription(repo port.Repository) error {
+func (i *Product) ValidateDescription(repo port.Repository) *kerror.KError {
 	if i.Description == "" {
-		return errors.New(ErrProductDescriptionIsRequired)
+		return kerror.NewKError(kerror.BadRequest, ErrProductDescriptionIsRequired)
 	}
 	return nil
 }
 
 // ValidateDuplicity validates the duplicity of the model
-func (b *Product) ValidateDuplicity(repo port.Repository) error {
+func (b *Product) ValidateDuplicity(repo port.Repository) *kerror.KError {
 	return b.Base.ValidateDuplicity(b, repo)
 }

@@ -1,12 +1,12 @@
 package domain
 
 import (
-	"errors"
 	"net/mail"
 	"strings"
 
 	"github.com/lavinas/keel/invoice/internal/core/port"
 	"github.com/lavinas/keel/invoice/pkg/cpf_cnpj"
+	"github.com/lavinas/keel/invoice/pkg/kerror"
 	"github.com/lavinas/keel/invoice/pkg/phone"
 )
 
@@ -26,8 +26,8 @@ type Client struct {
 }
 
 // Validate validates the client
-func (c *Client) Validate(repo port.Repository) error {
-	execOrder := []func(repo port.Repository) error{
+func (c *Client) Validate(repo port.Repository) *kerror.KError {
+	execOrder := []func(repo port.Repository) *kerror.KError{
 		c.Base.Validate,
 		c.ValidateName,
 		c.ValidateEmail,
@@ -52,40 +52,40 @@ func (c *Client) Fit() {
 }
 
 // ValidateName validates the name of the client
-func (c *Client) ValidateName(repo port.Repository) error {
+func (c *Client) ValidateName(repo port.Repository) *kerror.KError {
 	if c.Name == "" {
-		return errors.New(ErrClientNameIsRequired)
+		return kerror.NewKError(kerror.BadRequest, ErrClientNameIsRequired)
 	}
 	if len(strings.Split(c.Name, " ")) < 2 {
-		return errors.New(ErrClientNameLength)
+		return kerror.NewKError(kerror.BadRequest, ErrClientNameLength)
 	}
 	return nil
 }
 
 // ValidateEmail validates the email of the client
-func (c *Client) ValidateEmail(repo port.Repository) error {
+func (c *Client) ValidateEmail(repo port.Repository) *kerror.KError {
 	if c.Email == "" {
-		return errors.New(ErrClientEmailIsRequired)
+		return kerror.NewKError(kerror.BadRequest, ErrClientEmailIsRequired)
 	}
 	if _, err := mail.ParseAddress(c.Email); err != nil {
-		return errors.New(ErrClientEmailIsInvalid)
+		return kerror.NewKError(kerror.BadRequest, ErrClientEmailIsInvalid)
 	}
 	return nil
 }
 
 // ValidateDocument validates the document of the client
-func (c *Client) ValidateDocument(repo port.Repository) error {
+func (c *Client) ValidateDocument(repo port.Repository) *kerror.KError {
 	if c.DocumentStr == "" {
 		return nil
 	}
 	if !cpf_cnpj.ValidateCPFOrCNPJ(c.DocumentStr) {
-		return errors.New(ErrClientDocumentIsInvalid)
+		return kerror.NewKError(kerror.BadRequest, ErrClientDocumentIsInvalid)
 	}
 	return nil
 }
 
 // ValidatePhone validates the phone of the client
-func (c *Client) ValidatePhone(repo port.Repository) error {
+func (c *Client) ValidatePhone(repo port.Repository) *kerror.KError {
 	if c.PhoneStr == "" {
 		return nil
 	}
@@ -95,10 +95,10 @@ func (c *Client) ValidatePhone(repo port.Repository) error {
 			return nil
 		}
 	}
-	return errors.New(ErrClientPhoneIsInvalid)
+	return kerror.NewKError(kerror.BadRequest, ErrClientPhoneIsInvalid)
 }
 
 // ValidateDuplicity validates the duplicity of the model
-func (b *Client) ValidateDuplicity(repo port.Repository) error {
+func (b *Client) ValidateDuplicity(repo port.Repository) *kerror.KError {
 	return b.Base.ValidateDuplicity(b, repo)
 }

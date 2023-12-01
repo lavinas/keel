@@ -1,11 +1,11 @@
 package domain
 
 import (
-	"errors"
 	"strings"
 	"time"
 
 	"github.com/lavinas/keel/invoice/internal/core/port"
+	"github.com/lavinas/keel/invoice/pkg/kerror"
 )
 
 // Base represents the base of the model
@@ -17,8 +17,8 @@ type Base struct {
 }
 
 // Validate validates the base of the model
-func (b *Base) Validate(repo port.Repository) error {
-	valOrder := []func(repo port.Repository) error{
+func (b *Base) Validate(repo port.Repository) *kerror.KError {
+	valOrder := []func(repo port.Repository) *kerror.KError{
 		b.ValidateID,
 		b.ValidateBusinessID,
 		b.ValidateCreated_at,
@@ -54,62 +54,61 @@ func (b *Base) GetID() string {
 }
 
 // ValidateBusinessID validates the business id of the model
-func (b *Base) ValidateBusinessID(repo port.Repository) error {
+func (b *Base) ValidateBusinessID(repo port.Repository) *kerror.KError {
 	if b.BusinessID == "" {
-		return errors.New(ErrBaseBusinessIDIsRequired)
+		return kerror.NewKError(kerror.BadRequest, ErrBaseBusinessIDIsRequired)
 	}
 	if len(strings.Split(b.BusinessID, " ")) > 1 {
-		return errors.New(ErrBaseBusinessIDLength)
+		return kerror.NewKError(kerror.BadRequest, ErrBaseBusinessIDLength)
 	}
 	if strings.ToLower(b.BusinessID) != b.BusinessID {
-		return errors.New(ErrBaseBusinessIDLower)
+		return kerror.NewKError(kerror.BadRequest, ErrBaseBusinessIDLower)
 	}
 	return nil
 }
 
 // ValidateID validates the id of the model
-func (b *Base) ValidateID(repo port.Repository) error {
+func (b *Base) ValidateID(repo port.Repository) *kerror.KError {
 	if b.ID == "" {
-		return errors.New(ErrBaseIDIsRequired)
+		return kerror.NewKError(kerror.BadRequest, ErrBaseIDIsRequired)
 	}
 	if len(strings.Split(b.ID, " ")) > 1 {
-		return errors.New(ErrBaseIDLength)
+		return kerror.NewKError(kerror.BadRequest, ErrBaseIDLength)
 	}
 	if strings.ToLower(b.ID) != b.ID {
-		return errors.New(ErrBaseIDLower)
+		return kerror.NewKError(kerror.BadRequest, ErrBaseIDLower)
 	}
 	return nil
 }
 
 // Validate Created_at validates the created_at of the model
-func (b *Base) ValidateCreated_at(repo port.Repository) error {
+func (b *Base) ValidateCreated_at(repo port.Repository) *kerror.KError {
 	if b.Created_at.IsZero() {
-		return errors.New(ErrBaseCreatedAtIsRequired)
+		return kerror.NewKError(kerror.BadRequest, ErrBaseCreatedAtIsRequired)
 	}
 	return nil
 }
 
 // Validate Updated_at validates the updated_at of the model
-func (b *Base) ValidateUpdated_at(repo port.Repository) error {
+func (b *Base) ValidateUpdated_at(repo port.Repository) *kerror.KError {
 	if b.Updated_at.IsZero() {
-		return errors.New(ErrBaseCreatedAtIsRequired)
+		return kerror.NewKError(kerror.BadRequest, ErrBaseCreatedAtIsRequired)
 	}
 	return nil
 }
 
 // ValidateLoopP is a function that pass a slice of validation functions and execute them in order
-func ValidateLoop(orderExec []func(repo port.Repository) error, repo port.Repository) error {
-	errMsg := ""
+func ValidateLoop(orderExec []func(repo port.Repository) *kerror.KError, repo port.Repository) *kerror.KError {
+	jerr := kerror.NewKError(kerror.None, "")
 	for _, val := range orderExec {
 		if err := val(repo); err != nil {
-			errMsg += err.Error() + " | "
+			jerr.Join(err.Type, err.Error())
 		}
 	}
-	if errMsg != "" {
-		errMsg = strings.TrimSuffix(errMsg, " | ")
-		return errors.New(errMsg)
+	if jerr.IsEmpty() {
+		return nil
 	}
-	return nil
+	return jerr
 }
 
 // GetBase returns a new base object
@@ -124,13 +123,13 @@ func GetDomain() []interface{} {
 }
 
 // ValidateDuplicity validates the duplicity of the model
-func (b *Base) ValidateDuplicity(base interface{}, repo port.Repository) error {
+func (b *Base) ValidateDuplicity(base interface{}, repo port.Repository) *kerror.KError {
 	exists, err := repo.Exists(base, b.BusinessID, b.ID)
 	if err != nil {
-		return err
+		return kerror.NewKError(kerror.Internal, err.Error())
 	}
 	if exists {
-		return errors.New(ErrBaseIDAlreadyExists)
+		return kerror.NewKError(kerror.Conflict, ErrBaseIDAlreadyExists)
 	}
 	return nil
 }

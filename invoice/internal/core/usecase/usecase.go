@@ -40,7 +40,7 @@ func (s *UseCase) Register(domain port.Domain, result port.DefaultResult) {
 	// Validate
 	if err := domain.Validate(s.repo); err != nil {
 		s.logger.Infof("%s - %s", name, err.Error())
-		result.Set(http.StatusBadRequest, err.Error())
+		result.Set(err.GetHTTPCode(), err.Error())
 		return
 	}
 	// Add to repository
