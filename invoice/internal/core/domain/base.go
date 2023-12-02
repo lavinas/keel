@@ -102,7 +102,7 @@ func ValidateLoop(orderExec []func(repo port.Repository) *kerror.KError, repo po
 	jerr := kerror.NewKError(kerror.None, "")
 	for _, val := range orderExec {
 		if err := val(repo); err != nil {
-			jerr.Join(err.Type, err.Error())
+			jerr.Join(err.GetType(), err.Error())
 		}
 	}
 	if jerr.IsEmpty() {

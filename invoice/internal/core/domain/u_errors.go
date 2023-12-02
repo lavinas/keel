@@ -16,24 +16,22 @@ const (
 
 // Client errors
 const (
-	ErrClientNameIsRequired    = "client name is required"
-	ErrClientNameLength        = "client name must have at least a name and surname"
-	ErrClientEmailIsRequired   = "client email is required"
-	ErrClientEmailIsInvalid    = "client email is invalid"
-	ErrClientDocumentIsInvalid = "client document is invalid"
-	ErrClientPhoneIsInvalid    = "client cell phone number is invalid"
-	ErrClientIDNotLower        = "client id must be lower case"
-	ErrDuplicatedID            = "id already exists"
+	ErrClientNameIsRequired    = "name is required"
+	ErrClientNameLength        = "name must have at least a name and surname"
+	ErrClientEmailIsRequired   = "email is required"
+	ErrClientEmailIsInvalid    = "email is invalid"
+	ErrClientDocumentIsInvalid = "document is invalid"
+	ErrClientPhoneIsInvalid    = "cell phone number is invalid"
 )
 
 // Instruction Status errors
 const (
-	ErrInstructionDescriptionIsRequired = "instruction description is required"
+	ErrInstructionDescriptionIsRequired = "description is required"
 )
 
 // Product errors
 const (
-	ErrProductDescriptionIsRequired = "product description is required"
+	ErrProductDescriptionIsRequired = "description is required"
 )
 
 // Invoice errors
@@ -41,50 +39,43 @@ const (
 	ErrInvoiceClientIsRequired         = "client id is required"
 	ErrInvoiceClientInformedTwice      = "client id and client are informed. Choose only one"
 	ErrInvoiceClientNotFound           = "client id not found"
-	ErrInvoiceBusinessIsRequired       = "invoice business is required"
-	ErrInvoiceCustomerIsRequired       = "invoice customer is required"
-	ErrInvoiceDateIsRequired           = "invoice date is required"
-	ErrInvoiceDateIsInvalid            = "invoice date is invalid. It must be in the format YYYY-MM-DD"
-	ErrInvoiceDueIsRequired            = "invoice due is required"
-	ErrInvoiceDueIsInvalid             = "invoice due is invalid. It must be in the format YYYY-MM-DD"
-	ErrInvoiceDueBeforeDate            = "invoice due date should not be before invoice date"
-	ErrInvoiceAmountIsRequired         = "invoice amount is required"
-	ErrInvoiceAmountIsInvalid          = "invoice amount is invalid. It must be a number (ex: 100.00)"
+	ErrInvoiceDateIsRequired           = "date is required"
+	ErrInvoiceDateIsInvalid            = "date is invalid. It must be in the format YYYY-MM-DD"
+	ErrInvoiceDueIsRequired            = "due is required"
+	ErrInvoiceDueIsInvalid             = "due is invalid. It must be in the format YYYY-MM-DD"
+	ErrInvoiceDueBeforeDate            = "due date should not be before invoice date"
+	ErrInvoiceAmountIsRequired         = "amount is required"
+	ErrInvoiceAmountIsInvalid          = "amount is invalid. It must be a number (ex: 100.00)"
 	ErrInvoiceInstructionIDIsRequired  = "instruction id is required"
 	ErrInvoiceInstructionInformedTwice = "instruction id and instruction are informed. Choose only one"
-
-	ErrInvoiceInstructionNotFound = "instruction id not found"
-	ErrItemIDLength               = "invoice item id must have only one word"
-	ErrItemIDLower                = "invoice item id must be lower case"
-	ErrItemQuantity               = "invoice item quantity must be greater than 0"
-	ErrItemPrice                  = "invoice item price must be not equal to 0"
-	ErrInvoiceAmountUnmatch       = "invoice amount does not match with the sum of the items"
+	ErrInvoiceInstructionNotFound      = "instruction id not found"
+	ErrInvoiceAmountUnmatch            = "invoice amount does not match with the sum of the items"
 )
 
 // Invoice Item errors
 const (
-	ErrItemProductRequired         = "invoice item product is required"
-	ErrItemProductConflict         = "invoice item product and product id are informed. Choose only one"
-	ErrItemProductInvalid          = "invoice item product is invalid"
-	ErrItemProductNotFound         = "invoice item product not found"
-	ErrItemQuantityRequired        = "invoice item quantity is required"
-	ErrItemQuantityInvalid         = "invoice item quantity is invalid"
-	ErrItemQuantityLessOrEqualZero = "invoice item quantity must be greater than 0"
-	ErrItemPriceRequired           = "invoice item price is required"
-	ErrItemPriceInvalid            = "invoice item price is invalid"
-	ErrItemPriceLessOrEqualZero    = "invoice item price must be greater than 0"
+	ErrItemProductRequired         = "product is required"
+	ErrItemProductConflict         = "product and product id are informed. Choose only one"
+	ErrItemProductInvalid          = "product is invalid"
+	ErrItemProductNotFound         = "product not found"
+	ErrItemQuantityRequired        = "quantity is required"
+	ErrItemQuantityInvalid         = "quantity is invalid"
+	ErrItemQuantityLessOrEqualZero = "quantity must be greater than 0"
+	ErrItemPriceRequired           = "price is required"
+	ErrItemPriceInvalid            = "price is invalid"
+	ErrItemPriceLessOrEqualZero    = "price must be greater than 0"
 )
 
 // Invoice Status errors
 const (
-	ErrInvoiceStatusIDIsRequired   = "invoice status id is required"
-	ErrInvoiceStatusNameIsRequired = "invoice status name is required"
-	ErrInvoiceStatusIDIsInvalid    = "invoice status id is invalid"
+	ErrInvoiceStatusIDIsRequired   = "id is required"
+	ErrInvoiceStatusNameIsRequired = "name is required"
+	ErrInvoiceStatusIDIsInvalid    = "id is invalid"
 )
 
 // Payment Status errors
 const (
-	ErrPaymentStatusIDIsRequired   = "payment status id is required"
-	ErrPaymentStatusNameIsRequired = "payment status name is required"
-	ErrPaymentStatusIDIsInvalid    = "payment status id is invalid"
+	ErrPaymentStatusIDIsRequired   = "id is required"
+	ErrPaymentStatusNameIsRequired = "name is required"
+	ErrPaymentStatusIDIsInvalid    = "id is invalid"
 )

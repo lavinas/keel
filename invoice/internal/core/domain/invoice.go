@@ -74,7 +74,8 @@ func (i *Invoice) ValidateClient(repo port.Repository) *kerror.KError {
 	} else if i.ClientID != "" {
 		return i.ValidateClientID(repo)
 	} else if err := i.Client.Validate(repo); err != nil {
-		return kerror.NewKError(kerror.BadRequest, "client "+err.Error())
+		err.SetPrefix("client ")
+		return err
 	}
 	return nil
 }
@@ -144,7 +145,8 @@ func (i *Invoice) ValidateInstruction(repo port.Repository) *kerror.KError {
 	} else if i.InstructionID != "" {
 		return i.ValidateInstructionID(repo)
 	} else if err := i.Instruction.Validate(repo); err != nil {
-		return kerror.NewKError(kerror.BadRequest, "instruction "+err.Error())
+		err.SetPrefix("instruction ")
+		return err
 	}
 	return nil
 }
@@ -177,7 +179,8 @@ func (i *Invoice) ValidateItem(repo port.Repository) *kerror.KError {
 	for _, item := range i.Item {
 		count++
 		if err := item.Validate(repo); err != nil {
-			return kerror.NewKError(kerror.BadRequest, "item "+err.Error())
+			err.SetPrefix("item " + strconv.Itoa(count) + " ")
+			return err
 		}
 		sum += item.GetAmount()
 	}
