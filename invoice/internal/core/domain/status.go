@@ -5,22 +5,22 @@ import (
 )
 
 const (
-	InvoiceStatusNone      = "none"
-	InvoiceStatusCreated   = "created"
+	InvoiceStatusNone    = "none"
+	InvoiceStatusCreated = "created"
 )
 
 // InvoiceStatus represents a status of the invoice
 type InvoiceStatus struct {
-	InvoiceID   string    `json:"-"           gorm:"primaryKey;type:varchar(50); not null"`
-	ID          string    `json:"id"          gorm:"primaryKey;type:varchar(50); not null"`
-	CreatedAt   time.Time `json:"created_at"  gorm:"type:timestamp; not null"`
+	InvoiceID string    `json:"-"           gorm:"primaryKey;type:varchar(50); not null"`
+	ID        string    `json:"id"          gorm:"primaryKey;type:varchar(50); not null"`
+	CreatedAt time.Time `json:"created_at"  gorm:"type:timestamp; not null"`
 }
 
 // NewInvoiceStatus creates a new invoice status
 func NewInvoiceStatus(invoiceID string) *InvoiceStatus {
 	return &InvoiceStatus{
-		InvoiceID:   invoiceID,
-		ID:          InvoiceStatusNone,
+		InvoiceID: invoiceID,
+		ID:        InvoiceStatusNone,
 	}
 }
 
