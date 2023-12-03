@@ -61,8 +61,9 @@ func (c *Item) ValidateProduct(repo port.Repository) *kerror.KError {
 		return kerror.NewKError(kerror.BadRequest, ErrItemProductConflict)
 	} else if c.ProductID != "" {
 		return c.ValidateProductID(repo)
-	} else if c.Product.Validate(repo) != nil {
-		return kerror.NewKError(kerror.BadRequest, ErrItemProductInvalid)
+	} else if err := c.Product.Validate(repo); err != nil {
+		err.SetPrefix("product ")
+		return err
 	}
 	return nil
 }
