@@ -10,10 +10,10 @@ import (
 
 // Base represents the base of the model
 type Base struct {
-	BusinessID string    `json:"-"            gorm:"primaryKey;type:varchar(50); not null"`
-	ID         string    `json:"id"           gorm:"primaryKey;type:varchar(50); not null"`
-	Created_at time.Time `json:"created_at"   gorm:"type:timestamp; not null"`
-	Updated_at time.Time `json:"updated_at"   gorm:"type:timestamp; not null"`
+	BusinessID string    `json:"-"   gorm:"primaryKey;type:varchar(50); not null"`
+	ID         string    `json:"id"  gorm:"primaryKey;type:varchar(50); not null"`
+	Created_at time.Time `json:"-"   gorm:"type:timestamp; not null"`
+	Updated_at time.Time `json:"-"   gorm:"type:timestamp; not null"`
 }
 
 // SetCreate sets the created_at and updated_at of the model

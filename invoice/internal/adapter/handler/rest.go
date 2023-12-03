@@ -5,9 +5,13 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/lavinas/keel/invoice/internal/core/domain"
-	"github.com/lavinas/keel/invoice/internal/core/dto"
 	"github.com/lavinas/keel/invoice/internal/core/port"
+	"github.com/lavinas/keel/invoice/pkg/kerror"
 	"github.com/lavinas/keel/invoice/pkg/krest"
+)
+
+const (
+	CreateDetail = "created"
 )
 
 // Rest is the rest handler for the application
@@ -48,12 +52,17 @@ func (h *Rest) Create(c *gin.Context) {
 	obj := h.domainFactory(c)
 	if err := c.ShouldBindJSON(obj); err != nil {
 		h.logger.Error(err)
-		c.JSON(http.StatusBadRequest, gin.H{"code": 409, "message": "invalid json structure"})
+		rError := NewError(kerror.NewKError(kerror.BadRequest, "invalid json structure"))
+		c.JSON(rError.Status, rError)
 		return
 	}
-	var result dto.DefaultResult
-	h.usercase.Create(obj, &result)
-	c.JSON(result.Code, result)
+	if err := h.usercase.Create(obj); err != nil {
+		rError := NewError(err)
+		c.JSON(rError.Status, rError)
+		return
+	}
+	result := NewRestResult(http.StatusCreated, CreateDetail, &obj)
+	c.JSON(http.StatusOK, result)
 }
 
 // domainFactory creates a new domain object

@@ -30,6 +30,12 @@ var (
 		Conflict:   409,
 		None:       200,
 	}
+	httpTitle = map[string]string{
+		Internal:   "Internal Server Error",
+		BadRequest: "Bad Request",
+		Conflict:   "Conflict",
+		None:       "None",
+	}
 )
 
 // KError represents an error on keel system
@@ -78,6 +84,11 @@ func (e *KError) IsEmpty() bool {
 // GetHTTPCode returns the http code of the error
 func (e *KError) GetHTTPCode() int {
 	return httpCode[e.etype]
+}
+
+// GetHTTPStatus returns the http status of the error
+func (e *KError) GetHTTPTitle() string {
+	return httpTitle[e.etype]
 }
 
 // SetPrefix sets the prefix of the error

@@ -15,6 +15,5 @@ type DefaultResult interface {
 }
 
 type UseCase interface {
-	Create(domain Domain, result DefaultResult)
+	Create(domain Domain) *kerror.KError
 }
-
