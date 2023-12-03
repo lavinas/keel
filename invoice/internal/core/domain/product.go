@@ -40,3 +40,8 @@ func (i *Product) ValidateDescription(repo port.Repository) *kerror.KError {
 func (b *Product) ValidateDuplicity(repo port.Repository) *kerror.KError {
 	return b.Base.ValidateDuplicity(b, repo)
 }
+
+// TableName returns the table name for gorm
+func (b *Product) TableName() string {
+	return "product"
+}

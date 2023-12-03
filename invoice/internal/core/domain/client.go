@@ -102,3 +102,8 @@ func (c *Client) ValidatePhone(repo port.Repository) *kerror.KError {
 func (b *Client) ValidateDuplicity(repo port.Repository) *kerror.KError {
 	return b.Base.ValidateDuplicity(b, repo)
 }
+
+// TableName returns the table name for gorm
+func (b *Client) TableName() string {
+	return "client"
+}

@@ -29,10 +29,10 @@ func (h *Rest) Run() {
 			"/invoice/ping": h.ping,
 		},
 		"POST": {
-			"/invoice/client":      h.Register,
-			"/invoice/instruction": h.Register,
-			"/invoice/product":     h.Register,
-			"invoice":              h.Register,
+			"/invoice/client":      h.Create,
+			"/invoice/instruction": h.Create,
+			"/invoice/product":     h.Create,
+			"invoice":              h.Create,
 		},
 	}
 	h.krest.Run(handlers)
@@ -44,7 +44,7 @@ func (h *Rest) ping(c *gin.Context) {
 }
 
 // Register is the register handler
-func (h *Rest) Register(c *gin.Context) {
+func (h *Rest) Create(c *gin.Context) {
 	obj := h.domainFactory(c)
 	if err := c.ShouldBindJSON(obj); err != nil {
 		h.logger.Error(err)
@@ -52,7 +52,7 @@ func (h *Rest) Register(c *gin.Context) {
 		return
 	}
 	var result dto.DefaultResult
-	h.usercase.Register(obj, &result)
+	h.usercase.Create(obj, &result)
 	c.JSON(result.Code, result)
 }
 

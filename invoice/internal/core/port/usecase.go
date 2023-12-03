@@ -1,5 +1,5 @@
 package port
 
 type UseCase interface {
-	Register(domain Domain, result DefaultResult)
+	Create(domain Domain, result DefaultResult)
 }

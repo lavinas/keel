@@ -1,61 +1,36 @@
 package domain
 
 import (
-	"errors"
+	"time"
 )
 
 const (
-	InvoiceStatusDraft     = "draft"
-	InvoiceStatusNew       = "new"
-	InvoiceStatusSent      = "sent"
-	InvoiceStatusViewed    = "viewed"
-	InvoiceStatusCancelled = "cancelled"
-	PaymentStatusUnpaid    = "unpaid"
-	PaymentStatusPaid      = "paid"
-	PaymentStatusUnderpaid = "underpaid"
-	PaymentStatusOverpaid  = "overpaid"
-	PaymentStatusReversed  = "reversed"
+	InvoiceStatusNone      = "none"
+	InvoiceStatusCreated   = "created"
 )
 
 // InvoiceStatus represents a status of the invoice
 type InvoiceStatus struct {
-	ID          string `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
+	InvoiceID   string    `json:"-"           gorm:"primaryKey;type:varchar(50); not null"`
+	ID          string    `json:"id"          gorm:"primaryKey;type:varchar(50); not null"`
+	CreatedAt   time.Time `json:"created_at"  gorm:"type:timestamp; not null"`
 }
 
-func (i *InvoiceStatus) Validate() error {
-	if i.ID == "" {
-		return errors.New(ErrInvoiceStatusIDIsRequired)
+// NewInvoiceStatus creates a new invoice status
+func NewInvoiceStatus(invoiceID string) *InvoiceStatus {
+	return &InvoiceStatus{
+		InvoiceID:   invoiceID,
+		ID:          InvoiceStatusNone,
 	}
-	if i.Name == "" {
-		return errors.New(ErrInvoiceStatusNameIsRequired)
-	}
-	if i.ID != InvoiceStatusDraft && i.ID != InvoiceStatusNew && i.ID != InvoiceStatusSent &&
-		i.ID != InvoiceStatusViewed && i.ID != InvoiceStatusCancelled {
-		return errors.New(ErrInvoiceStatusIDIsInvalid)
-	}
-	return nil
 }
 
-// PaymentStatus represents a status of the payment of the invoice
-type PaymentStatus struct {
-	ID          string `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
+// SetCreated sets the status to created
+func (i *InvoiceStatus) SetCreated() {
+	id := "created"
+	i.ID = id
 }
 
-// ValidatePaymentStatus validates the payment status
-func (p *PaymentStatus) Validate() error {
-	if p.ID == "" {
-		return errors.New(ErrPaymentStatusIDIsRequired)
-	}
-	if p.Name == "" {
-		return errors.New(ErrPaymentStatusNameIsRequired)
-	}
-	if p.ID != PaymentStatusUnpaid && p.ID != PaymentStatusPaid && p.ID != PaymentStatusUnderpaid &&
-		p.ID != PaymentStatusOverpaid && p.ID != PaymentStatusReversed {
-		return errors.New(ErrPaymentStatusIDIsInvalid)
-	}
-	return nil
+// TableName returns the table name for gorm
+func (i *InvoiceStatus) TableName() string {
+	return InvoiceStatusCreated
 }

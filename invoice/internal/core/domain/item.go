@@ -14,7 +14,7 @@ type Item struct {
 	Base
 	InvoiceID    string   `json:"invoice_id"  gorm:"type:varchar(50); not null"`
 	ProductID    string   `json:"product_id"  gorm:"type:varchar(50); not null"`
-	Product      *Product `json:"-"           gorm:"foreignKey:BusinessID,ProductID;associationForeignKey:BusinessID,ID"`
+	Product      *Product `json:"product"     gorm:"foreignKey:BusinessID,ProductID;associationForeignKey:BusinessID,ID"`
 	Description  string   `json:"description" gorm:"type:varchar(255)"`
 	QuantityStr  string   `json:"quantity"    gorm:"-"`
 	Quantity     int      `json:"-"           gorm:"type:int; not null"`
@@ -38,6 +38,10 @@ func (i *Item) Fit() {
 	i.Base.Fit()
 	if i.Base.ID == "" {
 		i.Base.ID = uuid.New().String()
+	}
+	if i.Product != nil {
+		i.Product.SetCreate(i.BusinessID)
+		i.Product.Fit()
 	}
 	i.Description = strings.TrimSpace(i.Description)
 	i.Quantity, _ = strconv.Atoi(i.QuantityStr)
@@ -108,4 +112,9 @@ func (c *Item) GetAmount() float64 {
 // ValidateDuplicity validates the duplicity of the invoice item
 func (c *Item) ValidateDuplicity(repo port.Repository) *kerror.KError {
 	return c.Base.ValidateDuplicity(c, repo)
+}
+
+// TableName returns the table name for gorm
+func (c *Item) TableName() string {
+	return "item"
 }

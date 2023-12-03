@@ -40,3 +40,8 @@ func (i *Instruction) ValidateDescription(repo port.Repository) *kerror.KError {
 func (b *Instruction) ValidateDuplicity(repo port.Repository) *kerror.KError {
 	return b.Base.ValidateDuplicity(b, repo)
 }
+
+// TableName returns the table name for gorm
+func (b *Instruction) TableName() string {
+	return "instruction"
+}

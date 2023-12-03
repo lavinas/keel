@@ -27,19 +27,11 @@ func (b *Base) Validate(repo port.Repository) *kerror.KError {
 	return ValidateLoop(valOrder, repo)
 }
 
-// SetBusinessID sets the business id of the model
-func (b *Base) SetBusinessID(business_id string) {
+// SetCreate sets the created_at and updated_at of the model
+func (b *Base) SetCreate(business_id string) {
 	b.BusinessID = business_id
-}
-
-// SetID sets the id of the model
-func (b *Base) SetCreatedAt(date time.Time) {
-	b.Created_at = date
-}
-
-// SetID sets the id of the model
-func (b *Base) SetUpdatedAt(date time.Time) {
-	b.Updated_at = date
+	b.Created_at = time.Now()
+	b.Updated_at = time.Now()
 }
 
 // Fit fits the base of the model
