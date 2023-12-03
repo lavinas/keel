@@ -11,8 +11,7 @@ import (
 )
 
 const (
-	DB_TYPE = "DB_TYPE"
-	DB_DNS  = "DB_DNS"
+	DB_DNS = "MYSQL_INVOICE_DNS"
 )
 
 // RepoMySql is the repository handler for the application

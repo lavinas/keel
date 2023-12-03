@@ -3,13 +3,12 @@ version: "3.1"
 services:    
   keel_invoice:
     build: .
-    container_name: keel_invoice
+    container_name: keel
     restart: always
     volumes:
       - .:/go/src/
     environment:
-      DB_TYPE: mysql
-      DB_DNS: root:root@tcp(mysql_invoice:3306)/keel_invoice?charset=utf8&parseTime=True&loc=Local
+      MYSQL_INVOICE_DNS: root:root@tcp(mysql_invoice:3306)/keel_invoice?charset=utf8&parseTime=True&loc=Local
       BUSINNESS_ID: cardoso&barbosa
       TZ: America/Sao_Paulo
     ports:

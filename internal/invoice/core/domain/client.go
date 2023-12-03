@@ -51,7 +51,7 @@ func (c *Client) Fit() {
 	c.Email = strings.TrimSpace(c.Email)
 	c.Document, _ = cpf_cnpj.ParseUint(c.DocumentStr)
 	for _, cr := range countries {
-		if c.PhoneStr = phone.Parse(c.PhoneStr, cr); c.PhoneStr != "" {
+		if c.Phone, _ = phone.ParseUint(c.PhoneStr, cr); c.Phone != 0 {
 			break
 		}
 	}
