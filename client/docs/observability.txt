@@ -1,6 +1,0 @@
-Log + metricas + tracing
----------------------------
-Jaeger
-Prometheus
-
-
