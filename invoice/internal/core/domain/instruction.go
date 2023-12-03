@@ -13,10 +13,10 @@ type Instruction struct {
 	Description string `json:"description"`
 }
 
-// Fit fits the instruction information received
-func (i *Instruction) Fit() {
-	i.Base.Fit()
-	i.Description = strings.TrimSpace(i.Description)
+// SetCreate set information for create a new instruction
+func (i *Instruction) SetCreate(business_id string) {
+	i.Base.SetCreate(business_id)
+	i.Fit()
 }
 
 // Validate validates the instruction
@@ -26,6 +26,12 @@ func (i *Instruction) Validate(repo port.Repository) *kerror.KError {
 		i.ValidateDescription,
 		i.ValidateDuplicity,
 	}, repo)
+}
+
+// Fit fits the instruction information received
+func (i *Instruction) Fit() {
+	i.Base.Fit()
+	i.Description = strings.TrimSpace(i.Description)
 }
 
 // ValidateDescription validates the description of the instruction

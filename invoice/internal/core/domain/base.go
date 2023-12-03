@@ -16,6 +16,14 @@ type Base struct {
 	Updated_at time.Time `json:"updated_at"   gorm:"type:timestamp; not null"`
 }
 
+// SetCreate sets the created_at and updated_at of the model
+func (b *Base) SetCreate(business_id string) {
+	b.BusinessID = business_id
+	b.Created_at = time.Now()
+	b.Updated_at = time.Now()
+	b.Fit()
+}
+
 // Validate validates the base of the model
 func (b *Base) Validate(repo port.Repository) *kerror.KError {
 	valOrder := []func(repo port.Repository) *kerror.KError{
@@ -27,22 +35,10 @@ func (b *Base) Validate(repo port.Repository) *kerror.KError {
 	return ValidateLoop(valOrder, repo)
 }
 
-// SetCreate sets the created_at and updated_at of the model
-func (b *Base) SetCreate(business_id string) {
-	b.BusinessID = business_id
-	b.Created_at = time.Now()
-	b.Updated_at = time.Now()
-}
-
 // Fit fits the base of the model
 func (b *Base) Fit() {
 	b.ID = strings.TrimSpace(b.ID)
 	b.BusinessID = strings.TrimSpace(b.BusinessID)
-}
-
-// GetBusinessID gets the business id of the model
-func (b *Base) GetID() string {
-	return b.ID
 }
 
 // ValidateBusinessID validates the business id of the model

@@ -32,7 +32,6 @@ func (s *UseCase) Create(domain port.Domain, result port.DefaultResult) {
 	// Prepare domain
 	name := "Creating " + reflect.TypeOf(domain).String()
 	domain.SetCreate(s.config.Get(BUSINNESS_ID))
-	domain.Fit()
 	// Validate
 	if err := domain.Validate(s.repo); err != nil {
 		s.logger.Infof("%s - %s", name, err.Error())

@@ -7,5 +7,4 @@ import (
 type Domain interface {
 	SetCreate(businessID string)
 	Validate(repo Repository) *kerror.KError
-	Fit()
 }

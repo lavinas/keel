@@ -25,6 +25,12 @@ type Client struct {
 	Phone       uint64 `json:"-"        gorm:"type:numeric(20)"`
 }
 
+// SetCreate set information for create a new client
+func (c *Client) SetCreate(business_id string) {
+	c.Base.SetCreate(business_id)
+	c.Fit()
+}
+
 // Validate validates the client
 func (c *Client) Validate(repo port.Repository) *kerror.KError {
 	execOrder := []func(repo port.Repository) *kerror.KError{

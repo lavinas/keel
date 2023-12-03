@@ -22,6 +22,15 @@ type Item struct {
 	UnitPrice    float64  `json:"-"           gorm:"type:decimal(20, 2); not null"`
 }
 
+// SetCreate set information for create a new invoice item
+func (i *Item) SetCreate(business_id string) {
+	i.Base.SetCreate(business_id)
+	i.Fit()
+	if i.Product != nil {
+		i.Product.SetCreate(i.BusinessID)
+	}
+}
+
 // Validate validates the invoice item
 func (i *Item) Validate(repo port.Repository) *kerror.KError {
 	return ValidateLoop([]func(repo port.Repository) *kerror.KError{
@@ -38,10 +47,6 @@ func (i *Item) Fit() {
 	i.Base.Fit()
 	if i.Base.ID == "" {
 		i.Base.ID = uuid.New().String()
-	}
-	if i.Product != nil {
-		i.Product.SetCreate(i.BusinessID)
-		i.Product.Fit()
 	}
 	i.Description = strings.TrimSpace(i.Description)
 	i.Quantity, _ = strconv.Atoi(i.QuantityStr)

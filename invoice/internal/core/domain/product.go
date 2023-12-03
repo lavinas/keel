@@ -13,6 +13,12 @@ type Product struct {
 	Description string `json:"description"`
 }
 
+// SetCreate set information for create a new product
+func (i *Product) SetCreate(business_id string) {
+	i.Base.SetCreate(business_id)
+	i.Fit()
+}
+
 // Validate validates the product
 func (i *Product) Validate(repo port.Repository) *kerror.KError {
 	return ValidateLoop([]func(repo port.Repository) *kerror.KError{

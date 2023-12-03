@@ -11,19 +11,40 @@ import (
 // Invoice represents an invoice - main model
 type Invoice struct {
 	Base
-	ClientID      string         `json:"client_id"      gorm:"type:varchar(50); not null"`
-	Client        *Client        `json:"client"         gorm:"foreignKey:BusinessID,ClientID;associationForeignKey:BusinessID,ID"`
-	DateStr       string         `json:"date"           gorm:"-"`
-	Date          time.Time      `json:"-"              gorm:"type:date; not null"`
-	DueStr        string         `json:"due"            gorm:"-"`
-	Due           time.Time      `json:"-"              gorm:"type:date; not null"`
-	AmountStr     string         `json:"amount"         gorm:"-"`
-	Amount        float64        `json:"-"              gorm:"type:decimal(20, 2); not null"`
-	InstructionID string         `json:"instruction_id" gorm:"type:varchar(50)"`
-	Instruction   *Instruction   `json:"instruction"    gorm:"foreignKey:BusinessID,InstructionID;associationForeignKey:BusinessID,ID"`
-	Item          []*Item        `json:"items"          gorm:"foreignKey:BusinessID,InvoiceID;associationForeignKey:BusinessID,ID"`
-	StatusID      string         `json:"-"              gorm:"type:varchar(50); not null"`
-	InvoiceStatus *InvoiceStatus `json:"status"         gorm:"foreignKey:ID,StatusID;associationForeignKey:InvoiceID,ID"`
+	ClientID        string       `json:"client_id"      gorm:"type:varchar(50); not null"`
+	Client          *Client      `json:"client"         gorm:"foreignKey:BusinessID,ClientID;associationForeignKey:BusinessID,ID"`
+	DateStr         string       `json:"date"           gorm:"-"`
+	Date            time.Time    `json:"-"              gorm:"type:date; not null"`
+	DueStr          string       `json:"due"            gorm:"-"`
+	Due             time.Time    `json:"-"              gorm:"type:date; not null"`
+	AmountStr       string       `json:"amount"         gorm:"-"`
+	Amount          float64      `json:"-"              gorm:"type:decimal(20, 2); not null"`
+	InstructionID   string       `json:"instruction_id" gorm:"type:varchar(50)"`
+	Instruction     *Instruction `json:"instruction"    gorm:"foreignKey:BusinessID,InstructionID;associationForeignKey:BusinessID,ID"`
+	Item            []*Item      `json:"items"          gorm:"foreignKey:BusinessID,InvoiceID;associationForeignKey:BusinessID,ID"`
+	InvoiceStatusID string       `json:"-"              gorm:"type:varchar(50); not null"`
+	InvoiceStatus   *Status      `json:"status"         gorm:"foreignKey:ID,InvoiceStatusID;associationForeignKey:InvoiceID,ID"`
+	PaymentStatusID string       `json:"-"              gorm:"type:varchar(50); not null"`
+	PaymentStatus   *Status      `json:"-"              gorm:"foreignKey:ID,PaymentStatusID;associationForeignKey:InvoiceID,ID"`
+}
+
+// SetCreate sets the created_at and updated_at of the model
+func (i *Invoice) SetCreate(business_id string) {
+	i.Base.SetCreate(business_id)
+	i.InvoiceStatus = NewInvoiceStatus(i.Base.ID, InvoiceSet)
+	i.InvoiceStatus.SetCreated()
+	i.PaymentStatus = NewInvoiceStatus(i.Base.ID, PaymentSet)
+	i.PaymentStatus.SetOpen()
+	i.Fit()
+	if i.Client != nil {
+		i.Client.SetCreate(i.BusinessID)
+	}
+	if i.Instruction != nil {
+		i.Instruction.SetCreate(i.BusinessID)
+	}
+	for _, item := range i.Item {
+		item.SetCreate(i.BusinessID)
+	}
 }
 
 // Validate validates the invoice
@@ -40,35 +61,11 @@ func (i *Invoice) Validate(repo port.Repository) *kerror.KError {
 	}, repo)
 }
 
-// SetCreate sets the created_at and updated_at of the model
-func (i *Invoice) SetCreate(business_id string) {
-	i.Base.SetCreate(business_id)
-	i.InvoiceStatus = NewInvoiceStatus(i.Base.ID)
-	i.InvoiceStatus.SetCreated()
-}
-
 // Fit fits the invoice information received
 func (i *Invoice) Fit() {
-	i.Base.Fit()
-	if i.Client != nil {
-		i.Client.SetCreate(i.BusinessID)
-		i.Client.Fit()
-	}
-	if i.Instruction != nil {
-		i.Instruction.SetCreate(i.BusinessID)
-		i.Instruction.Fit()
-	}
-	for _, item := range i.Item {
-		item.SetCreate(i.BusinessID)
-		item.InvoiceID = i.ID
-		item.Fit()
-	}
 	i.Date, _ = time.Parse("2006-01-02", i.DateStr)
 	i.Due, _ = time.Parse("2006-01-02", i.DueStr)
 	i.Amount, _ = strconv.ParseFloat(i.AmountStr, 64)
-	if i.InvoiceStatus == nil {
-		i.InvoiceStatus = NewInvoiceStatus(i.Base.ID)
-	}
 }
 
 // ValidateClient validates the client of the invoice
