@@ -2,7 +2,7 @@ package domain
 
 // Email is the struct that contains the email information
 type Email struct {
-	ID         string            `json:"id"`
+	Base
 	Sender     Sender            `json:"sender"`
 	Receiver   Receiver          `json:"receiver"`
 	Template   Template          `json:"template"`
