@@ -25,11 +25,11 @@ type Status struct {
 }
 
 // NewInvoiceStatus creates a new invoice status
-func NewInvoiceStatus(EmailID string, set string) *Status {
+func NewStatus(EmailID string, set string) *Status {
 	return &Status{
 		EmailID: EmailID,
-		Set:       set,
-		ID:        None,
+		Set:     set,
+		ID:      None,
 	}
 }
 

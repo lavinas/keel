@@ -76,6 +76,17 @@ func (e *KError) Join(t string, m string) {
 	e.message = e.message + messageSeparator + m
 }
 
+// JoinK joins a KError to the error
+func (e *KError) JoinKError(err *KError) {
+	if err == nil || err.IsEmpty() {
+		return
+	}
+	if orderEtype[err.etype] < orderEtype[e.etype] {
+		e.etype = err.etype
+	}
+	e.message = e.message + messageSeparator + err.message
+}
+
 // IsEmpty checks if the error is empty
 func (e *KError) IsEmpty() bool {
 	return e.etype == None

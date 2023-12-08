@@ -1,7 +1,7 @@
 version: "3.1"
 
 services:    
-  keel_invoice:
+  keel:
     build: .
     container_name: keel
     restart: always
@@ -9,6 +9,7 @@ services:
       - .:/go/src/
     environment:
       MYSQL_INVOICE_DNS: root:root@tcp(mysql_invoice:3306)/keel_invoice?charset=utf8&parseTime=True&loc=Local
+      MYSQL_EMAIL_DNS: root:root@tcp(mysql_email:3306)/keel_email?charset=utf8&parseTime=True&loc=Local
       BUSINNESS_ID: cardoso&barbosa
       TZ: America/Sao_Paulo
     ports:
@@ -26,9 +27,25 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: keel_invoice
     volumes:
-      - ./.mysql:/var/lib/mysql
+      - ./.mysql:/var/lib/.mysql/invoice
     ports:
       - "3311:3306"
+    networks:
+      - keelnet
+
+  mysql_email:
+    image: mysql:8
+    container_name: mysql_email
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    tty: true
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: keel_email
+    volumes:
+      - ./.mysql:/var/lib/.mysql/email
+    ports:
+      - "3312:3306"
     networks:
       - keelnet
 

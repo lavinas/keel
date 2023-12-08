@@ -25,7 +25,7 @@ type Status struct {
 }
 
 // NewInvoiceStatus creates a new invoice status
-func NewInvoiceStatus(invoiceID string, set string) *Status {
+func NewStatus(invoiceID string, set string) *Status {
 	return &Status{
 		InvoiceID: invoiceID,
 		Set:       set,

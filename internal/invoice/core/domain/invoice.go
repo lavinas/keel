@@ -31,9 +31,9 @@ type Invoice struct {
 // SetCreate sets the created_at and updated_at of the model
 func (i *Invoice) SetCreate(business_id string) {
 	i.Base.SetCreate(business_id)
-	i.InvoiceStatus = NewInvoiceStatus(i.Base.ID, InvoiceSet)
+	i.InvoiceStatus = NewStatus(i.Base.ID, InvoiceSet)
 	i.InvoiceStatus.SetCreated()
-	i.PaymentStatus = NewInvoiceStatus(i.Base.ID, PaymentSet)
+	i.PaymentStatus = NewStatus(i.Base.ID, PaymentSet)
 	i.PaymentStatus.SetOpen()
 	i.Fit()
 	if i.Client != nil {

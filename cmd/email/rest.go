@@ -3,14 +3,14 @@ package main
 import (
 	"fmt"
 
-	"github.com/lavinas/keel/internal/invoice/adapter/handler"
-	"github.com/lavinas/keel/internal/invoice/adapter/repository"
-	"github.com/lavinas/keel/internal/invoice/adapter/tools"
-	"github.com/lavinas/keel/internal/invoice/core/usecase"
+	"github.com/lavinas/keel/internal/email/adapter/handler"
+	"github.com/lavinas/keel/internal/email/adapter/repository"
+	"github.com/lavinas/keel/internal/email/adapter/tools"
+	"github.com/lavinas/keel/internal/email/core/usecase"
 )
 
 const (
-	name                     = "invoice"
+	name                     = "email"
 	fatalErrorCreatingLogger = "fatal error creating logger: %w"
 	fatalErrorCreatingRepo   = "fatal error creating repo: %w"
 )
