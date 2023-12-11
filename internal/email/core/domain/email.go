@@ -39,6 +39,15 @@ func (e *Email) SetCreate() {
 	if e.Variables == nil {
 		e.Variables = make(map[string]string)
 	}
+	if e.Sender != nil {
+		e.Sender.SetCreate()
+	}
+	if e.Receiver != nil {
+		e.Receiver.SetCreate()
+	}
+	if e.Template != nil {
+		e.Template.SetCreate()
+	}
 }
 
 // Validate validate the email information
@@ -61,7 +70,10 @@ func (e *Email) ValidateSender() *kerror.KError {
 		return kerror.NewKError(kerror.BadRequest, ErrEmailSenderIsTwice)
 	}
 	if e.Sender != nil {
-		return e.Sender.Validate()
+		if err := e.Sender.Validate(); err != nil {
+			err.SetPrefix("sender")
+			return err
+		}
 	}
 	return nil
 }
@@ -75,7 +87,10 @@ func (e *Email) ValidateReceiver() *kerror.KError {
 		return kerror.NewKError(kerror.BadRequest, ErrEmailReceiverIsTwice)
 	}
 	if e.Receiver != nil {
-		return e.Receiver.Validate()
+		if err := e.Receiver.Validate(); err != nil {
+			err.SetPrefix("receiver")
+			return err
+		}
 	}
 	return nil
 }
@@ -89,7 +104,10 @@ func (e *Email) ValidateTemplate() *kerror.KError {
 		return kerror.NewKError(kerror.BadRequest, ErrEmailTemplateTwice)
 	}
 	if e.Template != nil {
-		return e.Template.Validate()
+		if err := e.Template.Validate(); err != nil {
+			err.SetPrefix("template")
+			return err
+		}
 	}
 	return nil
 }
@@ -103,7 +121,10 @@ func (e *Email) ValidateSMTPServer() *kerror.KError {
 		return kerror.NewKError(kerror.BadRequest, ErrEmailSMTPServerTwice)
 	}
 	if e.SMTPServer != nil {
-		return e.SMTPServer.Validate()
+		if err := e.SMTPServer.Validate(); err != nil {
+			err.SetPrefix("smtp_server")
+			return err
+		}
 	}
 	return nil
 }

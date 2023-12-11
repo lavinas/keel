@@ -72,14 +72,14 @@ func (b *Base) ValidateUpdatedAt() *kerror.KError {
 
 // ValidateLoop validate the base information
 func validateLoop(val []func() *kerror.KError) *kerror.KError {
-	var err kerror.KError
+	err := kerror.NewKError(kerror.None, "")
 	for _, f := range val {
 		err.JoinKError(f())
 	}
 	if err.IsEmpty() {
 		return nil
 	}
-	return &err
+	return err
 }
 
 // GetBase returns a new base object
