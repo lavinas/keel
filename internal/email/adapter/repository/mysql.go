@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/lavinas/keel/internal/email/core/domain"
 	"github.com/lavinas/keel/internal/email/core/port"
@@ -58,7 +59,12 @@ func (r *MySql) Close() {
 
 // Add adds a object to the database
 func (r *MySql) Add(obj interface{}) error {
-	return r.Db.Create(obj).Error
+	err := r.Db.Create(obj).Error
+	if err != nil {
+		fmt.Println("err", err.Error())
+		return err
+	}
+	return nil
 }
 
 // FindByID finds a object by id

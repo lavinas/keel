@@ -48,6 +48,9 @@ func (e *Email) SetCreate() {
 	if e.Template != nil {
 		e.Template.SetCreate()
 	}
+	if e.SMTPServer != nil {
+		e.SMTPServer.SetCreate()
+	}
 }
 
 // Validate validate the email information
