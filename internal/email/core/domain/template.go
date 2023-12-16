@@ -54,3 +54,8 @@ func (t *Template) ValidateBody() *kerror.KError {
 	}
 	return nil
 }
+
+// TableName returns the table name for gorm
+func (b *Template) TableName() string {
+	return "template"
+}

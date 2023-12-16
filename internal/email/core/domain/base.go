@@ -90,6 +90,7 @@ func GetDomain() []interface{} {
 		&Receiver{},
 		&SMTPServer{},
 		&Status{},
+		&Variable{},
 		&Email{},
 	}
 }

@@ -18,27 +18,25 @@ const (
 // Email is the struct that contains the email information
 type Email struct {
 	Base
-	SenderID     string            `json:"sender_id"   gorm:"type:varchar(50); not null"`
-	Sender       *Sender           `json:"sender"      gorm:"foreignKey:SenderID"`
-	ReceiverID   string            `json:"receiver_id" gorm:"type:varchar(50); not null"`
-	Receiver     *Receiver         `json:"receiver"    gorm:"foreignKey:ReceiverID"`
-	TemplateID   string            `json:"template_id" gorm:"type:varchar(50); not null"`
-	Template     *Template         `json:"template"    gorm:"foreignKey:TemplateID"`
-	SMTPServerID string            `json:"smtp_server_id" gorm:"type:varchar(50); not null"`
-	SMTPServer   *SMTPServer       `json:"smtp_server" gorm:"foreignKey:SMTPServerID"`
-	Variables    map[string]string `json:"variables"   gorm:"type:varchar(50); not null"`
-	StatusID     string            `json:"-"           gorm:"type:varchar(50); not null"`
-	Status       *Status           `json:"status"      gorm:"foreignKey:ID,StatusID"`
+	SenderID     string      `json:"sender_id"      gorm:"type:varchar(50); not null"`
+	Sender       *Sender     `json:"sender"         gorm:"foreignKey:SenderID"`
+	ReceiverID   string      `json:"receiver_id"    gorm:"type:varchar(50); not null"`
+	Receiver     *Receiver   `json:"receiver"       gorm:"foreignKey:ReceiverID"`
+	TemplateID   string      `json:"template_id"    gorm:"type:varchar(50); not null"`
+	Template     *Template   `json:"template"       gorm:"foreignKey:TemplateID"`
+	SMTPServerID string      `json:"smtp_server_id" gorm:"type:varchar(50); not null"`
+	SMTPServer   *SMTPServer `json:"smtp_server"    gorm:"foreignKey:SMTPServerID"`
+	Variables    []*Variable `json:"variables"      gorm:"foreignKey:ID;associationForeignKey:EmailID"`
+	StatusID     string      `json:"-"              gorm:"type:varchar(50); not null"`
+	Status       *Status     `json:"status"         gorm:"foreignKey:ID,StatusID"`
 }
 
 // SetCreate set information for create a new email
 func (e *Email) SetCreate() {
 	e.Base.SetCreate()
 	e.StatusID = Created
-	e.Status = NewStatus(e.Base.ID, e.StatusID)
-	if e.Variables == nil {
-		e.Variables = make(map[string]string)
-	}
+	e.Status = NewStatus(e.Base.ID)
+	e.Status.SetCreated("")
 	if e.Sender != nil {
 		e.Sender.SetCreate()
 	}
@@ -51,6 +49,11 @@ func (e *Email) SetCreate() {
 	if e.SMTPServer != nil {
 		e.SMTPServer.SetCreate()
 	}
+	if e.Variables != nil {
+		for _, v := range e.Variables {
+			v.SetCreate()
+		}
+	}
 }
 
 // Validate validate the email information
@@ -61,6 +64,7 @@ func (e *Email) Validate() *kerror.KError {
 		e.ValidateReceiver,
 		e.ValidateTemplate,
 		e.ValidateSMTPServer,
+		e.ValidateVariables,
 	})
 }
 
@@ -130,4 +134,23 @@ func (e *Email) ValidateSMTPServer() *kerror.KError {
 		}
 	}
 	return nil
+}
+
+// ValidateVariables validate the email information
+func (e *Email) ValidateVariables() *kerror.KError {
+	if e.Variables == nil {
+		return nil
+	}
+	for _, v := range e.Variables {
+		if err := v.Validate(); err != nil {
+			err.SetPrefix("variables")
+			return err
+		}
+	}
+	return nil
+}
+
+// TableName returns the table name for gorm
+func (b *Email) TableName() string {
+	return "email"
 }

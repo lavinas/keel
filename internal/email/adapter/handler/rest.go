@@ -64,7 +64,7 @@ func (h *Rest) Create(c *gin.Context) {
 		return
 	}
 	result := krest.NewKRestResult(http.StatusCreated, CreateDetail, &obj)
-	c.JSON(http.StatusOK, result)
+	c.JSON(result.Status, result)
 }
 
 // domainFactory creates a new domain object

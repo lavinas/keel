@@ -53,3 +53,8 @@ func (s *Sender) ValidateEmail() *kerror.KError {
 	}
 	return nil
 }
+
+// TableName returns the table name for gorm
+func (b *Sender) TableName() string {
+	return "sender"
+}

@@ -79,3 +79,8 @@ func (s *SMTPServer) ValidatePass() *kerror.KError {
 	}
 	return nil
 }
+
+// TableName returns the table name for gorm
+func (b *SMTPServer) TableName() string {
+	return "smtp_server"
+}
