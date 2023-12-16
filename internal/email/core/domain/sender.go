@@ -19,7 +19,7 @@ type Sender struct {
 
 // SetCreate set information for create a new business
 func (s *Sender) SetCreate() {
-	s.Base.SetCreate()
+	s.Base.SetCreate(false)
 }
 
 // Validate validate the business information

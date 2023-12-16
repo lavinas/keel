@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+
+	"github.com/lavinas/keel/internal/email/core/port"
 	"github.com/lavinas/keel/pkg/kerror"
 )
 
@@ -25,13 +27,12 @@ type Base struct {
 }
 
 // SetCreate set information for create a new client
-func (b *Base) SetCreate() {
+func (b *Base) SetCreate(genID bool) {
 	if b.ID == "" {
 		b.ID = uuid.New().String()
 	}
 	b.Created_at = time.Now()
 	b.Updated_at = time.Now()
-
 }
 
 // Validate validate the base information
@@ -82,6 +83,18 @@ func validateLoop(val []func() *kerror.KError) *kerror.KError {
 	return err
 }
 
+// ValidateDuplicity validates the duplicity of the model
+func (b *Base) ValidateDuplicity(base interface{}, repo port.Repository) *kerror.KError {
+	exists, err := repo.Exists(base, b.ID)
+	if err != nil {
+		return kerror.NewKError(kerror.Internal, err.Error())
+	}
+	if exists {
+		return kerror.NewKError(kerror.Conflict, ErrBaseIDAlreadyExists)
+	}
+	return nil
+}
+
 // GetBase returns a new base object
 func GetDomain() []interface{} {
 	return []interface{}{
@@ -94,3 +107,4 @@ func GetDomain() []interface{} {
 		&Email{},
 	}
 }
+

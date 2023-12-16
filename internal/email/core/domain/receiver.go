@@ -17,7 +17,7 @@ type Receiver struct {
 
 // SetCreate set information for create a new client
 func (r *Receiver) SetCreate() {
-	r.Base.SetCreate()
+	r.Base.SetCreate(false)
 }
 
 // Validate validate the client information

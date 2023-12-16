@@ -33,7 +33,7 @@ type Email struct {
 
 // SetCreate set information for create a new email
 func (e *Email) SetCreate() {
-	e.Base.SetCreate()
+	e.Base.SetCreate(true)
 	e.StatusID = Created
 	e.Status = NewStatus(e.Base.ID)
 	e.Status.SetCreated("")
@@ -149,6 +149,7 @@ func (e *Email) ValidateVariables() *kerror.KError {
 	}
 	return nil
 }
+
 
 // TableName returns the table name for gorm
 func (b *Email) TableName() string {
