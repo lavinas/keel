@@ -23,7 +23,7 @@ type Variable struct {
 
 // SetCreate set information for create a new variable item
 func (v *Variable) SetCreate() {
-	v.Base.SetCreate(true)
+	v.Base.SetCreate()
 }
 
 // Validate validate the variable information

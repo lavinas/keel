@@ -50,7 +50,7 @@ type EmailResult struct {
 
 // SetCreate set information for create a new email
 func (e *Email) SetCreate() {
-	e.Base.SetCreate(true)
+	e.Base.SetCreate()
 	e.StatusID = Created
 	e.Status = NewStatus(e.Base.ID)
 	e.Status.SetCreated("")

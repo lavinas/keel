@@ -21,7 +21,8 @@ type Template struct {
 
 // SetCreate set information for create a new email template
 func (t *Template) SetCreate() {
-	t.Base.SetCreate(false)
+	t.Base.SetShortenID(t, t.Subject)
+	t.Base.SetCreate()
 }
 
 // Validate validate the email template information

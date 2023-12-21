@@ -19,7 +19,8 @@ type Sender struct {
 
 // SetCreate set information for create a new business
 func (s *Sender) SetCreate() {
-	s.Base.SetCreate(false)
+	s.Base.SetShortenID(s, s.Name)
+	s.Base.SetCreate()
 }
 
 // Validate validate the business information

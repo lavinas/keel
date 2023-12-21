@@ -8,15 +8,26 @@ import (
 
 	"github.com/lavinas/keel/internal/email/core/port"
 	"github.com/lavinas/keel/pkg/kerror"
+	"github.com/lavinas/keel/pkg/kname"
 )
 
 const (
+	// ErrBaseIDIsRequired is the error for id is required
 	ErrBaseIDIsRequired        = "id is required"
+	// ErrBaseIDLength is the error for id length
 	ErrBaseIDLength            = "id must have only one word. Use underscore to separate words"
+	// ErrBaseIDLower is the error for id lower case
 	ErrBaseIDLower             = "id must be lower case"
+	// ErrBaseCreatedAtIsRequired is the error for created_at is required
 	ErrBaseCreatedAtIsRequired = "created_at is required"
+	// ErrBaseUpdatedAtIsRequired is the error for updated_at is required
 	ErrBaseUpdatedAtIsRequired = "updated_at is required"
+	// ErrBaseIDAlreadyExists is the error for id already exists
 	ErrBaseIDAlreadyExists     = "id already exists"
+	// TypeUUID is the type for create uuid id
+	TypeUUID = "uuid"
+	// TypeName is the type for create name id
+	TypeName = "name"
 )
 
 // Base is the struct that contains the base information
@@ -37,12 +48,30 @@ func (b *Base) GetRepository() port.Repository {
 }
 
 // SetCreate set information for create a new client
-func (b *Base) SetCreate(genID bool) {
-	if b.ID == "" && genID {
+func (b *Base) SetCreate() {
+	if b.ID == "" {
 		b.ID = uuid.New().String()
 	}
 	b.Created_at = time.Now()
 	b.Updated_at = time.Now()
+}
+
+// SetShortenID set the ID with shorten name
+func (b *Base) SetShortenID(obj port.Domain, name string) *kerror.KError {
+	kname := kname.NewKname()
+	attempt := 1
+	for {
+		b.ID = kname.GetShorten(name, attempt)
+		exists, err := b.Repo.Exists(obj, b.ID)
+		if err != nil {
+			return kerror.NewKError(kerror.Internal, err.Error())
+		}
+		if !exists {
+			break
+		}
+		attempt++
+	}
+	return nil
 }
 
 // Validate validate the base information

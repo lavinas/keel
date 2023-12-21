@@ -25,7 +25,8 @@ type SMTPServer struct {
 
 // SetCreate set information for create a new SMTP server
 func (s *SMTPServer) SetCreate() {
-	s.Base.SetCreate(false)
+	s.Base.SetShortenID(s, s.User)
+	s.Base.SetCreate()
 }
 
 // Validate validate the SMTP server information
