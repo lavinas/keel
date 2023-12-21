@@ -6,6 +6,7 @@ import (
 
 	"github.com/lavinas/keel/internal/email/core/port"
 	"github.com/lavinas/keel/pkg/kerror"
+
 )
 
 const (
@@ -53,17 +54,12 @@ func (e *Email) SetCreate() {
 	e.StatusID = Created
 	e.Status = NewStatus(e.Base.ID)
 	e.Status.SetCreated("")
-	if e.Sender != nil {
-		e.Sender.SetCreate()
-	}
-	if e.Receiver != nil {
-		e.Receiver.SetCreate()
-	}
-	if e.Template != nil {
-		e.Template.SetCreate()
-	}
-	if e.SMTPServer != nil {
-		e.SMTPServer.SetCreate()
+	setList := []port.Domain{e.Sender, e.Receiver, e.Template, e.SMTPServer}
+	for _, v := range setList {
+		if !reflect.ValueOf(v).IsNil() {
+			v.SetRepository(e.Repo)
+			v.SetCreate()
+		}
 	}
 	if e.Variables != nil {
 		for _, v := range e.Variables {
@@ -104,7 +100,6 @@ func (e *Email) ValidateTemplate() *kerror.KError {
 func (e *Email) ValidateSMTPServer() *kerror.KError {
 	return e.validateItem(e.SMTPServerID, e.SMTPServer, "smtp server ", ErrEmailSMTPServerIsRequired)
 }
-
 
 // ValidateVariables validate the email information
 func (e *Email) ValidateVariables() *kerror.KError {
@@ -147,29 +142,12 @@ func (b *Email) GetResult() any {
 	if vresult != "" {
 		vresult = vresult[:len(vresult)-3]
 	}
-	senderid := b.SenderID
-	if b.Sender != nil {
-		senderid = b.Sender.ID
-	}
-	receiverid := b.ReceiverID
-	if b.Receiver != nil {
-		receiverid = b.Receiver.ID
-	}
-	templateid := b.TemplateID
-	if b.Template != nil {
-		templateid = b.Template.ID
-	}
-	smtpserverid := b.SMTPServerID
-	if b.SMTPServer != nil {
-		smtpserverid = b.SMTPServer.ID
-	}
-
 	return &EmailResult{
 		ID:           b.ID,
-		SenderID:     senderid,
-		ReceiverID:   receiverid,
-		TemplateID:   templateid,
-		SMTPServerID: smtpserverid,
+		SenderID:     b.getItemID(b.Sender, b.SenderID),
+		ReceiverID:   b.getItemID(b.Receiver, b.ReceiverID),
+		TemplateID:   b.getItemID(b.Template, b.TemplateID),
+		SMTPServerID: b.getItemID(b.SMTPServer, b.SMTPServerID),
 		Variables:    vresult,
 		Status:       b.StatusID,
 	}
@@ -194,4 +172,12 @@ func (e *Email) validateItem(id string, sub port.Domain, prefix string, errMessa
 		return kerror.NewKError(kerror.BadRequest, errMessage)
 	}
 	return nil
+}
+
+// getItemID returns the email sub information id
+func (e *Email) getItemID(sub port.Domain, id string) string {
+	if !reflect.ValueOf(sub).IsNil() {
+		return sub.GetID()
+	}
+	return id
 }

@@ -98,6 +98,11 @@ func (b *Base) SetID(id string) {
 	b.ID = id
 }
 
+// getID returns the base ID information
+func (b *Base) GetID() string {
+	return b.ID
+}
+
 // Get returns the base information from repository
 func (b *Base) GetByID(obj interface{}) *kerror.KError {
 	if b.Repo == nil {

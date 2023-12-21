@@ -6,6 +6,7 @@ import (
 
 type Domain interface {
 	SetID(id string)
+	GetID() string
 	SetRepository(repo Repository)
 	GetRepository() Repository
 	SetCreate()
