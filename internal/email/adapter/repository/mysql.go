@@ -2,7 +2,6 @@ package repository
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/lavinas/keel/internal/email/core/domain"
 	"github.com/lavinas/keel/internal/email/core/port"
@@ -61,10 +60,21 @@ func (r *MySql) Close() {
 func (r *MySql) Add(obj interface{}) error {
 	err := r.Db.Create(obj).Error
 	if err != nil {
-		fmt.Println("err", err.Error())
 		return err
 	}
 	return nil
+}
+
+// Get gets a object from the database
+func (r *MySql) GetByID(obj interface{}) (bool, error) {
+	tx := r.Db.First(obj)
+	if tx.Error == nil {
+		return true, nil
+	}
+	if errors.Is(tx.Error, gorm.ErrRecordNotFound) {
+		return false, nil
+	}
+	return false, tx.Error
 }
 
 // FindByID finds a object by id

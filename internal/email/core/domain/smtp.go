@@ -36,6 +36,7 @@ func (s *SMTPServer) Validate() *kerror.KError {
 		s.ValidatePort,
 		s.ValidateUser,
 		s.ValidatePass,
+		s.ValidateDuplicity,
 	})
 }
 
@@ -78,6 +79,21 @@ func (s *SMTPServer) ValidatePass() *kerror.KError {
 		return kerror.NewKError(kerror.BadRequest, ErrSMTPPassLength)
 	}
 	return nil
+}
+
+// ValidateDuplicity validates the duplicity of the model
+func (r *SMTPServer) ValidateDuplicity() *kerror.KError {
+	return r.Base.ValidateDuplicity(r)
+}
+
+// GetByID returns the model by its ID
+func (r *SMTPServer) GetByID() *kerror.KError {
+	return r.Base.GetByID(r)
+}
+
+// GetResult returns the result that is the SMTP server itself
+func (s *SMTPServer) GetResult() interface{} {
+	return s
 }
 
 // TableName returns the table name for gorm

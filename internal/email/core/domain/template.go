@@ -30,6 +30,7 @@ func (t *Template) Validate() *kerror.KError {
 		t.Base.Validate,
 		t.ValidateSubject,
 		t.ValidateBody,
+		t.ValidateDuplicity,
 	})
 }
 
@@ -53,6 +54,21 @@ func (t *Template) ValidateBody() *kerror.KError {
 		return kerror.NewKError(kerror.BadRequest, ErrTemplateBodyLength)
 	}
 	return nil
+}
+
+// ValidateDuplicity validates the duplicity of the model
+func (r *Template) ValidateDuplicity() *kerror.KError {
+	return r.Base.ValidateDuplicity(r)
+}
+
+// GetByID returns the model by its ID
+func (r *Template) GetByID() *kerror.KError {
+	return r.Base.GetByID(r)
+}
+
+// GetResult returns the result that is the template itself
+func (t *Template) GetResult() interface{} {
+	return t
 }
 
 // TableName returns the table name for gorm

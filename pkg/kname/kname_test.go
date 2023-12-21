@@ -5,11 +5,10 @@ import (
 )
 
 type ShortenTest struct {
-	name string
-	attempt int
+	name     string
+	attempt  int
 	expected string
 }
-
 
 func TestGetShorten(t *testing.T) {
 	tests := []ShortenTest{
@@ -28,7 +27,7 @@ func TestGetShorten(t *testing.T) {
 	}
 	k := NewKname()
 	line := 1
-    for _, test := range tests {
+	for _, test := range tests {
 		actual := k.GetShorten(test.name, test.attempt)
 		if actual != test.expected {
 			t.Errorf("Expected %v, got %v in line %v", test.expected, actual, line)

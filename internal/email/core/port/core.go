@@ -5,8 +5,13 @@ import (
 )
 
 type Domain interface {
+	SetID(id string)
+	SetRepository(repo Repository)
+	GetRepository() Repository
 	SetCreate()
 	Validate() *kerror.KError
+	GetByID() *kerror.KError
+	GetResult() any
 }
 
 type DefaultResult interface {

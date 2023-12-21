@@ -63,7 +63,7 @@ func (h *Rest) Create(c *gin.Context) {
 		c.JSON(rError.Status, rError)
 		return
 	}
-	result := krest.NewKRestResult(http.StatusCreated, CreateDetail, &obj)
+	result := krest.NewKRestResult(http.StatusCreated, CreateDetail, obj.GetResult())
 	c.JSON(result.Status, result)
 }
 

@@ -1,8 +1,8 @@
 package kname
 
 import (
-	"strings"
 	"fmt"
+	"strings"
 )
 
 // Kname is a service that provides names tools
@@ -27,7 +27,7 @@ func (k *Kname) GetShorten(name string, attempt int) string {
 		return sname[0] + "_" + sname[pos]
 	}
 	rname := sname[0]
-	if  len > 1 {
+	if len > 1 {
 		rname += "_" + sname[len-1]
 		pos--
 	}
@@ -36,5 +36,3 @@ func (k *Kname) GetShorten(name string, attempt int) string {
 	}
 	return rname
 }
-
-	

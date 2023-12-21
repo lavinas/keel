@@ -29,6 +29,7 @@ func (s *Sender) Validate() *kerror.KError {
 		s.ValidateName,
 		s.ValidateEmail,
 		s.Base.Validate,
+		s.ValidateDuplicity,
 	})
 }
 
@@ -52,6 +53,21 @@ func (s *Sender) ValidateEmail() *kerror.KError {
 		return kerror.NewKError(kerror.BadRequest, ErrSenderEmailLength)
 	}
 	return nil
+}
+
+// ValidateDuplicity validates the duplicity of the model
+func (r *Sender) ValidateDuplicity() *kerror.KError {
+	return r.Base.ValidateDuplicity(r)
+}
+
+// GetByID returns the model by its ID
+func (r *Sender) GetByID() *kerror.KError {
+	return r.Base.GetByID(r)
+}
+
+// GetResult returns the result that is the business itself
+func (s *Sender) GetResult() interface{} {
+	return s
 }
 
 // TableName returns the table name for gorm

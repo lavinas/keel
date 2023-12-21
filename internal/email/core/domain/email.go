@@ -1,12 +1,17 @@
 package domain
 
 import (
+	"fmt"
+	"reflect"
+
+	"github.com/lavinas/keel/internal/email/core/port"
 	"github.com/lavinas/keel/pkg/kerror"
 )
 
 const (
 	ErrEmailSenderIsRequired     = "sender is required"
 	ErrEmailSenderIsTwice        = "sender id and sender is informed. Only one is allowed"
+	ErrEmailSenderNotFound 	     = "sender id not found"
 	ErrEmailReceiverIsRequired   = "receiver is required"
 	ErrEmailReceiverIsTwice      = "receiver id and receiver is informed. Only one is allowed"
 	ErrEmailTemplateIsRequired   = "template is required"
@@ -29,6 +34,17 @@ type Email struct {
 	Variables    []*Variable `json:"variables"      gorm:"foreignKey:ID;associationForeignKey:EmailID"`
 	StatusID     string      `json:"-"              gorm:"type:varchar(50); not null"`
 	Status       *Status     `json:"status"         gorm:"foreignKey:ID,StatusID"`
+}
+
+// EmailResult is the struct that contains the email information for presentation
+type EmailResult struct {
+	ID           string `json:"id"`
+	SenderID     string `json:"sender_id"`
+	ReceiverID   string `json:"receiver_id"`
+	TemplateID   string `json:"template_id"`
+	SMTPServerID string `json:"smtp_server_id"`
+	Variables    string `json:"variables"`
+	Status       string `json:"status"`
 }
 
 // SetCreate set information for create a new email
@@ -65,93 +81,117 @@ func (e *Email) Validate() *kerror.KError {
 		e.ValidateTemplate,
 		e.ValidateSMTPServer,
 		e.ValidateVariables,
+		e.ValidateDuplicity,
 	})
 }
 
-// ValidateSender validate the email information
+// ValidateSender validate sender information
 func (e *Email) ValidateSender() *kerror.KError {
-	if e.SenderID == "" && e.Sender == nil {
-		return kerror.NewKError(kerror.BadRequest, ErrEmailSenderIsRequired)
-	}
-	if e.SenderID != "" && e.Sender != nil {
-		return kerror.NewKError(kerror.BadRequest, ErrEmailSenderIsTwice)
-	}
-	if e.Sender != nil {
-		if err := e.Sender.Validate(); err != nil {
-			err.SetPrefix("sender")
-			return err
-		}
-	}
-	return nil
+	return e.validateItem(e.SenderID, e.Sender, "sender ", ErrEmailSenderIsRequired)
 }
 
-// ValidateReceiver validate the email information
+// ValidateReceiver validate receiver information
 func (e *Email) ValidateReceiver() *kerror.KError {
-	if e.ReceiverID == "" && e.Receiver == nil {
-		return kerror.NewKError(kerror.BadRequest, ErrEmailReceiverIsRequired)
-	}
-	if e.ReceiverID != "" && e.Receiver != nil {
-		return kerror.NewKError(kerror.BadRequest, ErrEmailReceiverIsTwice)
-	}
-	if e.Receiver != nil {
-		if err := e.Receiver.Validate(); err != nil {
-			err.SetPrefix("receiver")
-			return err
-		}
-	}
-	return nil
+	return e.validateItem(e.ReceiverID, e.Receiver, "receiver ", ErrEmailReceiverIsRequired)
 }
 
-// ValidateTemplate validate the email information
+// ValidateTemplate validate template information
 func (e *Email) ValidateTemplate() *kerror.KError {
-	if e.TemplateID == "" && e.Template == nil {
-		return kerror.NewKError(kerror.BadRequest, ErrEmailTemplateIsRequired)
-	}
-	if e.TemplateID != "" && e.Template != nil {
-		return kerror.NewKError(kerror.BadRequest, ErrEmailTemplateTwice)
-	}
-	if e.Template != nil {
-		if err := e.Template.Validate(); err != nil {
-			err.SetPrefix("template")
-			return err
-		}
-	}
-	return nil
+	return e.validateItem(e.TemplateID, e.Template, "template ", ErrEmailTemplateIsRequired)
 }
 
-// ValidateSMTPServer validate the email information
+// ValidateSMTPServer validate smtp server information
 func (e *Email) ValidateSMTPServer() *kerror.KError {
-	if e.SMTPServerID == "" && e.SMTPServer == nil {
-		return kerror.NewKError(kerror.BadRequest, ErrEmailSMTPServerIsRequired)
-	}
-	if e.SMTPServerID != "" && e.SMTPServer != nil {
-		return kerror.NewKError(kerror.BadRequest, ErrEmailSMTPServerTwice)
-	}
-	if e.SMTPServer != nil {
-		if err := e.SMTPServer.Validate(); err != nil {
-			err.SetPrefix("smtp_server")
-			return err
-		}
-	}
-	return nil
+	return e.validateItem(e.SMTPServerID, e.SMTPServer, "smtp server ", ErrEmailSMTPServerIsRequired)
 }
+
 
 // ValidateVariables validate the email information
 func (e *Email) ValidateVariables() *kerror.KError {
 	if e.Variables == nil {
 		return nil
 	}
+	count := 0
 	for _, v := range e.Variables {
 		if err := v.Validate(); err != nil {
-			err.SetPrefix("variables")
+			msg := fmt.Sprintf("variable %v ", count)
+			err.SetPrefix(msg)
 			return err
 		}
+		count++
 	}
 	return nil
 }
 
+// ValidateDuplicity validates the duplicity of the model
+func (e *Email) ValidateDuplicity() *kerror.KError {
+	return e.Base.ValidateDuplicity(e)
+}
+
+// GetByID returns the model by its ID
+func (r *Email) GetByID() *kerror.KError {
+	return r.Base.GetByID(r)
+}
 
 // TableName returns the table name for gorm
 func (b *Email) TableName() string {
 	return "email"
+}
+
+// GetResult returns the email information for presentation without extra information
+func (b *Email) GetResult() any {
+	vresult := ""
+	for _, v := range b.Variables {
+		vresult += v.GetResult() + " | "
+	}
+	if vresult != "" {
+		vresult = vresult[:len(vresult)-3]
+	}
+	senderid := b.SenderID
+	if b.Sender != nil {
+		senderid = b.Sender.ID
+	}
+	receiverid := b.ReceiverID
+	if b.Receiver != nil {
+		receiverid = b.Receiver.ID
+	}
+	templateid := b.TemplateID
+	if b.Template != nil {
+		templateid = b.Template.ID
+	}
+	smtpserverid := b.SMTPServerID
+	if b.SMTPServer != nil {
+		smtpserverid = b.SMTPServer.ID
+	}
+
+	return &EmailResult{
+		ID:           b.ID,
+		SenderID:     senderid,
+		ReceiverID:   receiverid,
+		TemplateID:   templateid,
+		SMTPServerID: smtpserverid,
+		Variables:    vresult,
+		Status:       b.StatusID,
+	}
+}
+
+// validateItem validate the email sub information by id or object
+func (e *Email) validateItem(id string, sub port.Domain, prefix string, errMessage string) *kerror.KError {
+	if !reflect.ValueOf(sub).IsNil() {
+		if err := sub.Validate(); err != nil {
+			err.SetPrefix(prefix)
+			return err
+		}
+	} else if id != "" {
+		sub2 := reflect.New(reflect.TypeOf(sub).Elem()).Interface().(port.Domain)
+		sub2.SetRepository(e.Repo)
+		sub2.SetID(id)
+		if err := sub2.GetByID(); err != nil {
+			err.SetPrefix(prefix)
+			return err
+		}
+	} else {
+		return kerror.NewKError(kerror.BadRequest, errMessage)
+	}
+	return nil
 }

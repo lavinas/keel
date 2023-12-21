@@ -21,14 +21,24 @@ const (
 
 // Base is the struct that contains the base information
 type Base struct {
-	ID         string    `json:"id" gorm:"primaryKey;type:varchar(50); not null"`
-	Created_at time.Time `json:"-"  gorm:"type:timestamp; not null"`
-	Updated_at time.Time `json:"-"  gorm:"type:timestamp; not null"`
+	Repo       port.Repository `json:"-"  gorm:"-"`
+	ID         string          `json:"id" gorm:"primaryKey;type:varchar(50); not null"`
+	Created_at time.Time       `json:"-"  gorm:"type:timestamp; not null"`
+	Updated_at time.Time       `json:"-"  gorm:"type:timestamp; not null"`
+}
+
+// SetRepository set the repository for the base
+func (b *Base) SetRepository(repo port.Repository) {
+	b.Repo = repo
+}
+
+func (b *Base) GetRepository() port.Repository {
+	return b.Repo
 }
 
 // SetCreate set information for create a new client
 func (b *Base) SetCreate(genID bool) {
-	if b.ID == "" {
+	if b.ID == "" && genID {
 		b.ID = uuid.New().String()
 	}
 	b.Created_at = time.Now()
@@ -71,21 +81,9 @@ func (b *Base) ValidateUpdatedAt() *kerror.KError {
 	return nil
 }
 
-// ValidateLoop validate the base information
-func validateLoop(val []func() *kerror.KError) *kerror.KError {
-	err := kerror.NewKError(kerror.None, "")
-	for _, f := range val {
-		err.JoinKError(f())
-	}
-	if err.IsEmpty() {
-		return nil
-	}
-	return err
-}
-
 // ValidateDuplicity validates the duplicity of the model
-func (b *Base) ValidateDuplicity(base interface{}, repo port.Repository) *kerror.KError {
-	exists, err := repo.Exists(base, b.ID)
+func (b *Base) ValidateDuplicity(base interface{}) *kerror.KError {
+	exists, err := b.Repo.Exists(base, b.ID)
 	if err != nil {
 		return kerror.NewKError(kerror.Internal, err.Error())
 	}
@@ -94,6 +92,28 @@ func (b *Base) ValidateDuplicity(base interface{}, repo port.Repository) *kerror
 	}
 	return nil
 }
+
+// SetID set the base information
+func (b *Base) SetID(id string) {
+	b.ID = id
+}
+
+// Get returns the base information from repository
+func (b *Base) GetByID(obj interface{}) *kerror.KError {
+	if b.Repo == nil {
+		panic("cagou")
+	}
+	found, err := b.Repo.GetByID(obj)
+	if err != nil {
+		return kerror.NewKError(kerror.Internal, err.Error())
+	}
+	if !found {
+		return kerror.NewKError(kerror.BadRequest, "id not found")
+	}
+	return nil
+}
+
+// Domain functions
 
 // GetBase returns a new base object
 func GetDomain() []interface{} {
@@ -108,3 +128,14 @@ func GetDomain() []interface{} {
 	}
 }
 
+// ValidateLoop validate the base information
+func validateLoop(val []func() *kerror.KError) *kerror.KError {
+	jerr := kerror.NewKError(kerror.None, "")
+	for _, f := range val {
+		jerr.JoinKError(f())
+	}
+	if jerr.IsEmpty() {
+		return nil
+	}
+	return jerr
+}

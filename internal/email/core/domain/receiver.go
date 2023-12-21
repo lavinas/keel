@@ -1,6 +1,8 @@
 package domain
 
-import "github.com/lavinas/keel/pkg/kerror"
+import (
+	"github.com/lavinas/keel/pkg/kerror"
+)
 
 const (
 	ErrReceiverNameLength      = "name must have less than 50 characters"
@@ -27,6 +29,7 @@ func (r *Receiver) Validate() *kerror.KError {
 		r.ValidateName,
 		r.ValidateEmail,
 		r.Base.Validate,
+		r.ValidateDuplicity,
 	})
 }
 
@@ -50,6 +53,21 @@ func (r *Receiver) ValidateEmail() *kerror.KError {
 		return kerror.NewKError(kerror.BadRequest, ErrReceiverEmailLength)
 	}
 	return nil
+}
+
+// ValidateDuplicity validates the duplicity of the model
+func (r *Receiver) ValidateDuplicity() *kerror.KError {
+	return r.Base.ValidateDuplicity(r)
+}
+
+// GetByID returns the model by its ID
+func (r *Receiver) GetByID() *kerror.KError {
+	return r.Base.GetByID(r)
+}
+
+// GetResult returns the result that is the receiver itself
+func (r *Receiver) GetResult() interface{} {
+	return r
 }
 
 // TableName returns the table name for gorm

@@ -84,7 +84,7 @@ func (e *KError) JoinKError(err *KError) {
 	if orderEtype[err.etype] < orderEtype[e.etype] {
 		e.etype = err.etype
 	}
-	e.message = e.message + messageSeparator + err.message
+	e.message = e.message + messageSeparator + err.Error()
 }
 
 // IsEmpty checks if the error is empty

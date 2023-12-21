@@ -27,6 +27,7 @@ func NewUseCase(config port.Config, logger port.Logger, repo port.Repository) *U
 func (s *UseCase) Create(domain port.Domain) *kerror.KError {
 	// Prepare domain
 	name := "Creating " + reflect.TypeOf(domain).String()
+	domain.SetRepository(s.repo)
 	domain.SetCreate()
 	// Validate
 	if err := domain.Validate(); err != nil {

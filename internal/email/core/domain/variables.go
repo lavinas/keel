@@ -60,6 +60,11 @@ func (v *Variable) ValidateValue() *kerror.KError {
 	return nil
 }
 
+// GetResult returns the variable value
+func (b *Variable) GetResult() string {
+	return b.Name + ": " + b.Value
+}
+
 // TableName returns the table name for gorm
 func (b *Variable) TableName() string {
 	return "variable"

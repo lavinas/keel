@@ -21,5 +21,6 @@ type Logger interface {
 
 type Repository interface {
 	Add(obj interface{}) error
+	GetByID(obj interface{}) (bool, error)
 	Exists(obj interface{}, id string) (bool, error)
 }
