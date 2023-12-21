@@ -13,17 +13,17 @@ import (
 
 const (
 	// ErrBaseIDIsRequired is the error for id is required
-	ErrBaseIDIsRequired        = "id is required"
+	ErrBaseIDIsRequired = "id is required"
 	// ErrBaseIDLength is the error for id length
-	ErrBaseIDLength            = "id must have only one word. Use underscore to separate words"
+	ErrBaseIDLength = "id must have only one word. Use underscore to separate words"
 	// ErrBaseIDLower is the error for id lower case
-	ErrBaseIDLower             = "id must be lower case"
+	ErrBaseIDLower = "id must be lower case"
 	// ErrBaseCreatedAtIsRequired is the error for created_at is required
 	ErrBaseCreatedAtIsRequired = "created_at is required"
 	// ErrBaseUpdatedAtIsRequired is the error for updated_at is required
 	ErrBaseUpdatedAtIsRequired = "updated_at is required"
 	// ErrBaseIDAlreadyExists is the error for id already exists
-	ErrBaseIDAlreadyExists     = "id already exists"
+	ErrBaseIDAlreadyExists = "id already exists"
 	// TypeUUID is the type for create uuid id
 	TypeUUID = "uuid"
 	// TypeName is the type for create name id

@@ -6,13 +6,12 @@ import (
 
 	"github.com/lavinas/keel/internal/email/core/port"
 	"github.com/lavinas/keel/pkg/kerror"
-
 )
 
 const (
 	ErrEmailSenderIsRequired     = "sender is required"
 	ErrEmailSenderIsTwice        = "sender id and sender is informed. Only one is allowed"
-	ErrEmailSenderNotFound 	     = "sender id not found"
+	ErrEmailSenderNotFound       = "sender id not found"
 	ErrEmailReceiverIsRequired   = "receiver is required"
 	ErrEmailReceiverIsTwice      = "receiver id and receiver is informed. Only one is allowed"
 	ErrEmailTemplateIsRequired   = "template is required"
