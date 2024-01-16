@@ -19,3 +19,16 @@ type StatementCreateIn struct {
 	Value   float64 `json:"statement_value"`
 	Comment string  `json:"statement_desc"`
 }
+
+// AssetStatementOut is a struct that represents the asset statement dto for output
+type StatementCreateOut struct {
+	ID        string  `json:"id"`
+	AssetID   string  `json:"asset_id"`
+	AssetName string  `json:"asset_name"`
+	Date      string  `json:"date"`
+	History   string  `json:"statement_type"`
+	Value     float64 `json:"statement_value"`
+	Comment   string  `json:"statement_desc"`
+}
+
+
