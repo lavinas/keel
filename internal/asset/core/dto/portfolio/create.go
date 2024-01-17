@@ -133,24 +133,3 @@ func (api *PortfolioItemCreate) validateAssetID(repo port.Repository) *kerror.KE
 	}
 	return nil
 }
-
-// ToDomain converts the asset portfolio dto to domain
-func (a *PortfolioCreateIn) ToDomain() *domain.Portfolio {
-	var items []*domain.PortfolioItem
-	for _, item := range a.PortfolioItems {
-		items = append(items, item.ToDomain())
-	}
-	return &domain.Portfolio{
-		ID:             a.ID,
-		Name:           a.Name,
-		PortfolioItems: items,
-	}
-}
-
-// toDomain converts the asset portfolio item dto to domain
-func (api *PortfolioItemCreate) ToDomain() *domain.PortfolioItem {
-	return &domain.PortfolioItem{
-		PortfolioID: api.PortfolioID,
-		AssetID:     api.AssetID,
-	}
-}

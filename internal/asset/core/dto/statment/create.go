@@ -127,17 +127,3 @@ func (a *StatementCreateIn) validateValue(repo port.Repository) *kerror.KError {
 	}
 	return nil
 }
-
-// ToDomain converts the asset statement dto to domain
-func (a *StatementCreateIn) ToDomain(repo port.Repository) *domain.Statement {
-	date, _ := time.Parse("2006-01-02", a.Date)
-	
-	return &domain.Statement{
-		ID:      a.ID,
-		AssetID: a.AssetID,
-		Date:    date,
-		History: a.History,
-		Value:   a.Value,
-		Comment: a.Comment,
-	}
-}

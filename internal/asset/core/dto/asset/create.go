@@ -100,20 +100,3 @@ func (a *AssetCreateIn) validateStartDate(repo port.Repository) *kerror.KError {
 	}
 	return nil
 }
-
-// ToDomain converts the asset dto for input creation to domain
-func (a *AssetCreateIn) ToDomain() *domain.Asset {
-	startDate, _ := time.Parse("2006-01-02", a.StartDate)
-	var endDate *time.Time = nil
-	if a.EndDate != "" {
-		ed, _ := time.Parse("2006-01-02", a.EndDate)
-		endDate = &ed
-	}
-	return &domain.Asset{
-		ID:        a.ID,
-		ClassID:   a.ClassID,
-		Name:      a.Name,
-		StartDate: startDate,
-		EndDate:   endDate,
-	}
-}

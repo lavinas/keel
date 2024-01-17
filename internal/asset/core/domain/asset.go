@@ -25,6 +25,18 @@ type Asset struct {
 	Balance   *Balance   `gorm:"foreignKey:AssetBalanceID;associationForeignKey:ID"`
 }
 
+// NewAsset creates a new asset
+func NewAsset(id, classID, name string, startDate time.Time, endDate *time.Time, balanceID string) *Asset {
+	return &Asset{
+		ID:        id,
+		ClassID:   classID,
+		Name:      name,
+		StartDate: startDate,
+		EndDate:   endDate,
+		BalanceID: balanceID,
+	}
+}
+
 // Validate validates the asset
 func (a *Asset) Validate() *kerror.KError {
 	if a.ID == "" {

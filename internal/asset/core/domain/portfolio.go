@@ -18,12 +18,30 @@ type Portfolio struct {
 	PortfolioItems []*PortfolioItem `gorm:"foreignKey:PortfolioID;associationForeignKey:ID"`
 }
 
+
 // AssetPortfolioItem is a struct that represents the asset portfolio item
 type PortfolioItem struct {
 	PortfolioID string     `gorm:"type:varchar(50); primaryKey"`
 	Portfolio   *Portfolio `gorm:"foreignKey:AssetPortfolioID;associationForeignKey:ID"`
 	AssetID     string     `gorm:"type:varchar(50); primaryKey"`
 	Asset       *Asset     `gorm:"foreignKey:AssetID;associationForeignKey:ID"`
+}
+
+// NewAssetPortfolio creates a new asset portfolio
+func NewPortfolio(id, name string, items []*PortfolioItem) *Portfolio {
+	return &Portfolio{
+		ID:   id,
+		Name: name,
+		PortfolioItems: items,
+	}
+}
+
+// NewAssetPortfolioItem creates a new asset portfolio item
+func NewPortfolioItem(portfolioID, assetID string) *PortfolioItem {
+	return &PortfolioItem{
+		PortfolioID: portfolioID,
+		AssetID:     assetID,
+	}
 }
 
 // Validate validates the asset portfolio

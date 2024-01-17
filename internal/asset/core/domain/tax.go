@@ -41,6 +41,26 @@ type TaxItem struct {
 	Value float64 `gorm:"type:decimal(0, 4); not null"`
 }
 
+// NewTax creates a new asset tax
+func NewTax(id, name, period string, taxItens []*TaxItem) *Tax {
+	return &Tax{
+		ID:     id,
+		Name:   name,
+		Period: period,
+		TaxItems: taxItens,
+	}
+}
+
+// NewTaxItem creates a new asset tax item
+func NewTaxItem(id, taxID string, until, value float64) *TaxItem {
+	return &TaxItem{
+		ID:    id,
+		TaxID: taxID,
+		Until: until,
+		Value: value,
+	}
+}
+
 // Validate validates the asset tax
 func (t *Tax) Validate() *kerror.KError {
 	if t.ID == "" {

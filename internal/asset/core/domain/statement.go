@@ -39,6 +39,19 @@ type Statement struct {
 	Balance   *Balance  `gorm:"foreignKey:AssetBalanceID;associationForeignKey:ID"`
 }
 
+// NewStatement creates a new asset statement line
+func NewStatement(id, assetID string, date time.Time, history string, value float64, comment, balanceID string) *Statement {
+	return &Statement{
+		ID:        id,
+		AssetID:   assetID,
+		Date:      date,
+		History:   history,
+		Value:     value,
+		Comment:   comment,
+		BalanceID: balanceID,
+	}
+}
+
 // Validate validates the asset movement
 func (s *Statement) Validate() *kerror.KError {
 	if s.ID == "" {

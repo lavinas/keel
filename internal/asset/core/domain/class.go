@@ -18,6 +18,15 @@ type Class struct {
 	Tax   *Tax   `gorm:"foreignKey:AssetTaxID;associationForeignKey:ID"`
 }
 
+// NewClass creates a new class
+func NewClass(id, name, taxID string) *Class {
+	return &Class{
+		ID:    id,
+		Name:  name,
+		TaxID: taxID,
+	}
+}
+
 // Validate validates the asset type
 func (c *Class) Validate() *kerror.KError {
 	if c.ID == "" {

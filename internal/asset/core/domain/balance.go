@@ -29,6 +29,21 @@ type Balance struct {
 	TaxItem        *TaxItem  `gorm:"foreignKey:AsseTaxItemID;associationForeignKey:ID"`
 }
 
+// NewBalance creates a new balance
+func NewBalance(id string, date time.Time, assetID string, principalValue, returnValue, grossValue, netValue, taxValue float64, taxItemID string) *Balance {
+	return &Balance{
+		ID:             id,
+		Date:           date,
+		AssetID:        assetID,
+		PrincipalValue: principalValue,
+		ReturnValue:    returnValue,
+		GrossValue:     grossValue,
+		NetValue:       netValue,
+		TaxValue:       taxValue,
+		TaxItemID:      taxItemID,
+	}
+}
+
 // Validate validates the balance
 func (b *Balance) Validate() *kerror.KError {
 	if b.ID == "" {
