@@ -15,14 +15,14 @@ const (
 
 // Asset is a struct that represents the asset
 type Asset struct {
-	ID        string    `gorm:"type:varchar(25); primaryKey"`
-	ClassID   string    `gorm:"type:varchar(25); not null"`
-	Class     *Class    `gorm:"foreignKey:AssetTypeID;associationForeignKey:ID"`
-	Name      string    `gorm:"type:varchar(50); not null"`
-	StartDate time.Time `gorm:"type:date; not null"`
-	EndDate   time.Time `gorm:"type:date; null"`
-	BalanceID string    `gorm:"type:varchar(25); null"`
-	Balance   *Balance  `gorm:"foreignKey:AssetBalanceID;associationForeignKey:ID"`
+	ID        string     `gorm:"type:varchar(25); primaryKey"`
+	ClassID   string     `gorm:"type:varchar(25); not null"`
+	Class     *Class     `gorm:"foreignKey:AssetTypeID;associationForeignKey:ID"`
+	Name      string     `gorm:"type:varchar(50); not null"`
+	StartDate time.Time  `gorm:"type:date; not null"`
+	EndDate   *time.Time `gorm:"type:date; null"`
+	BalanceID string     `gorm:"type:varchar(25); null"`
+	Balance   *Balance   `gorm:"foreignKey:AssetBalanceID;associationForeignKey:ID"`
 }
 
 // Validate validates the asset

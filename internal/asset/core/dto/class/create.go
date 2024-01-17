@@ -81,3 +81,12 @@ func (a *ClassCreateIn) validateAssetTaxID(repo port.Repository) *kerror.KError 
 	}
 	return nil
 }
+
+// ToDomain converts the asset class dto to domain
+func (a *ClassCreateIn) ToDomain() *domain.Class {
+	return &domain.Class{
+		ID:    a.ID,
+		Name:  a.Name,
+		TaxID: a.TaxID,
+	}
+}
