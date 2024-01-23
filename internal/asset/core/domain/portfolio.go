@@ -18,7 +18,6 @@ type Portfolio struct {
 	PortfolioItems []*PortfolioItem `gorm:"foreignKey:PortfolioID;associationForeignKey:ID"`
 }
 
-
 // AssetPortfolioItem is a struct that represents the asset portfolio item
 type PortfolioItem struct {
 	PortfolioID string     `gorm:"type:varchar(50); primaryKey"`
@@ -30,8 +29,8 @@ type PortfolioItem struct {
 // NewAssetPortfolio creates a new asset portfolio
 func NewPortfolio(id, name string, items []*PortfolioItem) *Portfolio {
 	return &Portfolio{
-		ID:   id,
-		Name: name,
+		ID:             id,
+		Name:           name,
 		PortfolioItems: items,
 	}
 }

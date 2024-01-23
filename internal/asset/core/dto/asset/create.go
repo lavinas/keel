@@ -3,8 +3,8 @@ package dto
 import (
 	"time"
 
-	"github.com/lavinas/keel/internal/asset/core/domain"
 	"github.com/lavinas/keel/internal/asset/core/port"
+	"github.com/lavinas/keel/internal/asset/core/domain"
 	"github.com/lavinas/keel/pkg/kerror"
 )
 
@@ -56,6 +56,24 @@ func (a *AssetCreateIn) Validate(repo port.Repository) *kerror.KError {
 	return nil
 }
 
+// GetDomain returns the asset domain for input creation
+func (a *AssetCreateIn) GetDomain() (port.Domain, *kerror.KError) {
+	startDate, err := time.Parse("2006-01-02", a.StartDate)
+	if err != nil {
+		return nil, kerror.NewKError(kerror.Internal, err.Error())
+	}
+	var endDate *time.Time
+	if a.EndDate != "" {
+		endDateValue, err := time.Parse("2006-01-02", a.EndDate)
+		if err != nil {
+			return nil, kerror.NewKError(kerror.Internal, err.Error())
+		}
+		endDate = &endDateValue
+	}
+	asset := domain.NewAsset(a.ID, a.ClassID, a.Name, startDate, endDate, "")
+	return asset, nil
+}
+
 // validateID validates the id asset dto for input creation
 func (a *AssetCreateIn) validateID(repo port.Repository) *kerror.KError {
 	if a.ID == "" {
@@ -99,4 +117,17 @@ func (a *AssetCreateIn) validateStartDate(repo port.Repository) *kerror.KError {
 		return kerror.NewKError(kerror.BadRequest, ErrorAssetStartDateInvalid)
 	}
 	return nil
+}
+
+// SetDomain sets the asset domain for output creation
+func (a *AssetCreateOut) SetDomain(d port.Domain) {
+	asset := d.(*domain.Asset)
+
+	a.ID = asset.ID
+	a.ClassID = asset.ClassID
+	a.ClassName = asset.Class.Name
+	a.StartDate = asset.StartDate.Format("2006-01-02")
+	if asset.EndDate != nil {
+		a.EndDate = asset.EndDate.Format("2006-01-02")
+	}
 }

@@ -37,22 +37,22 @@ type Tax struct {
 type TaxItem struct {
 	ID    string  `gorm:"type:varchar(25); primaryKey"`
 	TaxID string  `gorm:"type:varchar(25); not null"`
-	Until float64 `gorm:"type:int; null"`
+	Until int `gorm:"type:int; null"`
 	Value float64 `gorm:"type:decimal(0, 4); not null"`
 }
 
 // NewTax creates a new asset tax
 func NewTax(id, name, period string, taxItens []*TaxItem) *Tax {
 	return &Tax{
-		ID:     id,
-		Name:   name,
-		Period: period,
+		ID:       id,
+		Name:     name,
+		Period:   period,
 		TaxItems: taxItens,
 	}
 }
 
 // NewTaxItem creates a new asset tax item
-func NewTaxItem(id, taxID string, until, value float64) *TaxItem {
+func NewTaxItem(id, taxID string, until int, value float64) *TaxItem {
 	return &TaxItem{
 		ID:    id,
 		TaxID: taxID,

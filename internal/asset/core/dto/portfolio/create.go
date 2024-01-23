@@ -56,6 +56,16 @@ func (a *PortfolioCreateIn) Validate(repo port.Repository) *kerror.KError {
 	return nil
 }
 
+// GetDomain returns the asset portfolio domain for input
+func (a *PortfolioCreateIn) GetDomain() (port.Domain, *kerror.KError) {
+	items := make([]*domain.PortfolioItem, 0)
+	for _, item := range a.PortfolioItems {
+		portfolioItem := domain.NewPortfolioItem(item.PortfolioID, item.AssetID)
+		items = append(items, portfolioItem)
+	}
+	return domain.NewPortfolio(a.ID, a.Name, items), nil
+}
+
 // validateID validates the id asset portfolio dto for input
 func (a *PortfolioCreateIn) validateID(repo port.Repository) *kerror.KError {
 	if a.ID == "" {
@@ -131,5 +141,24 @@ func (api *PortfolioItemCreate) validateAssetID(repo port.Repository) *kerror.KE
 	} else if !exists {
 		return kerror.NewKError(kerror.Internal, ErrorPortfolioItemAssetIDNotFound)
 	}
+	return nil
+}
+
+// SetDomain sets the asset portfolio domain for output
+func (a *PortfolioCreateOut) SetDomain(d port.Domain) *kerror.KError {
+	portfolio, ok := d.(*domain.Portfolio)
+	if !ok {
+		return kerror.NewKError(kerror.Internal, "Domain is not a portfolio")
+	}
+	items := make([]PortfolioItemCreate, 0)
+	for _, item := range portfolio.PortfolioItems {
+		items = append(items, PortfolioItemCreate{
+			PortfolioID: item.PortfolioID,
+			AssetID:     item.AssetID,
+		})
+	}
+	a.ID = portfolio.ID
+	a.Name = portfolio.Name
+	a.PortfolioItems = items
 	return nil
 }

@@ -72,6 +72,15 @@ func (a *TaxCreateIn) Validate(repo port.Repository) *kerror.KError {
 	return nil
 }
 
+// GetDomain returns the asset tax domain for input
+func (a *TaxCreateIn) GetDomain() (port.Domain, *kerror.KError) {
+	taxItens := make([]*domain.TaxItem, 0) 
+	for _, taxItem := range a.TaxItens {
+		taxItens = append(taxItens, domain.NewTaxItem(taxItem.ID, a.ID, taxItem.Until, taxItem.Value))
+	}
+	return domain.NewTax(a.ID, a.Name, a.Period, taxItens), nil
+}
+
 // validateID validates the id asset tax dto for input
 func (a *TaxCreateIn) validateID(repo port.Repository) *kerror.KError {
 	if a.ID == "" {
@@ -162,5 +171,25 @@ func (a *TaxItemCreate) validateValue(repo port.Repository) *kerror.KError {
 	if a.Value < 0 || a.Value > 1 {
 		return kerror.NewKError(kerror.Internal, ErrorTaxItemValueInvalid)
 	}
+	return nil
+}
+
+// SetDomain sets the asset tax domain for output
+func (a *TaxCreateOut) SetDomain(d port.Domain) *kerror.KError {
+	tax, ok := d.(*domain.Tax)
+	if !ok {
+		return kerror.NewKError(kerror.Internal, "Domain is not a tax")
+	}
+	taxItens := make([]TaxItemCreate, 0)
+	for _, taxItem := range tax.TaxItems {
+		taxItens = append(taxItens, TaxItemCreate{
+			ID:    taxItem.ID,
+			Until: taxItem.Until,
+			Value: taxItem.Value,
+		})
+	}
+	a.ID = tax.ID
+	a.Name = tax.Name
+	a.TaxItens = taxItens
 	return nil
 }

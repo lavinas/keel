@@ -72,6 +72,16 @@ func (a *StatementCreateIn) Validate(repo port.Repository) *kerror.KError {
 	return nil
 }
 
+// GetDomain returns the asset statement domain for input
+func (a *StatementCreateIn) GetDomain() (port.Domain, *kerror.KError) {
+	date, err := time.Parse("2006-01-02", a.Date)
+	if err != nil {
+		return nil, kerror.NewKError(kerror.Internal, err.Error())
+	}
+	statement := domain.NewStatement(a.ID, a.AssetID, date, a.History, a.Value, a.Comment, "")
+	return statement, nil
+}
+
 // validateID validates the id asset statement dto for input
 func (a *StatementCreateIn) validateID(repo port.Repository) *kerror.KError {
 	if a.ID == "" {
@@ -125,5 +135,21 @@ func (a *StatementCreateIn) validateValue(repo port.Repository) *kerror.KError {
 	if a.Value == 0 {
 		return kerror.NewKError(kerror.BadRequest, ErrorStatementValueRequired)
 	}
+	return nil
+}
+
+// SetDomain sets the asset statement domain for output
+func (a *StatementCreateOut) SetDomain(d port.Domain) *kerror.KError {
+	statement, ok := d.(*domain.Statement)
+	if !ok {
+		return kerror.NewKError(kerror.Internal, "Domain is not a statement")
+	}
+	a.ID = statement.ID
+	a.AssetID = statement.AssetID
+	a.AssetName = statement.Asset.Name
+	a.Date = statement.Date.Format("2006-01-02")
+	a.History = statement.History
+	a.Value = statement.Value
+	a.Comment = statement.Comment
 	return nil
 }

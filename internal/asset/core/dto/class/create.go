@@ -48,6 +48,12 @@ func (a *ClassCreateIn) Validate(repo port.Repository) *kerror.KError {
 	return nil
 }
 
+// GetDomain returns the asset class domain for input
+func (a *ClassCreateIn) GetDomain() (port.Domain, *kerror.KError) {
+	class := domain.NewClass(a.ID, a.Name, a.TaxID)
+	return class, nil
+}
+
 // validateID validates the id asset class dto for input
 func (a *ClassCreateIn) validateID(repo port.Repository) *kerror.KError {
 	if a.ID == "" {
@@ -79,5 +85,18 @@ func (a *ClassCreateIn) validateAssetTaxID(repo port.Repository) *kerror.KError 
 	} else if !exists {
 		return kerror.NewKError(kerror.Internal, ErrorClassAssetTaxIDNotFound)
 	}
+	return nil
+}
+
+// SetDomain sets the asset class domain for output
+func (a *ClassCreateOut) SetDomain(d port.Domain) *kerror.KError {
+	class, ok := d.(*domain.Class)
+	if !ok {
+		return kerror.NewKError(kerror.Internal, "Domain is not an asset class")
+	}
+	a.ID = class.ID
+	a.Name = class.Name
+	a.TaxID = class.TaxID
+	a.TaxName = class.Tax.Name
 	return nil
 }
