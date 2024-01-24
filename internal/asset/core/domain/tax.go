@@ -1,17 +1,27 @@
 package domain
 
 import (
+	"fmt"
+
 	"github.com/lavinas/keel/pkg/kerror"
 )
 
 const (
 	ErrorTaxIDRequired        = "Tax ID is required"
+	ErrorTaxIDLength          = "Tax ID must have less than %d characters"
 	ErrorTaxNameRequired      = "Tax Name is required"
+	ErrorTaxNameLength        = "Tax Name must have less than %d characters"
 	ErrorTaxPeriodRequired    = "Tax Period is required"
+	ErrorTaxPeriodLength      = "Tax Period must have less than %d characters"
 	ErrorTaxPeriodInvalid     = "Tax Period is invalid"
 	ErrorTaxItemIDRequired    = "Tax Item ID is required"
+	ErrorTaxItemIDLength      = "Tax Item ID must have less than %d characters"
 	ErrorTaxItemTaxIDRequired = "Tax Item Tax ID is required"
 	ErrorTaxItemValueInvalid  = "Tax Item Value is invalid"
+	LengthTaxID               = 25
+	LengthTaxName             = 50
+	LengthTaxPeriod           = 2
+	LengthTaxItemID           = 25
 )
 
 var (
@@ -66,11 +76,20 @@ func (t *Tax) Validate() *kerror.KError {
 	if t.ID == "" {
 		return kerror.NewKError(kerror.Internal, ErrorTaxIDRequired)
 	}
+	if len(t.ID) > LengthTaxID {
+		return kerror.NewKError(kerror.Internal, fmt.Sprintf(ErrorTaxIDLength, LengthTaxID))
+	}
 	if t.Name == "" {
 		return kerror.NewKError(kerror.Internal, ErrorTaxNameRequired)
 	}
+	if len(t.Name) > LengthTaxName {
+		return kerror.NewKError(kerror.Internal, fmt.Sprintf(ErrorTaxNameLength, LengthTaxName))
+	}
 	if t.Period == "" {
 		return kerror.NewKError(kerror.Internal, ErrorTaxPeriodRequired)
+	}
+	if len(t.Period) > LengthTaxPeriod {
+		return kerror.NewKError(kerror.Internal, fmt.Sprintf(ErrorTaxPeriodLength, LengthTaxPeriod))
 	}
 	if _, ok := PeriodMap[t.Period]; !ok {
 		return kerror.NewKError(kerror.Internal, ErrorTaxPeriodInvalid)
@@ -87,6 +106,9 @@ func (t *Tax) Validate() *kerror.KError {
 func (ti *TaxItem) Validate(tax_id string) *kerror.KError {
 	if ti.ID == "" {
 		return kerror.NewKError(kerror.Internal, ErrorTaxItemIDRequired)
+	}
+	if len(ti.ID) > LengthTaxItemID {
+		return kerror.NewKError(kerror.Internal, fmt.Sprintf(ErrorTaxItemIDLength, LengthTaxItemID))
 	}
 	if ti.TaxID != tax_id {
 		return kerror.NewKError(kerror.Internal, ErrorTaxItemTaxIDRequired)

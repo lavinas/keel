@@ -1,6 +1,7 @@
 package dto
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/lavinas/keel/internal/asset/core/domain"
@@ -10,12 +11,16 @@ import (
 
 const (
 	ErrorAssetIDRequired        = "Asset ID is required"
+	ErrorAssetIDLength          = "Asset ID must have %d characters"
 	ErrorAssetIDDuplicated      = "Asset ID is duplicated"
 	ErrorAssetClassIDRequired   = "Asset Class ID is required"
+	ErrorAssetClassIDLength     = "Asset Class ID must have %d characters"
 	ErrorAssetNameRequired      = "Asset Name is required"
+	ErrorAssetNameLength        = "Asset Name must have %d characters"
 	ErrorAssetStartDateRequired = "Asset Start Date is required"
 	ErrorAssetStartDateInvalid  = "Asset Start Date is invalid"
 	ErrorAssetClassIDNotFound   = "Asset Class ID is not found"
+	ErrorAssetDomainInvalid     = "Domain is not an asset"
 )
 
 // AssetCreateIn is a struct that represents the asset dto for input creation
@@ -79,6 +84,9 @@ func (a *AssetCreateIn) validateID(repo port.Repository) *kerror.KError {
 	if a.ID == "" {
 		return kerror.NewKError(kerror.BadRequest, ErrorAssetIDRequired)
 	}
+	if len(a.ID) > domain.LengthAssetID {
+		return kerror.NewKError(kerror.BadRequest, fmt.Sprintf(ErrorAssetIDLength, domain.LengthAssetID))
+	}
 	if exists, error := repo.Exists(domain.Asset{}, a.ID); error != nil {
 		return kerror.NewKError(kerror.Internal, error.Error())
 	} else if exists {
@@ -92,6 +100,9 @@ func (a *AssetCreateIn) validateClassID(repo port.Repository) *kerror.KError {
 	if a.ClassID == "" {
 		return kerror.NewKError(kerror.BadRequest, ErrorAssetClassIDRequired)
 	}
+	if len(a.ClassID) > domain.LengthClassID {
+		return kerror.NewKError(kerror.BadRequest, fmt.Sprintf(ErrorAssetClassIDLength, domain.LengthClassID))
+	}
 	if exists, error := repo.Exists(domain.Class{}, a.ClassID); error != nil {
 		return kerror.NewKError(kerror.Internal, error.Error())
 	} else if !exists {
@@ -104,6 +115,9 @@ func (a *AssetCreateIn) validateClassID(repo port.Repository) *kerror.KError {
 func (a *AssetCreateIn) validateName(repo port.Repository) *kerror.KError {
 	if a.Name == "" {
 		return kerror.NewKError(kerror.BadRequest, ErrorAssetNameRequired)
+	}
+	if len(a.Name) > domain.LengthAssetName {
+		return kerror.NewKError(kerror.BadRequest, fmt.Sprintf(ErrorAssetNameLength, domain.LengthAssetName))
 	}
 	return nil
 }
@@ -121,8 +135,10 @@ func (a *AssetCreateIn) validateStartDate(repo port.Repository) *kerror.KError {
 
 // SetDomain sets the asset domain for output creation
 func (a *AssetCreateOut) SetDomain(d port.Domain) *kerror.KError {
-	asset := d.(*domain.Asset)
-
+	asset, ok := d.(*domain.Asset)
+	if !ok {
+		return kerror.NewKError(kerror.Internal, ErrorAssetDomainInvalid)
+	}
 	a.ID = asset.ID
 	a.ClassID = asset.ClassID
 	a.ClassName = asset.Class.Name

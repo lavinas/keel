@@ -1,6 +1,7 @@
 package dto
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/lavinas/keel/internal/asset/core/domain"
@@ -10,14 +11,18 @@ import (
 
 const (
 	ErrorStatementIDRequired      = "Statement ID is required"
+	ErrorStatementIDLenght        = "Statement ID must have %d characters"
 	ErrorStatementIDDuplicated    = "Statement ID is duplicated"
 	ErrorStatementAssetIDRequired = "Statement Asset ID is required"
+	ErrorStatementAssedIDLength   = "Statement Asset ID must have %d characters"
 	ErrorStatementAssetIDNotFound = "Statement Asset ID is not found"
 	ErrorStatementDateRequired    = "Statement Date is required"
 	ErrorStatementDateInvalid     = "Statement Date is invalid"
 	ErrorStatementHistoryRequired = "Statement History is required"
+	ErrorStatementHistoryLength   = "Statement History must have %d characters"
 	ErrorStatementHistoryInvalid  = "Statement History is invalid"
 	ErrorStatementValueRequired   = "Statement Value is required"
+	ErrorStatementDomainInvalid   = "Domain is not a statement"
 )
 
 var (
@@ -87,6 +92,9 @@ func (a *StatementCreateIn) validateID(repo port.Repository) *kerror.KError {
 	if a.ID == "" {
 		return kerror.NewKError(kerror.BadRequest, ErrorStatementIDRequired)
 	}
+	if len(a.ID) > domain.LengthStatementID {
+		return kerror.NewKError(kerror.BadRequest, fmt.Sprintf(ErrorStatementIDLenght, domain.LengthStatementID))
+	}
 	if exists, err := repo.Exists(&domain.Statement{}, a.ID); err != nil {
 		return kerror.NewKError(kerror.Internal, err.Error())
 	} else if exists {
@@ -99,6 +107,9 @@ func (a *StatementCreateIn) validateID(repo port.Repository) *kerror.KError {
 func (a *StatementCreateIn) validateAssetID(repo port.Repository) *kerror.KError {
 	if a.AssetID == "" {
 		return kerror.NewKError(kerror.BadRequest, ErrorStatementAssetIDRequired)
+	}
+	if len(a.AssetID) > domain.LengthAssetID {
+		return kerror.NewKError(kerror.BadRequest, fmt.Sprintf(ErrorStatementAssedIDLength, domain.LengthAssetID))
 	}
 	if exists, err := repo.Exists(&domain.Asset{}, a.AssetID); err != nil {
 		return kerror.NewKError(kerror.Internal, err.Error())
@@ -124,6 +135,9 @@ func (a *StatementCreateIn) validateHistory(repo port.Repository) *kerror.KError
 	if a.History == "" {
 		return kerror.NewKError(kerror.BadRequest, ErrorStatementHistoryRequired)
 	}
+	if len(a.History) > domain.LengthStatementHistory {
+		return kerror.NewKError(kerror.BadRequest, fmt.Sprintf(ErrorStatementHistoryLength, domain.LengthStatementHistory))
+	}
 	if _, ok := HistoryMap[a.History]; !ok {
 		return kerror.NewKError(kerror.BadRequest, ErrorStatementHistoryInvalid)
 	}
@@ -142,7 +156,7 @@ func (a *StatementCreateIn) validateValue(repo port.Repository) *kerror.KError {
 func (a *StatementCreateOut) SetDomain(d port.Domain) *kerror.KError {
 	statement, ok := d.(*domain.Statement)
 	if !ok {
-		return kerror.NewKError(kerror.Internal, "Domain is not a statement")
+		return kerror.NewKError(kerror.Internal, ErrorStatementDomainInvalid)
 	}
 	a.ID = statement.ID
 	a.AssetID = statement.AssetID

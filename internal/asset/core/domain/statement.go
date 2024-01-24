@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/lavinas/keel/pkg/kerror"
@@ -8,12 +9,19 @@ import (
 
 const (
 	ErrorStatementIDRequired        = "Statement ID is required"
+	ErrorStatementIDLenght          = "Statement ID must have %d characters"
 	ErrorStatementAssetIDRequired   = "Statement Asset ID is required"
+	ErrorStatementAssetIDLenght     = "Statement Asset ID must have %d characters"
 	ErrorStatementDateRequired      = "Statement Date is required"
 	ErrorStatementHistoryRequired   = "Statement History is required"
+	ErrorStatementHistoryLength     = "Statement History must have %d characters"
 	ErrorStatementHistoryInvalid    = "Statement History is invalid"
 	ErrorStatementValueRequired     = "Statement Value is required"
 	ErrorStatementBalanceIDRequired = "Statement Balance ID is required"
+	ErrorStatementBalanceID         = "Statement Balance ID must have %d characters"
+	LengthStatementID               = 25
+	LengthStatementHistory          = 2
+	LengthStatementComment          = 100
 )
 
 var (
@@ -57,14 +65,23 @@ func (s *Statement) Validate() *kerror.KError {
 	if s.ID == "" {
 		return kerror.NewKError(kerror.Internal, ErrorStatementIDRequired)
 	}
+	if len(s.ID) > LengthStatementID {
+		return kerror.NewKError(kerror.Internal, fmt.Sprintf(ErrorStatementIDLenght, LengthStatementID))
+	}
 	if s.AssetID == "" {
 		return kerror.NewKError(kerror.Internal, ErrorStatementAssetIDRequired)
+	}
+	if len(s.AssetID) > LengthAssetID {
+		return kerror.NewKError(kerror.Internal, fmt.Sprintf(ErrorStatementAssetIDLenght, LengthAssetID))
 	}
 	if s.Date.IsZero() {
 		return kerror.NewKError(kerror.Internal, ErrorStatementDateRequired)
 	}
 	if s.History == "" {
 		return kerror.NewKError(kerror.Internal, ErrorStatementHistoryRequired)
+	}
+	if len(s.History) > LengthStatementHistory {
+		return kerror.NewKError(kerror.Internal, fmt.Sprintf(ErrorStatementHistoryLength, LengthStatementHistory))
 	}
 	if _, ok := HistoryMap[s.History]; !ok {
 		return kerror.NewKError(kerror.Internal, ErrorStatementHistoryInvalid)
@@ -74,6 +91,9 @@ func (s *Statement) Validate() *kerror.KError {
 	}
 	if s.BalanceID == "" {
 		return kerror.NewKError(kerror.Internal, ErrorStatementBalanceIDRequired)
+	}
+	if len(s.BalanceID) > LengthBalanceID {
+		return kerror.NewKError(kerror.Internal, fmt.Sprintf(ErrorStatementBalanceID, LengthBalanceID))
 	}
 	if s.Balance != nil {
 		return s.Balance.Validate()

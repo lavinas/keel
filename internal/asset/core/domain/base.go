@@ -8,5 +8,6 @@ func GetDomain() []interface{} {
 		&Balance{},
 		&Statement{},
 		&Portfolio{},
+		&PortfolioItem{},
 	}
 }

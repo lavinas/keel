@@ -1,14 +1,23 @@
 package domain
 
 import (
+	"fmt"
+
 	"github.com/lavinas/keel/pkg/kerror"
 )
 
 const (
 	ErrorPortfolioIDRequired          = "Portfolio ID is required"
+	ErrorPortfolioIDLength            = "Portfolio ID must have %d characters"
 	ErrorPortfolioNameRequired        = "Portfolio Name is required"
+	ErrorPortfolioNameLength          = "Portfolio Name must have %d characters"
 	ErrorPortfolioItemIDRequired      = "Portfolio Item ID is required"
+	ErrorPortfolioItemIDLength        = "Portfolio Item ID must have %d characters"
 	ErrorPortfolioItemAssetIDRequired = "Portfolio Item Asset ID is required"
+	ErrorPortfolioItemAssetIDLength   = "Portfolio Item Asset ID must have %d characters"
+	LengthPortfolioID                 = 25
+	LengthPortfolioName               = 50
+	LengthPortfolioItemID             = 25
 )
 
 // AssetPortfolio is a struct that represents the asset portfolio
@@ -48,8 +57,14 @@ func (p *Portfolio) Validate() *kerror.KError {
 	if p.ID == "" {
 		return kerror.NewKError(kerror.Internal, ErrorPortfolioIDRequired)
 	}
+	if len(p.ID) > LengthPortfolioID {
+		return kerror.NewKError(kerror.Internal, fmt.Sprintf(ErrorPortfolioIDLength, LengthPortfolioID))
+	}
 	if p.Name == "" {
 		return kerror.NewKError(kerror.Internal, ErrorPortfolioNameRequired)
+	}
+	if len(p.Name) > LengthPortfolioName {
+		return kerror.NewKError(kerror.Internal, fmt.Sprintf(ErrorPortfolioNameLength, LengthPortfolioName))
 	}
 	return nil
 }
@@ -59,8 +74,14 @@ func (api *PortfolioItem) Validate() *kerror.KError {
 	if api.PortfolioID == "" {
 		return kerror.NewKError(kerror.Internal, ErrorPortfolioItemIDRequired)
 	}
+	if len(api.PortfolioID) > LengthPortfolioItemID {
+		return kerror.NewKError(kerror.Internal, fmt.Sprintf(ErrorPortfolioItemIDLength, LengthPortfolioItemID))
+	}
 	if api.AssetID == "" {
 		return kerror.NewKError(kerror.Internal, ErrorPortfolioItemAssetIDRequired)
+	}
+	if len(api.AssetID) > LengthAssetID {
+		return kerror.NewKError(kerror.Internal, fmt.Sprintf(ErrorPortfolioItemAssetIDLength, LengthAssetID))
 	}
 	return nil
 }

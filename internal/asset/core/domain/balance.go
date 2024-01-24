@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/lavinas/keel/pkg/kerror"
@@ -8,11 +9,15 @@ import (
 
 const (
 	ErrorBalanceIDRequired        = "Balance ID is required"
+	ErrorBalanceIDLength          = "Balance ID must have %d characters"
 	ErrorBalanceDateRequired      = "Balance Date is required"
 	ErrorBalanceAssetIDRequired   = "Balance Asset ID is required"
+	ErrorBalanceAssetIDLength     = "Balance Asset ID must have %d characters"
 	ErrorBalanceTaxItemIDRequired = "Balance Tax Item ID is required"
+	ErrorBalanceTaxItemIDLength   = "Balance Tax Item ID must have %d characters"
 	ErrorBalanceGrossValueInvalid = "Balance Principal Value + Return Value must be equal to Gross Value"
 	ErrorBalanceNetValueInvalid   = "Balance Gross Value - Tax Value must be equal to Net Value"
+	LengthBalanceID               = 25
 )
 
 type Balance struct {
@@ -49,14 +54,23 @@ func (b *Balance) Validate() *kerror.KError {
 	if b.ID == "" {
 		return kerror.NewKError(kerror.Internal, ErrorBalanceIDRequired)
 	}
+	if len(b.ID) > LengthBalanceID {
+		return kerror.NewKError(kerror.Internal, fmt.Sprintf(ErrorBalanceIDLength, LengthBalanceID))
+	}
 	if b.Date.IsZero() {
 		return kerror.NewKError(kerror.Internal, ErrorBalanceDateRequired)
 	}
 	if b.AssetID == "" {
 		return kerror.NewKError(kerror.Internal, ErrorBalanceAssetIDRequired)
 	}
+	if len(b.AssetID) > LengthAssetID {
+		return kerror.NewKError(kerror.Internal, fmt.Sprintf(ErrorBalanceAssetIDLength, LengthAssetID))
+	}
 	if b.TaxItemID == "" {
 		return kerror.NewKError(kerror.Internal, ErrorBalanceTaxItemIDRequired)
+	}
+	if len(b.TaxItemID) > LengthTaxItemID {
+		return kerror.NewKError(kerror.Internal, fmt.Sprintf(ErrorBalanceTaxItemIDLength, LengthTaxItemID))
 	}
 	if b.PrincipalValue+b.ReturnValue != b.GrossValue {
 		return kerror.NewKError(kerror.Internal, ErrorBalanceGrossValueInvalid)

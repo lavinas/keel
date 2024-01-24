@@ -1,22 +1,29 @@
 package dto
 
 import (
+	"fmt"
+
 	"github.com/lavinas/keel/internal/asset/core/domain"
 	"github.com/lavinas/keel/internal/asset/core/port"
 	"github.com/lavinas/keel/pkg/kerror"
 )
 
 const (
-	ErrorTaxIDRequired       = "Tax ID is required"
-	ErrorTaxIDDuplicated     = "Tax ID is duplicated"
-	ErrorTaxNameRequired     = "Tax Name is required"
-	ErrorTaxPeriodRequired   = "Tax Period is required"
-	ErrorTaxPeriodInvalid    = "Tax Period is invalid"
-	ErrorTaxItensRequired    = "Tax Itens is required"
-	ErrorTaxItemIDRequired   = "Tax Item ID is required"
-	ErrorTaxItemIDDuplicated = "Tax Item ID is duplicated"
-	ErrorTaxItemUntilInvalid = "Tax Item Until is invalid"
-	ErrorTaxItemValueInvalid = "Tax Item Value is invalid"
+	ErrorTaxIDRequired           = "Tax ID is required"
+	ErrorTaxIDLength             = "Tax ID must have less than %d characters"
+	ErrorTaxIDDuplicated         = "Tax ID is duplicated"
+	ErrorTaxNameRequired         = "Tax Name is required"
+	ErrorTaxNameLength           = "Tax Name must have less than %d characters"
+	ErrorTaxPeriodRequired       = "Tax Period is required"
+	ErrorTaxPeriodLength         = "Tax Period must have less than %d characters"
+	ErrorTaxPeriodInvalid        = "Tax Period is invalid"
+	ErrorTaxItensRequired        = "Tax Itens is required"
+	ErrorTaxItemIDRequired       = "Tax Item ID is required"
+	ErrorTaxItemIDLength         = "Tax Item ID must have less than %d characters"
+	ErrorTaxItemIDDuplicated     = "Tax Item ID is duplicated"
+	ErrorTaxItemUntilInvalid     = "Tax Item Until is invalid"
+	ErrorTaxItemValueInvalid     = "Tax Item Value is invalid"
+	ErrorTaxItemTaxInvalidDomain = "Domain is not a tax"
 )
 
 var (
@@ -33,8 +40,8 @@ var (
 // AssetTaxItemIn is a struct that represents the asset tax item dto for input
 type TaxItemCreate struct {
 	ID    string  `json:"id"`
-	Until int     `json:"period_until"`
-	Value float64 `json:"tax"`
+	Until int     `json:"until"`
+	Value float64 `json:"value"`
 }
 
 // AssetTaxIn is a struct that represents the asset tax dto for input
@@ -84,12 +91,15 @@ func (a *TaxCreateIn) GetDomain() (port.Domain, *kerror.KError) {
 // validateID validates the id asset tax dto for input
 func (a *TaxCreateIn) validateID(repo port.Repository) *kerror.KError {
 	if a.ID == "" {
-		return kerror.NewKError(kerror.Internal, ErrorTaxIDRequired)
+		return kerror.NewKError(kerror.BadRequest, ErrorTaxIDRequired)
+	}
+	if len(a.ID) > domain.LengthTaxID {
+		return kerror.NewKError(kerror.BadRequest, fmt.Sprintf(ErrorTaxIDLength, domain.LengthTaxID))
 	}
 	if exists, err := repo.Exists(&domain.Tax{}, a.ID); err != nil {
 		return kerror.NewKError(kerror.Internal, err.Error())
 	} else if exists {
-		return kerror.NewKError(kerror.Internal, ErrorTaxIDDuplicated)
+		return kerror.NewKError(kerror.BadRequest, ErrorTaxIDDuplicated)
 	}
 	return nil
 }
@@ -97,7 +107,10 @@ func (a *TaxCreateIn) validateID(repo port.Repository) *kerror.KError {
 // validateName validates the name asset tax dto for input
 func (a *TaxCreateIn) validateName(repo port.Repository) *kerror.KError {
 	if a.Name == "" {
-		return kerror.NewKError(kerror.Internal, ErrorTaxNameRequired)
+		return kerror.NewKError(kerror.BadRequest, ErrorTaxNameRequired)
+	}
+	if len(a.Name) > domain.LengthTaxName {
+		return kerror.NewKError(kerror.BadRequest, fmt.Sprintf(ErrorTaxNameLength, domain.LengthTaxName))
 	}
 	return nil
 }
@@ -105,10 +118,13 @@ func (a *TaxCreateIn) validateName(repo port.Repository) *kerror.KError {
 // validatePeriod validates the period asset tax dto for input
 func (a *TaxCreateIn) validatePeriod(repo port.Repository) *kerror.KError {
 	if a.Period == "" {
-		return kerror.NewKError(kerror.Internal, ErrorTaxPeriodRequired)
+		return kerror.NewKError(kerror.BadRequest, ErrorTaxPeriodRequired)
+	}
+	if len(a.Period) > domain.LengthTaxPeriod {
+		return kerror.NewKError(kerror.BadRequest, fmt.Sprintf(ErrorTaxPeriodLength, domain.LengthTaxPeriod))
 	}
 	if _, ok := PeriodMap[a.Period]; !ok {
-		return kerror.NewKError(kerror.Internal, ErrorTaxPeriodInvalid)
+		return kerror.NewKError(kerror.BadRequest, ErrorTaxPeriodInvalid)
 	}
 	return nil
 }
@@ -116,7 +132,7 @@ func (a *TaxCreateIn) validatePeriod(repo port.Repository) *kerror.KError {
 // validateTaxItens validates the tax itens asset tax dto for input
 func (a *TaxCreateIn) validateTaxItens(repo port.Repository) *kerror.KError {
 	if len(a.TaxItens) == 0 {
-		return kerror.NewKError(kerror.Internal, ErrorTaxItensRequired)
+		return kerror.NewKError(kerror.BadRequest, ErrorTaxItensRequired)
 	}
 	for _, taxItem := range a.TaxItens {
 		if err := taxItem.validate(repo); err != nil {
@@ -148,12 +164,15 @@ func (a *TaxItemCreate) validate(repo port.Repository) *kerror.KError {
 // validateID validates the id tax item asset tax dto for input
 func (a *TaxItemCreate) validateID(repo port.Repository) *kerror.KError {
 	if a.ID == "" {
-		return kerror.NewKError(kerror.Internal, ErrorTaxItemIDRequired)
+		return kerror.NewKError(kerror.BadRequest, ErrorTaxItemIDRequired)
+	}
+	if len(a.ID) > domain.LengthTaxItemID {
+		return kerror.NewKError(kerror.BadRequest, fmt.Sprintf(ErrorTaxItemIDLength, domain.LengthTaxItemID))
 	}
 	if exists, err := repo.Exists(&domain.TaxItem{}, a.ID); err != nil {
 		return kerror.NewKError(kerror.Internal, err.Error())
 	} else if exists {
-		return kerror.NewKError(kerror.Internal, ErrorTaxItemIDDuplicated)
+		return kerror.NewKError(kerror.BadRequest, ErrorTaxItemIDDuplicated)
 	}
 	return nil
 }
@@ -161,7 +180,7 @@ func (a *TaxItemCreate) validateID(repo port.Repository) *kerror.KError {
 // validatePeriodUntil validates the period until tax item asset tax dto for input
 func (a *TaxItemCreate) validateUntil(repo port.Repository) *kerror.KError {
 	if a.Until <= 0 {
-		return kerror.NewKError(kerror.Internal, ErrorTaxItemUntilInvalid)
+		return kerror.NewKError(kerror.BadRequest, ErrorTaxItemUntilInvalid)
 	}
 	return nil
 }
@@ -169,7 +188,7 @@ func (a *TaxItemCreate) validateUntil(repo port.Repository) *kerror.KError {
 // validateValue validates the value tax item asset tax dto for input
 func (a *TaxItemCreate) validateValue(repo port.Repository) *kerror.KError {
 	if a.Value < 0 || a.Value > 1 {
-		return kerror.NewKError(kerror.Internal, ErrorTaxItemValueInvalid)
+		return kerror.NewKError(kerror.BadRequest, ErrorTaxItemValueInvalid)
 	}
 	return nil
 }
@@ -178,7 +197,7 @@ func (a *TaxItemCreate) validateValue(repo port.Repository) *kerror.KError {
 func (a *TaxCreateOut) SetDomain(d port.Domain) *kerror.KError {
 	tax, ok := d.(*domain.Tax)
 	if !ok {
-		return kerror.NewKError(kerror.Internal, "Domain is not a tax")
+		return kerror.NewKError(kerror.Internal, ErrorTaxItemTaxInvalidDomain)
 	}
 	taxItens := make([]TaxItemCreate, 0)
 	for _, taxItem := range tax.TaxItems {
