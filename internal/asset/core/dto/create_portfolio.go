@@ -40,7 +40,6 @@ type PortfolioCreateOut struct {
 
 // PortfolioItemCreate is a struct that represents the asset portfolio item dto for input and output
 type PortfolioItemCreate struct {
-	PortfolioID string `json:"portfolio_id"`
 	AssetID     string `json:"asset_id"`
 }
 
@@ -67,7 +66,7 @@ func (a *PortfolioCreateIn) Validate(repo port.Repository) *kerror.KError {
 func (a *PortfolioCreateIn) GetDomain() (port.Domain, *kerror.KError) {
 	items := make([]*domain.PortfolioItem, 0)
 	for _, item := range a.PortfolioItems {
-		portfolioItem := domain.NewPortfolioItem(item.PortfolioID, item.AssetID)
+		portfolioItem := domain.NewPortfolioItem(a.ID, item.AssetID)
 		items = append(items, portfolioItem)
 	}
 	return domain.NewPortfolio(a.ID, a.Name, items), nil
@@ -116,7 +115,6 @@ func (a *PortfolioCreateIn) validatePortfolioItems(repo port.Repository) *kerror
 // Validate validates the asset portfolio item dto for input
 func (api *PortfolioItemCreate) Validate(repo port.Repository) *kerror.KError {
 	valMap := []func(repo port.Repository) *kerror.KError{
-		api.validatePortfolioID,
 		api.validateAssetID,
 	}
 	ret := kerror.NewKError(kerror.None, "")
@@ -127,22 +125,6 @@ func (api *PortfolioItemCreate) Validate(repo port.Repository) *kerror.KError {
 	}
 	if !ret.IsEmpty() {
 		return ret
-	}
-	return nil
-}
-
-// validatePortfolioID validates the portfolio id asset portfolio item dto for input
-func (api *PortfolioItemCreate) validatePortfolioID(repo port.Repository) *kerror.KError {
-	if api.PortfolioID == "" {
-		return kerror.NewKError(kerror.BadRequest, ErrorPortfolioItemIDRequired)
-	}
-	if len(api.PortfolioID) > domain.LengthPortfolioItemID {
-		return kerror.NewKError(kerror.BadRequest, fmt.Sprintf(ErrorPortfolioItemIDLength, domain.LengthPortfolioItemID))
-	}
-	if exists, err := repo.Exists(&domain.Portfolio{}, api.PortfolioID); err != nil {
-		return kerror.NewKError(kerror.Internal, err.Error())
-	} else if !exists {
-		return kerror.NewKError(kerror.BadRequest, ErrorPortfolioItemIDNotFound)
 	}
 	return nil
 }
@@ -172,7 +154,6 @@ func (a *PortfolioCreateOut) SetDomain(d port.Domain) *kerror.KError {
 	items := make([]PortfolioItemCreate, 0)
 	for _, item := range portfolio.PortfolioItems {
 		items = append(items, PortfolioItemCreate{
-			PortfolioID: item.PortfolioID,
 			AssetID:     item.AssetID,
 		})
 	}
