@@ -3,8 +3,8 @@ package repository
 import (
 	"errors"
 
-	"github.com/lavinas/keel/internal/email/core/domain"
-	"github.com/lavinas/keel/internal/email/core/port"
+	"github.com/lavinas/keel/internal/asset/core/domain"
+	"github.com/lavinas/keel/internal/asset/core/port"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -66,8 +66,8 @@ func (r *MySql) Add(obj interface{}) error {
 }
 
 // Get gets a object from the database
-func (r *MySql) GetByID(obj interface{}) (bool, error) {
-	tx := r.Db.First(obj)
+func (r *MySql) GetByID(obj interface{}, id string) (bool, error) {
+	tx := r.Db.First(obj, "ID = ?", id)
 	if tx.Error == nil {
 		return true, nil
 	}

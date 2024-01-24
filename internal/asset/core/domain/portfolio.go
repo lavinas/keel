@@ -21,7 +21,7 @@ type Portfolio struct {
 // AssetPortfolioItem is a struct that represents the asset portfolio item
 type PortfolioItem struct {
 	PortfolioID string     `gorm:"type:varchar(50); primaryKey"`
-	Portfolio   *Portfolio `gorm:"foreignKey:AssetPortfolioID;associationForeignKey:ID"`
+	Portfolio   *Portfolio `gorm:"foreignKey:PortfolioID;associationForeignKey:ID"`
 	AssetID     string     `gorm:"type:varchar(50); primaryKey"`
 	Asset       *Asset     `gorm:"foreignKey:AssetID;associationForeignKey:ID"`
 }
@@ -63,4 +63,14 @@ func (api *PortfolioItem) Validate() *kerror.KError {
 		return kerror.NewKError(kerror.Internal, ErrorPortfolioItemAssetIDRequired)
 	}
 	return nil
+}
+
+// TableName returns the table name for gorm
+func (b *Portfolio) TableName() string {
+	return "portfolio"
+}
+
+// TableName returns the table name for gorm
+func (b *PortfolioItem) TableName() string {
+	return "portfolio_item"
 }

@@ -15,7 +15,7 @@ type Class struct {
 	ID    string `gorm:"type:varchar(25); primaryKey"`
 	Name  string `gorm:"type:varchar(50); not null"`
 	TaxID string `gorm:"type:varchar(25); not null"`
-	Tax   *Tax   `gorm:"foreignKey:AssetTaxID;associationForeignKey:ID"`
+	Tax   *Tax   `gorm:"foreignKey:TaxID;associationForeignKey:ID"`
 }
 
 // NewClass creates a new class
@@ -39,4 +39,9 @@ func (c *Class) Validate() *kerror.KError {
 		return kerror.NewKError(kerror.Internal, ErrorClassTaxIDRequired)
 	}
 	return nil
+}
+
+// TableName returns the table name for gorm
+func (b *Class) TableName() string {
+	return "class"
 }

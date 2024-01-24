@@ -13,7 +13,7 @@ type UseCase struct {
 }
 
 // NewService creates a new usecase handler
-func NewService(repo port.Repository, logger port.Logger, config port.Config) *UseCase {
+func NewUseCase(repo port.Repository, logger port.Logger, config port.Config) *UseCase {
 	return &UseCase{
 		repo:   repo,
 		logger: logger,
@@ -41,4 +41,3 @@ func (s *UseCase) Create(dtoIn port.CreateDtoIn, DtoOut port.CreateDtoOut) *kerr
 	}
 	return nil
 }
-

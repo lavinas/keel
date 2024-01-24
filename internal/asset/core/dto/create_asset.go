@@ -3,8 +3,8 @@ package dto
 import (
 	"time"
 
-	"github.com/lavinas/keel/internal/asset/core/port"
 	"github.com/lavinas/keel/internal/asset/core/domain"
+	"github.com/lavinas/keel/internal/asset/core/port"
 	"github.com/lavinas/keel/pkg/kerror"
 )
 
@@ -70,7 +70,7 @@ func (a *AssetCreateIn) GetDomain() (port.Domain, *kerror.KError) {
 		}
 		endDate = &endDateValue
 	}
-	asset := domain.NewAsset(a.ID, a.ClassID, a.Name, startDate, endDate, "")
+	asset := domain.NewAsset(a.ID, a.ClassID, a.Name, startDate, endDate)
 	return asset, nil
 }
 
@@ -120,7 +120,7 @@ func (a *AssetCreateIn) validateStartDate(repo port.Repository) *kerror.KError {
 }
 
 // SetDomain sets the asset domain for output creation
-func (a *AssetCreateOut) SetDomain(d port.Domain) {
+func (a *AssetCreateOut) SetDomain(d port.Domain) *kerror.KError {
 	asset := d.(*domain.Asset)
 
 	a.ID = asset.ID
@@ -130,4 +130,5 @@ func (a *AssetCreateOut) SetDomain(d port.Domain) {
 	if asset.EndDate != nil {
 		a.EndDate = asset.EndDate.Format("2006-01-02")
 	}
+	return nil
 }

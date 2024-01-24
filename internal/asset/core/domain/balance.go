@@ -26,7 +26,7 @@ type Balance struct {
 	NetValue       float64   `gorm:"type:decimal(17, 2); not null"`
 	TaxValue       float64   `gorm:"type:decimal(17, 2); not null"`
 	TaxItemID      string    `gorm:"type:varchar(25); not null"`
-	TaxItem        *TaxItem  `gorm:"foreignKey:AsseTaxItemID;associationForeignKey:ID"`
+	TaxItem        *TaxItem  `gorm:"foreignKey:TaxItemID;associationForeignKey:ID"`
 }
 
 // NewBalance creates a new balance
@@ -65,4 +65,9 @@ func (b *Balance) Validate() *kerror.KError {
 		return kerror.NewKError(kerror.Internal, ErrorBalanceNetValueInvalid)
 	}
 	return nil
+}
+
+// TableName returns the table name for gorm
+func (b *Balance) TableName() string {
+	return "balance"
 }

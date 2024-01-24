@@ -37,8 +37,8 @@ type Tax struct {
 type TaxItem struct {
 	ID    string  `gorm:"type:varchar(25); primaryKey"`
 	TaxID string  `gorm:"type:varchar(25); not null"`
-	Until int `gorm:"type:int; null"`
-	Value float64 `gorm:"type:decimal(0, 4); not null"`
+	Until int     `gorm:"type:int; null"`
+	Value float64 `gorm:"type:decimal(4, 4); not null"`
 }
 
 // NewTax creates a new asset tax
@@ -95,4 +95,14 @@ func (ti *TaxItem) Validate(tax_id string) *kerror.KError {
 		return kerror.NewKError(kerror.Internal, ErrorTaxItemValueInvalid)
 	}
 	return nil
+}
+
+// TableName returns the table name for gorm
+func (b *Tax) TableName() string {
+	return "tax"
+}
+
+// TableName returns the table name for gorm
+func (b *TaxItem) TableName() string {
+	return "tax_item"
 }

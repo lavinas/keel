@@ -36,7 +36,7 @@ type Statement struct {
 	Value     float64   `gorm:"type:decimal(17, 2); not null"`
 	Comment   string    `gorm:"type:varchar(100); null"`
 	BalanceID string    `gorm:"type:varchar(25); not null"`
-	Balance   *Balance  `gorm:"foreignKey:AssetBalanceID;associationForeignKey:ID"`
+	Balance   *Balance  `gorm:"foreignKey:BalanceID;associationForeignKey:ID"`
 }
 
 // NewStatement creates a new asset statement line
@@ -79,4 +79,9 @@ func (s *Statement) Validate() *kerror.KError {
 		return s.Balance.Validate()
 	}
 	return nil
+}
+
+// TableName returns the table name for gorm
+func (b *Statement) TableName() string {
+	return "statement"
 }

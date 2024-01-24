@@ -74,7 +74,7 @@ func (a *TaxCreateIn) Validate(repo port.Repository) *kerror.KError {
 
 // GetDomain returns the asset tax domain for input
 func (a *TaxCreateIn) GetDomain() (port.Domain, *kerror.KError) {
-	taxItens := make([]*domain.TaxItem, 0) 
+	taxItens := make([]*domain.TaxItem, 0)
 	for _, taxItem := range a.TaxItens {
 		taxItens = append(taxItens, domain.NewTaxItem(taxItem.ID, a.ID, taxItem.Until, taxItem.Value))
 	}

@@ -15,25 +15,23 @@ const (
 
 // Asset is a struct that represents the asset
 type Asset struct {
-	ID        string     `gorm:"type:varchar(25); primaryKey"`
-	ClassID   string     `gorm:"type:varchar(25); not null"`
-	Class     *Class     `gorm:"foreignKey:AssetTypeID;associationForeignKey:ID"`
-	Name      string     `gorm:"type:varchar(50); not null"`
-	StartDate time.Time  `gorm:"type:date; not null"`
-	EndDate   *time.Time `gorm:"type:date; null"`
-	BalanceID string     `gorm:"type:varchar(25); null"`
-	Balance   *Balance   `gorm:"foreignKey:AssetBalanceID;associationForeignKey:ID"`
+	ID            string     `gorm:"type:varchar(25); primaryKey"`
+	ClassID       string     `gorm:"type:varchar(25); not null"`
+	Class         *Class     `gorm:"foreignKey:ClassID;associationForeignKey:ID"`
+	Name          string     `gorm:"type:varchar(50); not null"`
+	StartDate     time.Time  `gorm:"type:date; not null"`
+	EndDate       *time.Time `gorm:"type:date; null"`
+	LastBalanceID string     `gorm:"type:varchar(25); null"`
 }
 
 // NewAsset creates a new asset
-func NewAsset(id, classID, name string, startDate time.Time, endDate *time.Time, balanceID string) *Asset {
+func NewAsset(id, classID, name string, startDate time.Time, endDate *time.Time) *Asset {
 	return &Asset{
 		ID:        id,
 		ClassID:   classID,
 		Name:      name,
 		StartDate: startDate,
 		EndDate:   endDate,
-		BalanceID: balanceID,
 	}
 }
 
@@ -51,8 +49,10 @@ func (a *Asset) Validate() *kerror.KError {
 	if a.StartDate.IsZero() {
 		return kerror.NewKError(kerror.Internal, ErrorAssetStartDateRequired)
 	}
-	if a.Balance != nil {
-		return a.Balance.Validate()
-	}
 	return nil
+}
+
+// TableName returns the table name for gorm
+func (b *Asset) TableName() string {
+	return "asset"
 }
