@@ -56,6 +56,7 @@ type TaxCreateIn struct {
 type TaxCreateOut struct {
 	ID       string          `json:"id"`
 	Name     string          `json:"name"`
+	Period   string          `json:"period"`
 	TaxItens []TaxItemCreate `json:"tax_itens"`
 }
 
@@ -209,6 +210,7 @@ func (a *TaxCreateOut) SetDomain(d port.Domain) *kerror.KError {
 	}
 	a.ID = tax.ID
 	a.Name = tax.Name
+	a.Period = tax.Period
 	a.TaxItens = taxItens
 	return nil
 }

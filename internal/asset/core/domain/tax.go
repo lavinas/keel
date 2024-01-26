@@ -71,6 +71,11 @@ func NewTaxItem(id, taxID string, until int, value float64) *TaxItem {
 	}
 }
 
+// SetCreate sets the asset create fields on create operation
+func (t *Tax) SetCreate() *kerror.KError {
+	return nil
+}
+
 // Validate validates the asset tax
 func (t *Tax) Validate() *kerror.KError {
 	if t.ID == "" {

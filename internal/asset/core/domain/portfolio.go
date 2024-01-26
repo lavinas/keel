@@ -52,6 +52,11 @@ func NewPortfolioItem(portfolioID, assetID string) *PortfolioItem {
 	}
 }
 
+// SetCreate sets the asset create fields on create operation
+func (p *Portfolio) SetCreate() *kerror.KError {
+	return nil
+}
+
 // Validate validates the asset portfolio
 func (p *Portfolio) Validate() *kerror.KError {
 	if p.ID == "" {

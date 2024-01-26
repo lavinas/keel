@@ -49,6 +49,11 @@ func NewBalance(id string, date time.Time, assetID string, principalValue, retur
 	}
 }
 
+// SetCreate sets the asset create fields on create operation
+func (b *Balance) SetCreate() *kerror.KError {
+	return nil
+}
+
 // Validate validates the balance
 func (b *Balance) Validate() *kerror.KError {
 	if b.ID == "" {

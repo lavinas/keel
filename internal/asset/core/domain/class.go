@@ -34,6 +34,11 @@ func NewClass(id, name, taxID string) *Class {
 	}
 }
 
+// SetCreate sets the asset create fields on create operation
+func (c *Class) SetCreate() *kerror.KError {
+	return nil
+}
+
 // Validate validates the asset type
 func (c *Class) Validate() *kerror.KError {
 	if c.ID == "" {

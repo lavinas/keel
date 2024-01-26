@@ -41,6 +41,11 @@ func NewAsset(id, classID, name string, startDate time.Time, endDate *time.Time)
 	}
 }
 
+// SetCreate sets the asset create fields on create operation
+func (a *Asset) SetCreate() *kerror.KError {
+	return nil
+}
+
 // Validate validates the asset
 func (a *Asset) Validate() *kerror.KError {
 	if a.ID == "" {

@@ -60,6 +60,11 @@ func NewStatement(id, assetID string, date time.Time, history string, value floa
 	}
 }
 
+// SetCreate sets the asset create fields on create operation
+func (s *Statement) SetCreate() *kerror.KError {
+	return nil
+}
+
 // Validate validates the asset movement
 func (s *Statement) Validate() *kerror.KError {
 	if s.ID == "" {

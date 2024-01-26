@@ -40,7 +40,7 @@ type PortfolioCreateOut struct {
 
 // PortfolioItemCreate is a struct that represents the asset portfolio item dto for input and output
 type PortfolioItemCreate struct {
-	AssetID     string `json:"asset_id"`
+	AssetID string `json:"asset_id"`
 }
 
 // Validate validates the asset portfolio dto for input
@@ -154,7 +154,7 @@ func (a *PortfolioCreateOut) SetDomain(d port.Domain) *kerror.KError {
 	items := make([]PortfolioItemCreate, 0)
 	for _, item := range portfolio.PortfolioItems {
 		items = append(items, PortfolioItemCreate{
-			AssetID:     item.AssetID,
+			AssetID: item.AssetID,
 		})
 	}
 	a.ID = portfolio.ID

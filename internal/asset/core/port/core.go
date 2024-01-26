@@ -18,6 +18,7 @@ type CreateDtoOut interface {
 // Domain is the interface that represents the system generic domain
 type Domain interface {
 	Validate() *kerror.KError
+	SetCreate() *kerror.KError
 }
 
 type UseCase interface {
