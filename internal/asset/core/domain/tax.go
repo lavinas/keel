@@ -3,6 +3,7 @@ package domain
 import (
 	"fmt"
 
+	"github.com/lavinas/keel/internal/asset/core/port"
 	"github.com/lavinas/keel/pkg/kerror"
 )
 
@@ -72,7 +73,7 @@ func NewTaxItem(id, taxID string, until int, value float64) *TaxItem {
 }
 
 // SetCreate sets the asset create fields on create operation
-func (t *Tax) SetCreate() *kerror.KError {
+func (t *Tax) SetCreate(repo port.Repository) *kerror.KError {
 	return nil
 }
 

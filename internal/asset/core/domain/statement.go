@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/lavinas/keel/internal/asset/core/port"
 	"github.com/lavinas/keel/pkg/kerror"
 )
 
@@ -12,6 +13,7 @@ const (
 	ErrorStatementIDLenght          = "Statement ID must have %d characters"
 	ErrorStatementAssetIDRequired   = "Statement Asset ID is required"
 	ErrorStatementAssetIDLenght     = "Statement Asset ID must have %d characters"
+	ErrorAssetIDInvalid             = "Asset ID is invalid"
 	ErrorStatementDateRequired      = "Statement Date is required"
 	ErrorStatementHistoryRequired   = "Statement History is required"
 	ErrorStatementHistoryLength     = "Statement History must have %d characters"
@@ -61,7 +63,15 @@ func NewStatement(id, assetID string, date time.Time, history string, value floa
 }
 
 // SetCreate sets the asset create fields on create operation
-func (s *Statement) SetCreate() *kerror.KError {
+func (s *Statement) SetCreate(repo port.Repository) *kerror.KError {
+	if s.AssetID == "" {
+		return kerror.NewKError(kerror.Internal, ErrorStatementAssetIDRequired)
+	}
+	if ex, err := repo.GetByID(s.Asset, s.AssetID); err != nil {
+		return kerror.NewKError(kerror.Internal, err.Error())
+	} else if !ex {
+		return kerror.NewKError(kerror.Internal, ErrorAssetIDInvalid)
+	}
 	return nil
 }
 
@@ -75,6 +85,9 @@ func (s *Statement) Validate() *kerror.KError {
 	}
 	if s.AssetID == "" {
 		return kerror.NewKError(kerror.Internal, ErrorStatementAssetIDRequired)
+	}
+	if s.Asset == nil {
+		return kerror.NewKError(kerror.Internal, ErrorAssetIDInvalid)
 	}
 	if len(s.AssetID) > LengthAssetID {
 		return kerror.NewKError(kerror.Internal, fmt.Sprintf(ErrorStatementAssetIDLenght, LengthAssetID))

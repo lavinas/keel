@@ -3,6 +3,7 @@ package domain
 import (
 	"fmt"
 
+	"github.com/lavinas/keel/internal/asset/core/port"
 	"github.com/lavinas/keel/pkg/kerror"
 )
 
@@ -13,6 +14,7 @@ const (
 	ErrorPortfolioNameLength          = "Portfolio Name must have %d characters"
 	ErrorPortfolioItemIDRequired      = "Portfolio Item ID is required"
 	ErrorPortfolioItemIDLength        = "Portfolio Item ID must have %d characters"
+	ErrorPortfolioItemAssetIDInvalid  = "Portfolio Item Asset ID is invalid"
 	ErrorPortfolioItemAssetIDRequired = "Portfolio Item Asset ID is required"
 	ErrorPortfolioItemAssetIDLength   = "Portfolio Item Asset ID must have %d characters"
 	LengthPortfolioID                 = 25
@@ -53,7 +55,12 @@ func NewPortfolioItem(portfolioID, assetID string) *PortfolioItem {
 }
 
 // SetCreate sets the asset create fields on create operation
-func (p *Portfolio) SetCreate() *kerror.KError {
+func (p *Portfolio) SetCreate(repo port.Repository) *kerror.KError {
+	for _, item := range p.PortfolioItems {
+		if err := item.SetCreate(repo); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
@@ -85,18 +92,34 @@ func (api *PortfolioItem) Validate() *kerror.KError {
 	if api.AssetID == "" {
 		return kerror.NewKError(kerror.Internal, ErrorPortfolioItemAssetIDRequired)
 	}
+	if api.Asset == nil {
+		return kerror.NewKError(kerror.Internal, ErrorPortfolioItemAssetIDInvalid)
+	}
 	if len(api.AssetID) > LengthAssetID {
 		return kerror.NewKError(kerror.Internal, fmt.Sprintf(ErrorPortfolioItemAssetIDLength, LengthAssetID))
 	}
 	return nil
 }
 
+// SetCreate sets the asset create fields on create operation
+func (api *PortfolioItem) SetCreate(repo port.Repository) *kerror.KError {
+	if api.AssetID == "" {
+		return kerror.NewKError(kerror.Internal, ErrorPortfolioItemIDRequired)
+	}
+	if ex, err := repo.GetByID(api.Asset, api.AssetID); err != nil {
+		return kerror.NewKError(kerror.Internal, err.Error())
+	} else if !ex {
+		return kerror.NewKError(kerror.Internal, ErrorPortfolioItemAssetIDInvalid)
+	}
+	return nil
+}
+
 // TableName returns the table name for gorm
-func (b *Portfolio) TableName() string {
+func (p *Portfolio) TableName() string {
 	return "portfolio"
 }
 
 // TableName returns the table name for gorm
-func (b *PortfolioItem) TableName() string {
+func (p *PortfolioItem) TableName() string {
 	return "portfolio_item"
 }

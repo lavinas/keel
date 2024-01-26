@@ -30,6 +30,9 @@ func (s *UseCase) Create(dtoIn port.CreateDtoIn, DtoOut port.CreateDtoOut) *kerr
 	if err != nil {
 		return err
 	}
+	if err := domain.SetCreate(s.repo); err != nil {
+		return err
+	}
 	if err := domain.Validate(); err != nil {
 		return err
 	}

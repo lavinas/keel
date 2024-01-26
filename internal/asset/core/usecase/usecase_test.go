@@ -7,9 +7,9 @@ import (
 	"testing"
 
 	"github.com/lavinas/keel/internal/asset/adapter/tools"
+	"github.com/lavinas/keel/internal/asset/core/domain"
 	"github.com/lavinas/keel/internal/asset/core/dto"
 	"github.com/lavinas/keel/internal/asset/core/port"
-	"github.com/lavinas/keel/internal/asset/core/domain"
 	"github.com/lavinas/keel/pkg/kerror"
 )
 
@@ -21,7 +21,7 @@ type CreateTestCase struct {
 	DtoOut         port.CreateDtoOut
 	ExpectedDtoOut port.CreateDtoOut
 	ExpectedError  *kerror.KError
-	Messages 	   []string
+	Messages       []string
 }
 
 var CreateTestCases = []CreateTestCase{
@@ -31,23 +31,22 @@ var CreateTestCases = []CreateTestCase{
 		Instr: "create tax ok",
 		DtoIn: &dto.TaxCreateIn{ID: "tax1", Name: "tax1", Period: "Y",
 			TaxItens: []dto.TaxItemCreate{{ID: "tax1", Until: 1, Value: 0.1}}},
-		DtoOut:         &dto.TaxCreateOut{},
-		ExpectedDtoOut: &dto.TaxCreateOut{ID: "tax1", Name: "tax1", Period: "Y", 
+		DtoOut: &dto.TaxCreateOut{},
+		ExpectedDtoOut: &dto.TaxCreateOut{ID: "tax1", Name: "tax1", Period: "Y",
 			TaxItens: []dto.TaxItemCreate{{ID: "tax1", Until: 1, Value: 0.1}}},
-		ExpectedError:  nil,
-		Messages: []string{},
+		ExpectedError: nil,
+		Messages:      []string{},
 	},
 	{
-		Name:  "create class - ok",
-		Desc:  "should create a new class",
-		Instr: "create class ok",
-		DtoIn: &dto.ClassCreateIn{ID: "class1", Name: "class1", TaxID: "tax1"},
+		Name:           "create class - ok",
+		Desc:           "should create a new class",
+		Instr:          "create class ok",
+		DtoIn:          &dto.ClassCreateIn{ID: "class1", Name: "class1", TaxID: "tax1"},
 		DtoOut:         &dto.ClassCreateOut{},
 		ExpectedDtoOut: &dto.ClassCreateOut{ID: "class1", Name: "class1", TaxID: "tax1"},
 		ExpectedError:  nil,
-		Messages: []string{},
+		Messages:       []string{},
 	},
-
 }
 
 func TestCreate(t *testing.T) {
@@ -66,7 +65,7 @@ func TestCreate(t *testing.T) {
 			if !reflect.DeepEqual(tc.DtoOut, tc.ExpectedDtoOut) {
 				t.Errorf("%s - Expected dto out: '%v', got: '%v'", tc.Name, tc.ExpectedDtoOut, tc.DtoOut)
 			}
-			if !reflect.DeepEqual(tc.Messages, logger.Message) && (len(tc.Messages) > 0 || len(logger.Message) > 0){
+			if !reflect.DeepEqual(tc.Messages, logger.Message) && (len(tc.Messages) > 0 || len(logger.Message) > 0) {
 				t.Errorf("%s - Expected messages: '%v', got: '%v'", tc.Name, tc.Messages, logger.Message)
 			}
 		})
@@ -85,7 +84,13 @@ func (r *MockRepository) Exists(obj interface{}, id string) (bool, error) {
 	return false, nil
 }
 func (r *MockRepository) GetByID(obj interface{}, id string) (bool, error) {
-	return true, nil
+	println(3, obj)
+	if r.Instr == "create class ok" && reflect.TypeOf(obj) == reflect.TypeOf(&domain.Tax{}) {
+		obj = &domain.Tax{ID: id, Name: id, Period: "Y", TaxItems: []*domain.TaxItem{{ID: id, Until: 1, Value: 0.1}}}
+		println(1, obj)
+		return true, nil
+	}
+	return false, nil
 }
 func (r *MockRepository) Add(obj interface{}) error {
 	return nil

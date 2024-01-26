@@ -3,12 +3,14 @@ package domain
 import (
 	"fmt"
 
+	"github.com/lavinas/keel/internal/asset/core/port"
 	"github.com/lavinas/keel/pkg/kerror"
 )
 
 const (
 	ErrorClassIDRequired    = "Class ID is required"
 	ErrorClassIDLength      = "Class ID must have %d characters"
+	ErrorClassTaxIDInvalid  = "Class Tax ID is invalid"
 	ErrorClassNameRequired  = "Class Name is required"
 	ErrorClassNameLength    = "Class Name must have %d characters"
 	ErrorClassTaxIDRequired = "Class Tax ID is required"
@@ -35,7 +37,16 @@ func NewClass(id, name, taxID string) *Class {
 }
 
 // SetCreate sets the asset create fields on create operation
-func (c *Class) SetCreate() *kerror.KError {
+func (c *Class) SetCreate(repo port.Repository) *kerror.KError {
+	if c.ID == "" {
+		return kerror.NewKError(kerror.Internal, ErrorClassIDRequired)
+	}
+	if b, err := repo.GetByID(c.Tax, c.TaxID); err != nil {
+		return kerror.NewKError(kerror.Internal, err.Error())
+	} else if !b {
+		return kerror.NewKError(kerror.Internal, ErrorClassTaxIDInvalid)
+	}
+	println(2, c.Tax)
 	return nil
 }
 
@@ -55,6 +66,9 @@ func (c *Class) Validate() *kerror.KError {
 	}
 	if c.TaxID == "" {
 		return kerror.NewKError(kerror.Internal, ErrorClassTaxIDRequired)
+	}
+	if c.Tax == nil {
+		return kerror.NewKError(kerror.Internal, ErrorClassTaxIDInvalid)
 	}
 	if len(c.TaxID) > LengthTaxID {
 		return kerror.NewKError(kerror.Internal, fmt.Sprintf(ErrorClassTaxIDLength, LengthTaxID))

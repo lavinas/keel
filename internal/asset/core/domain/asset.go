@@ -4,12 +4,14 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/lavinas/keel/internal/asset/core/port"
 	"github.com/lavinas/keel/pkg/kerror"
 )
 
 const (
 	ErrorAssetIDRequired        = "Asset ID is required"
 	ErrorAssetIDLength          = "Asset ID must have %d characters"
+	ErrorAssetClassIDInvalid    = "Asset Class ID is invalid"
 	ErrorAssetClassIDRequired   = "Asset Class ID is required"
 	ErrorAssetClassIDLength     = "Asset Class ID must have %d characters"
 	ErrorAssetNameRequired      = "Asset Name is required"
@@ -42,7 +44,15 @@ func NewAsset(id, classID, name string, startDate time.Time, endDate *time.Time)
 }
 
 // SetCreate sets the asset create fields on create operation
-func (a *Asset) SetCreate() *kerror.KError {
+func (a *Asset) SetCreate(repo port.Repository) *kerror.KError {
+	if a.ID == "" {
+		return kerror.NewKError(kerror.Internal, ErrorAssetIDRequired)
+	}
+	if ex, err := repo.GetByID(a.Class, a.ClassID); err != nil {
+		return kerror.NewKError(kerror.Internal, err.Error())
+	} else if !ex {
+		return kerror.NewKError(kerror.Internal, ErrorAssetClassIDInvalid)
+	}
 	return nil
 }
 
@@ -56,6 +66,9 @@ func (a *Asset) Validate() *kerror.KError {
 	}
 	if a.ClassID == "" {
 		return kerror.NewKError(kerror.Internal, ErrorAssetClassIDRequired)
+	}
+	if a.Class == nil {
+		return kerror.NewKError(kerror.Internal, ErrorAssetClassIDInvalid)
 	}
 	if len(a.ClassID) > LengthClassID {
 		return kerror.NewKError(kerror.Internal, fmt.Sprintf(ErrorAssetClassIDLength, LengthClassID))
