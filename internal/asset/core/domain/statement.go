@@ -67,6 +67,7 @@ func (s *Statement) SetCreate(repo port.Repository) *kerror.KError {
 	if s.AssetID == "" {
 		return kerror.NewKError(kerror.Internal, ErrorStatementAssetIDRequired)
 	}
+	s.Asset = &Asset{ID: s.AssetID}
 	if ex, err := repo.GetByID(s.Asset, s.AssetID); err != nil {
 		return kerror.NewKError(kerror.Internal, err.Error())
 	} else if !ex {
@@ -107,6 +108,7 @@ func (s *Statement) Validate() *kerror.KError {
 	if s.Value == 0 {
 		return kerror.NewKError(kerror.Internal, ErrorStatementValueRequired)
 	}
+	/*
 	if s.BalanceID == "" {
 		return kerror.NewKError(kerror.Internal, ErrorStatementBalanceIDRequired)
 	}
@@ -116,6 +118,7 @@ func (s *Statement) Validate() *kerror.KError {
 	if s.Balance != nil {
 		return s.Balance.Validate()
 	}
+	*/
 	return nil
 }
 

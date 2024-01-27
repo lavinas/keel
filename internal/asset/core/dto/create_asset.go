@@ -26,8 +26,8 @@ const (
 // AssetCreateIn is a struct that represents the asset dto for input creation
 type AssetCreateIn struct {
 	ID        string `json:"id"`
-	ClassID   string `json:"class_id"`
 	Name      string `json:"name"`
+	ClassID   string `json:"class_id"`
 	StartDate string `json:"start_date"`
 	EndDate   string `json:"end_date"`
 }
@@ -35,6 +35,7 @@ type AssetCreateIn struct {
 // AssetCreateOut is a struct that represents the asset dto for output creation
 type AssetCreateOut struct {
 	ID        string `json:"id"`
+	Name      string `json:"name"`
 	ClassID   string `json:"class_id"`
 	ClassName string `json:"class_name"`
 	StartDate string `json:"start_date"`
@@ -87,7 +88,7 @@ func (a *AssetCreateIn) validateID(repo port.Repository) *kerror.KError {
 	if len(a.ID) > domain.LengthAssetID {
 		return kerror.NewKError(kerror.BadRequest, fmt.Sprintf(ErrorAssetIDLength, domain.LengthAssetID))
 	}
-	if exists, error := repo.Exists(domain.Asset{}, a.ID); error != nil {
+	if exists, error := repo.Exists(&domain.Asset{}, a.ID); error != nil {
 		return kerror.NewKError(kerror.Internal, error.Error())
 	} else if exists {
 		return kerror.NewKError(kerror.BadRequest, ErrorAssetIDDuplicated)
@@ -103,7 +104,7 @@ func (a *AssetCreateIn) validateClassID(repo port.Repository) *kerror.KError {
 	if len(a.ClassID) > domain.LengthClassID {
 		return kerror.NewKError(kerror.BadRequest, fmt.Sprintf(ErrorAssetClassIDLength, domain.LengthClassID))
 	}
-	if exists, error := repo.Exists(domain.Class{}, a.ClassID); error != nil {
+	if exists, error := repo.Exists(&domain.Class{}, a.ClassID); error != nil {
 		return kerror.NewKError(kerror.Internal, error.Error())
 	} else if !exists {
 		return kerror.NewKError(kerror.BadRequest, ErrorAssetClassIDNotFound)
@@ -140,6 +141,7 @@ func (a *AssetCreateOut) SetDomain(d port.Domain) *kerror.KError {
 		return kerror.NewKError(kerror.Internal, ErrorAssetDomainInvalid)
 	}
 	a.ID = asset.ID
+	a.Name = asset.Name
 	a.ClassID = asset.ClassID
 	a.ClassName = asset.Class.Name
 	a.StartDate = asset.StartDate.Format("2006-01-02")

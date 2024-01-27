@@ -41,12 +41,12 @@ func (c *Class) SetCreate(repo port.Repository) *kerror.KError {
 	if c.ID == "" {
 		return kerror.NewKError(kerror.Internal, ErrorClassIDRequired)
 	}
+	c.Tax = &Tax{ID: c.TaxID}
 	if b, err := repo.GetByID(c.Tax, c.TaxID); err != nil {
 		return kerror.NewKError(kerror.Internal, err.Error())
 	} else if !b {
 		return kerror.NewKError(kerror.Internal, ErrorClassTaxIDInvalid)
 	}
-	println(2, c.Tax)
 	return nil
 }
 

@@ -106,6 +106,7 @@ func (api *PortfolioItem) SetCreate(repo port.Repository) *kerror.KError {
 	if api.AssetID == "" {
 		return kerror.NewKError(kerror.Internal, ErrorPortfolioItemIDRequired)
 	}
+	api.Asset = &Asset{ID: api.AssetID}
 	if ex, err := repo.GetByID(api.Asset, api.AssetID); err != nil {
 		return kerror.NewKError(kerror.Internal, err.Error())
 	} else if !ex {
@@ -114,7 +115,7 @@ func (api *PortfolioItem) SetCreate(repo port.Repository) *kerror.KError {
 	return nil
 }
 
-// TableName returns the table name for gorm
+// TableName returns the table name for gorm...............................
 func (p *Portfolio) TableName() string {
 	return "portfolio"
 }

@@ -48,6 +48,7 @@ func (a *Asset) SetCreate(repo port.Repository) *kerror.KError {
 	if a.ID == "" {
 		return kerror.NewKError(kerror.Internal, ErrorAssetIDRequired)
 	}
+	a.Class = &Class{ID: a.ClassID}
 	if ex, err := repo.GetByID(a.Class, a.ClassID); err != nil {
 		return kerror.NewKError(kerror.Internal, err.Error())
 	} else if !ex {

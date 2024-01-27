@@ -28,14 +28,14 @@ const (
 type PortfolioCreateIn struct {
 	ID             string                `json:"id"`
 	Name           string                `json:"name"`
-	PortfolioItems []PortfolioItemCreate `json:"portfolio_items"`
+	PortfolioItems []*PortfolioItemCreate `json:"portfolio_items"`
 }
 
 // PortfolioCreateOut is a struct that represents the asset portfolio dto for output
 type PortfolioCreateOut struct {
 	ID             string                `json:"id"`
 	Name           string                `json:"name"`
-	PortfolioItems []PortfolioItemCreate `json:"portfolio_items"`
+	PortfolioItems []*PortfolioItemCreate `json:"portfolio_items"`
 }
 
 // PortfolioItemCreate is a struct that represents the asset portfolio item dto for input and output
@@ -151,9 +151,9 @@ func (a *PortfolioCreateOut) SetDomain(d port.Domain) *kerror.KError {
 	if !ok {
 		return kerror.NewKError(kerror.Internal, ErrorPortfolioDomainInvalid)
 	}
-	items := make([]PortfolioItemCreate, 0)
+	items := make([]*PortfolioItemCreate, 0)
 	for _, item := range portfolio.PortfolioItems {
-		items = append(items, PortfolioItemCreate{
+		items = append(items, &PortfolioItemCreate{
 			AssetID: item.AssetID,
 		})
 	}
